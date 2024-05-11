@@ -208,89 +208,87 @@
                 Padding="2.5"
                 Background="{DynamicResource ControlBarFillColorDefaultBrush}"
                 CornerRadius="5">
-                <ui:DynamicScrollViewer>
-                    <Grid>
-                        <Image
-                            x:Name="SplashScreen"
-                            Width="300"
-                            Height="300"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Opacity="0.1"
-                            RenderOptions.BitmapScalingMode="HighQuality"
-                            SnapsToDevicePixels="True"
-                            Source="pack://application:,,,/Resources/Images/Mystrose.png"
-                            UseLayoutRounding="True"
-                            Visibility="Collapsed" />
-                        <Grid x:Name="LoadoutPnl" Visibility="Visible">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
+                <Grid>
+                    <Image
+                        x:Name="SplashScreen"
+                        Width="300"
+                        Height="300"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Opacity="0.1"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        SnapsToDevicePixels="True"
+                        Source="pack://application:,,,/Resources/Images/Mystrose.png"
+                        UseLayoutRounding="True"
+                        Visibility="Collapsed" />
+                    <Grid x:Name="LoadoutPnl" Visibility="Visible">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
 
-                            <Grid Grid.Row="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                                <TextBlock
-                                    x:Name="ClassTxt"
-                                    Grid.Column="0"
-                                    Margin="7.5,3"
-                                    VerticalAlignment="Center"
-                                    FontFamily="{DynamicResource BDMerced}"
-                                    FontSize="24"
-                                    Text="Class Name" />
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <ui:Button
-                                        x:Name="Class1Btn"
-                                        Width="30"
-                                        Height="30"
-                                        Margin="5,0,0,0"
-                                        Padding="0"
-                                        Background="Transparent"
-                                        Click="OnButtonClick">
-                                        <ui:Button.Icon>
-                                            <ui:SymbolIcon Symbol="Edit20" />
-                                        </ui:Button.Icon>
-                                    </ui:Button>
-                                    <ui:Button
-                                        x:Name="Class0Btn"
-                                        Width="30"
-                                        Height="30"
-                                        Margin="5,0,7.5,0"
-                                        Padding="0"
-                                        Background="Transparent"
-                                        Click="OnButtonClick">
-                                        <ui:Button.Icon>
-                                            <ui:SymbolIcon Symbol="Delete20" />
-                                        </ui:Button.Icon>
-                                    </ui:Button>
-                                </StackPanel>
-                            </Grid>
                             <TextBlock
-                                x:Name="ClassAliasTxt"
-                                Grid.Row="1"
-                                Margin="7.5,-2.5"
+                                x:Name="ClassTxt"
+                                Grid.Column="0"
+                                Margin="7.5,3"
                                 VerticalAlignment="Center"
                                 FontFamily="{DynamicResource BDMerced}"
-                                FontSize="18"
-                                Opacity="0.5"
-                                Text="Alias - Name" />
-                            <Border
-                                Grid.Row="2"
-                                Margin="7.5,6"
-                                BorderBrush="#52525e"
-                                BorderThickness="0.5"
-                                CornerRadius="0.25"
-                                Opacity="0.5" />
-                            <ContentControl x:Name="EngineCtl" Grid.Row="3" />
+                                FontSize="24"
+                                Text="Class Name" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <ui:Button
+                                    x:Name="Class1Btn"
+                                    Width="30"
+                                    Height="30"
+                                    Margin="5,0,0,0"
+                                    Padding="0"
+                                    Background="Transparent"
+                                    Click="OnButtonClick">
+                                    <ui:Button.Icon>
+                                        <ui:SymbolIcon Symbol="Edit20" />
+                                    </ui:Button.Icon>
+                                </ui:Button>
+                                <ui:Button
+                                    x:Name="Class0Btn"
+                                    Width="30"
+                                    Height="30"
+                                    Margin="5,0,7.5,0"
+                                    Padding="0"
+                                    Background="Transparent"
+                                    Click="OnButtonClick">
+                                    <ui:Button.Icon>
+                                        <ui:SymbolIcon Symbol="Delete20" />
+                                    </ui:Button.Icon>
+                                </ui:Button>
+                            </StackPanel>
                         </Grid>
+                        <TextBlock
+                            x:Name="ClassAliasTxt"
+                            Grid.Row="1"
+                            Margin="7.5,-2.5"
+                            VerticalAlignment="Center"
+                            FontFamily="{DynamicResource BDMerced}"
+                            FontSize="18"
+                            Opacity="0.5"
+                            Text="Alias - Name" />
+                        <Border
+                            Grid.Row="2"
+                            Margin="7.5,6"
+                            BorderBrush="#52525e"
+                            BorderThickness="0.5"
+                            CornerRadius="0.25"
+                            Opacity="0.5" />
+                        <ContentControl x:Name="EngineCtl" Grid.Row="3" />
                     </Grid>
-                </ui:DynamicScrollViewer>
+                </Grid>
 
             </Border>
         </Grid>

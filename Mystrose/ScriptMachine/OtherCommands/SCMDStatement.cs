@@ -11,6 +11,7 @@ using Mystrose.ReadableModels.ScriptMachine;
 using Mystrose.ReadableModels.General;
 using Mystrose.ReadableModels.Environment;
 using Mystrose.ReadableModels.Base;
+using System.Linq;
 
 namespace Mystrose.ScriptMachine.Objects;
 
@@ -69,11 +70,11 @@ public class SCMDStatement : ScriptCommand, IStatementCommand
             ScriptStatementType.Drop => new RMItemDrop()
         };
 
-        SecondaryParameters.Clear();
-        SecondaryParameters[key] = ScriptRepository.ConvertToConditionals(targetStatement);
-
         ReadableModel targetModel = (ReadableModel)targetStatement;
         Dictionary<string, ScriptParameter> mandatoryParameters = ScriptRepository.ConvertToConditionals(targetModel.MandatorySearchProperties);
+
+        SecondaryParameters.Clear();
+        SecondaryParameters[key] = ScriptRepository.ConvertToConditionals(targetStatement).Where(k => !mandatoryParameters.ContainsKey(k.Key)).ToDictionary();
 
         return mandatoryParameters;
     }   

@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using Wpf.Ui.Common;
+using WpfControls = Wpf.Ui.Controls;
 
 namespace Mystrose.ScriptMachine;
 
@@ -84,6 +85,11 @@ public partial class ScriptEnginePanel : UserControl
         get => ActivePanel.Name.Equals("Creator_CodelinePnl") ? Creator_CodelineDescTxt : Editor_CodelineDescTxt;
     }
 
+    public WpfControls.DynamicScrollViewer CodelineScrollViewer
+    {
+        get => ActivePanel.Name.Equals("Creator_CodelinePnl") ? Creator_PrmScroll : Editor_PrmScroll;
+    }
+
     public Label CodelineParameterLabel
     {
         get => ActivePanel.Name.Equals("Creator_CodelinePnl") ? Creator_PrmLbl : Editor_PrmLbl;
@@ -94,6 +100,11 @@ public partial class ScriptEnginePanel : UserControl
         get => ActivePanel.Name.Equals("Creator_CodelinePnl") ? Creator_OptedPrmLbl : Editor_OptedPrmLbl;
     }
 
+    public Label CodelineExtrasLabel
+    {
+        get => ActivePanel.Name.Equals("Creator_CodelinePnl") ? Creator_MoreOptedPrmLbl : Editor_MoreOptedPrmLbl;
+    }
+
     public UIElementCollection CodelineParameters
     {
         get => ActivePanel.Name.Equals("Creator_CodelinePnl") ? Creator_PrmList.Children : Editor_PrmList.Children;
@@ -102,6 +113,16 @@ public partial class ScriptEnginePanel : UserControl
     public UIElementCollection CodelineOptParameters
     {
         get => ActivePanel.Name.Equals("Creator_CodelinePnl") ? Creator_OptedPrmList.Children : Editor_OptedPrmList.Children;
+    }
+
+    public ComboBox CodelineExtrasBox
+    {
+        get => ActivePanel.Name.Equals("Creator_CodelinePnl") ? Creator_MoreOptedPrmBox : Editor_MoreOptedPrmBox;
+    }
+
+    public Button CodelineExtrasBtn
+    {
+        get => ActivePanel.Name.Equals("Creator_CodelinePnl") ? Creator_MoreOptedPrmBtn : Editor_MoreOptedPrmBtn;
     }
     #endregion
 
@@ -443,20 +464,21 @@ public partial class ScriptEnginePanel : UserControl
         UIElementCollection collection;
         Dictionary<string, ScriptParameter> parameters;
 
-        switch (optKey)
+        if (optKey is null)
         {
-            case null:
-                targetType = ScriptParameterType.Parameter;
-                collection = CodelineParameters;
-                parameters = cmd.Parameters;
-                CodelineParameterLabel.Visibility = parameters.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-                break;
-            default:
-                targetType = ScriptParameterType.SecondaryParameter;
-                collection = CodelineOptParameters;
-                parameters = cmd.PassSecondaryParameters(optKey);
-                CodelineOptParameterLabel.Visibility = parameters.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-                break;
+            targetType = ScriptParameterType.Parameter;
+            collection = CodelineParameters;
+            parameters = cmd.Parameters;
+            CodelineParameterLabel.Visibility = parameters.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            RefreshExtraParameters(optKey, []);
+        }
+        else
+        {
+            targetType = ScriptParameterType.SecondaryParameter;
+            collection = CodelineOptParameters;
+            parameters = cmd.PassSecondaryParameters(optKey);
+            CodelineOptParameterLabel.Visibility = parameters.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            RefreshExtraParameters(optKey, cmd.SecondaryParameters[optKey]);
         }
 
         foreach (KeyValuePair<string, ScriptParameter> keyValuePair in parameters)
@@ -465,15 +487,67 @@ public partial class ScriptEnginePanel : UserControl
             collection.Add(inputItem);
         }
     }
+
+    public void RefreshExtraParameters(string key, Dictionary<string, ScriptParameter> extras)
+    {
+        if (extras.Count <= 0)
+        {
+            CodelineExtrasLabel.Visibility = Visibility.Collapsed;
+            CodelineExtrasBox.Visibility = Visibility.Collapsed;
+            CodelineExtrasBtn.Visibility = Visibility.Collapsed;
+
+            CodelineExtrasLabel.Tag = null;
+            return;
+        }
+
+        CodelineExtrasLabel.Visibility = Visibility.Visible;
+        CodelineExtrasBox.Visibility = Visibility.Visible;
+        CodelineExtrasBtn.Visibility = Visibility.Visible;
+
+        CodelineExtrasLabel.Tag = key;
+
+        foreach (string extraPrmKey in extras.Keys)
+        {
+            CodelineExtrasBox.Items.Add(extraPrmKey);
+        }
+
+        CodelineExtrasBox.SelectedIndex = 0;
+    }
+
+    public void AddExtraParameter(ScriptCommand cmd)
+    {
+        string optkey = (string)CodelineExtrasLabel.Tag;
+        string prmName = (string)CodelineExtrasBox.SelectedValue;
+
+        ScriptParameter prm = cmd.SecondaryParameters[optkey][prmName];
+        ScriptParameterInput prmInput = new(ScriptParameterType.SecondaryParameter, prmName, this, cmd, prm, false);
+
+        CodelineOptParameters.Add(prmInput);
+        CodelineOptParameterLabel.Visibility = Visibility.Visible;
+
+        CodelineExtrasBox.Items.Remove(prmName);
+        CodelineExtrasBox.SelectedIndex = 0;
+
+        CodelineScrollViewer.ScrollToEnd();
+    }
+
+    public void RemoveExtraParameter(ScriptParameterInput input)
+    {
+        CodelineOptParameters.Remove(input);
+        CodelineOptParameterLabel.Visibility = CodelineOptParameters.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+        CodelineExtrasBox.Items.Add(input.Name);
+        CodelineExtrasBox.SelectedIndex = 0;
+
+        CodelineScrollViewer.ScrollToEnd();
+    }
     #endregion
 
     #region Methods: Loadout
     public void SetLoadout(ScriptLoadout loadout)
     {
         Engine.CurrentLoadout = loadout;
-
         RefreshStancesList();
-
         SwitchCurrentView(ScriptCodelineType.Action);
     }
     #endregion
@@ -482,9 +556,7 @@ public partial class ScriptEnginePanel : UserControl
     public void SwitchCurrentStance(ScriptStance stance)
     {
         StancesBox.SelectedItem = stance;
-
         Engine.CurrentStance = stance;
-
         RefreshCodelines(stance.Commands);
     }
 
@@ -596,7 +668,7 @@ public partial class ScriptEnginePanel : UserControl
     #region Methods: Event
     private void View_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is not Wpf.Ui.Controls.Button btn)
+        if (sender is not WpfControls.Button btn)
         {
             return;
         }
@@ -714,6 +786,13 @@ public partial class ScriptEnginePanel : UserControl
             case "Creator_ClearPrmBtn":
             case "Editor_ClearPrmBtn":
                 RefreshParameters();
+                break;
+
+            case "Creator_MoreOptedPrmBtn":
+                AddExtraParameter(SelectedCommand);
+                break;
+            case "Editor_MoreOptedPrmBtn":
+                AddExtraParameter(EditedCommand);
                 break;
         }
     }
