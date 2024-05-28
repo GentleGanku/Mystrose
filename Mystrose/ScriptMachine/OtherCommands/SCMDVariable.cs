@@ -2,6 +2,7 @@
 using Mystrose.ScriptMachine.Inputs;
 using Mystrose.ScriptMachine.Interfaces;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Mystrose.ScriptMachine.Objects;
@@ -34,9 +35,9 @@ public class SCMDVariable : ScriptCommand, IVariableCommand
     {
         return new SCMDVariable()
         {
-            Parameters = new(Parameters),
-            SecondaryParameters = new(SecondaryParameters),
-            EndResult = EndResult
+            Parameters = ScriptRepository.CloneToParameters(Parameters),
+            SecondaryParameters = ScriptRepository.CloneToSecondaryParameters(SecondaryParameters),
+            EndResult = JsonSerializer.Deserialize<ScriptResultType>(JsonSerializer.Serialize(EndResult))
         };
     }
 

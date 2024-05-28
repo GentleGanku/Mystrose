@@ -1,0 +1,48 @@
+﻿<UserControl
+    x:Class="Mystrose.ScriptMachine.Controls.StanceManager"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Mystrose.ScriptMachine.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    d:DesignHeight="60"
+    d:DesignWidth="60"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <StackPanel x:Key="DialogContent">
+                <Label Content="Enter a stance name." />
+                <ui:TextBox PlaceholderText="Assignee" />
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton
+                        Margin="0,0,5,0"
+                        Content="Add"
+                        GroupName="radio_group_one"
+                        IsChecked="True" />
+                    <RadioButton
+                        Margin="0,0,5,0"
+                        Content="Remove"
+                        GroupName="radio_group_one" />
+                </StackPanel>
+            </StackPanel>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <ui:Button
+            x:Name="PromptBtn"
+            Width="30"
+            Height="30"
+            Padding="0"
+            Background="Transparent"
+            Click="Prompt_Click"
+            CommandParameter="{StaticResource DialogContent}">
+            <ui:Button.Content>
+                <ui:SymbolIcon FontSize="24" Symbol="AddSubtractCircle24" />
+            </ui:Button.Content>
+        </ui:Button>
+    </Grid>
+
+</UserControl>

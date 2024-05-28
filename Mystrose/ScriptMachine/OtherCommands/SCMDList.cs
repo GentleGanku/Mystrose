@@ -3,6 +3,8 @@ using Mystrose.ScriptMachine.Inputs;
 using Mystrose.ScriptMachine.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Mystrose.ScriptMachine.Objects;
@@ -23,6 +25,7 @@ public class SCMDList : ScriptCommand, IListCommand
     #endregion
 
     #region Properties
+    [JsonIgnore]
     public ScriptListType? ListType
     {
         get => Enum.TryParse(Parameters["List Type"].String, out ScriptListType type) ? type : null;
@@ -40,10 +43,10 @@ public class SCMDList : ScriptCommand, IListCommand
     {
         return new SCMDList()
         {
-            InternalCommands = new(InternalCommands),
-            Parameters = new(Parameters),
-            SecondaryParameters = new(SecondaryParameters),
-            EndResult = EndResult
+            InternalCommands = ScriptRepository.CloneToCommandsList(InternalCommands),
+            Parameters = ScriptRepository.CloneToParameters(Parameters),
+            SecondaryParameters = ScriptRepository.CloneToSecondaryParameters(SecondaryParameters),
+            EndResult = JsonSerializer.Deserialize<ScriptResultType>(JsonSerializer.Serialize(EndResult))
         };
     }
 

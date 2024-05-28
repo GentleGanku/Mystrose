@@ -1,25 +1,36 @@
 ﻿using Mystrose.ScriptMachine.Enumerations;
-using System.Text.Json.Serialization;
 
 namespace Mystrose.ScriptMachine.Inputs;
 
 /// <summary>
-/// A base class that represents a conditional statement object.
+/// An inheritor class that represents a key value pair object.
 /// </summary>
 public class ScriptKeyValuePair : ScriptParameter
 {
 
     #region Constructors
+    public ScriptKeyValuePair()
+    {
+        // Empty constructor for serialization and deserialization.
+    }
+
     public ScriptKeyValuePair(string key) : base()
     {
+        InputType = ScriptParameterInputType.KeyValuePair;
         SetKey(key);
     }
 
     public ScriptKeyValuePair(string key, object value, string? hint = null) : base(value, hint)
     {
+        InputType = ScriptParameterInputType.KeyValuePair;
         SetKey(key);
         SetValue(value);
     }
+    #endregion
+
+    #region Private Fields
+    private string _key;
+    private object _value;
     #endregion
 
     #region Properties
@@ -29,10 +40,13 @@ public class ScriptKeyValuePair : ScriptParameter
     /// <returns>
     /// A string representing the parameter's specific key.
     /// </returns>
-    public string? Key
+    public string Key
     {
-        get;
-        private set;
+        get => _key;
+        set
+        {
+            _key = value;
+        }
     }
 
     /// <summary>
@@ -41,10 +55,22 @@ public class ScriptKeyValuePair : ScriptParameter
     /// <returns>
     /// An object representing the parameter's value.
     /// </returns>
-    public object? Value
+    public object Value
     {
-        get;
-        private set;
+        get => _value;
+        set
+        {
+            base.SetValue(value);
+
+            _value = Type switch
+            {
+                ScriptValueType.String => String,
+                ScriptValueType.Integer => Integer,
+                ScriptValueType.Double => Double,
+                ScriptValueType.Boolean => Boolean,
+                _ => Object
+            };
+        }
     }
     #endregion
 
@@ -54,25 +80,17 @@ public class ScriptKeyValuePair : ScriptParameter
         Key = key;
     }
 
-    public void SetValue(object? value)
+    public void SetValue(object value)
     {
-        base.SetValue(value);
-        Value = Type switch
-        {
-            ScriptValueType.String => String,
-            ScriptValueType.Integer => Integer,
-            ScriptValueType.Double => Double,
-            ScriptValueType.Boolean => Boolean,
-            _ => Object
-        };
+        Value = value;
     }
 
     public void Empty()
     {
-        base.Empty();
+        Key = string.Empty;
+        Value = string.Empty;
 
-        Key = null;
-        Value = null;
+        base.Empty();
     }
     #endregion
 

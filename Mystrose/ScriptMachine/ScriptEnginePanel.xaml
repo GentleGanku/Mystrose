@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:Mystrose.ScriptMachine"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    d:DataContext=""
+    xmlns:controls="clr-namespace:Mystrose.ScriptMachine.Controls"
     d:DesignHeight="600"
     d:DesignWidth="750"
     mc:Ignorable="d">
@@ -330,6 +330,7 @@
                                 <ui:SymbolIcon FontSize="16" Symbol="NotePin16" />
                             </ui:Button.Content>
                         </ui:Button>
+                        <controls:StanceManager />
                     </StackPanel>
                 </Grid>
                 <Border
@@ -590,6 +591,7 @@
                             Name="Creator_PrmScroll"
                             Grid.Row="2"
                             Margin="10,2.5"
+                            Padding="0,0,10,0"
                             ScrollViewer.CanContentScroll="False"
                             VirtualizingPanel.ScrollUnit="Pixel">
 
@@ -861,6 +863,7 @@
                             Name="Editor_PrmScroll"
                             Grid.Row="2"
                             Margin="10,2.5"
+                            Padding="0,0,10,0"
                             ScrollViewer.CanContentScroll="True"
                             VirtualizingPanel.ScrollUnit="Pixel">
 

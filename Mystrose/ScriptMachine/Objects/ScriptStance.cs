@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Mystrose.ScriptMachine.Objects;
 
@@ -9,7 +10,6 @@ public class ScriptStance
     public ScriptStance(string name)
     {
         Name = name;
-        Index = 0;
         Commands = [];
     }
     #endregion
@@ -21,11 +21,12 @@ public class ScriptStance
         private set;
     }
 
+    [JsonIgnore]
     public int Index
     {
         get;
         private set;
-    }
+    } = 0;
 
     public List<ScriptCommand> Commands
     {

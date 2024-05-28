@@ -3,6 +3,7 @@ using Mystrose.ScriptMachine.Inputs;
 using Mystrose.ScriptMachine.Objects;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Mystrose.ScriptMachine.Commands.Action;
@@ -27,9 +28,9 @@ public class ACMDSkillUse : SCMDAction
     {
         return new ACMDSkillUse()
         {
-            Parameters = new(Parameters),
-            SecondaryParameters = new(SecondaryParameters),
-            EndResult = EndResult
+            Parameters = ScriptRepository.CloneToParameters(Parameters),
+            SecondaryParameters = ScriptRepository.CloneToSecondaryParameters(SecondaryParameters),
+            EndResult = JsonSerializer.Deserialize<ScriptResultType>(JsonSerializer.Serialize(EndResult))
         };
     }
 
@@ -57,7 +58,7 @@ public class ACMDSkillUse : SCMDAction
 
     public override async Task Execute(ScriptEngine engine)
     {
-        int index = (int)Parameters["Skill Index"].RealValue(engine).Integer;
+        int index = Parameters["Skill Index"].GetVar(engine).Integer;
 
         switch (Parameters["Rule Type"].String)
         {
@@ -71,12 +72,12 @@ public class ACMDSkillUse : SCMDAction
             case "Ruling":
                 int safeChecks = 0;
 
-                if (SecondaryParameters["Ruling"]["Minimum HP (%)"].Double != -1.0)
+                if (SecondaryParameters["Ruling"]["Minimum HP (%)"].Double >= 0.0)
                 {
                     safeChecks -= engine.Master.HP <= engine.Master.MaxHP * (SecondaryParameters["Ruling"]["Minimum HP (%)"].Double / 100.0) ? 0 : 1;
                 }
 
-                if (SecondaryParameters["Ruling"]["Minimum MP (%)"].Double != -1.0)
+                if (SecondaryParameters["Ruling"]["Minimum MP (%)"].Double >= 0.0)
                 {
                     safeChecks -= engine.Master.MP <= engine.Master.MaxMP * (SecondaryParameters["Ruling"]["Minimum MP (%)"].Double / 100.0) ? 0 : 1;
                 }
@@ -87,7 +88,7 @@ public class ACMDSkillUse : SCMDAction
                     return;
                 }
 
-                if (SecondaryParameters["Ruling"]["Wait"].RealValue(engine).Boolean == true)
+                if (SecondaryParameters["Ruling"]["Wait"].GetVar(engine).Boolean == true)
                 {
                     await engine.WaitForCondition(
                         () =>

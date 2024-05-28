@@ -2,6 +2,7 @@
 using Mystrose.ScriptMachine.Inputs;
 using Mystrose.ScriptMachine.Objects;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Mystrose.ScriptMachine.Commands.Action;
@@ -26,9 +27,9 @@ public class ACMDWait : SCMDAction
     {
         return new ACMDWait()
         {
-            Parameters = new(Parameters),
-            SecondaryParameters = new(SecondaryParameters),
-            EndResult = EndResult
+            Parameters = ScriptRepository.CloneToParameters(Parameters),
+            SecondaryParameters = ScriptRepository.CloneToSecondaryParameters(SecondaryParameters),
+            EndResult = JsonSerializer.Deserialize<ScriptResultType>(JsonSerializer.Serialize(EndResult))
         };
     }
 
@@ -56,7 +57,7 @@ public class ACMDWait : SCMDAction
 
     public override async Task Execute(ScriptEngine engine)
     {
-        int delayTime = (int)(Parameters["Delay Time"].RealValue(engine).Double * 1000);
+        int delayTime = (int)(Parameters["Delay Time"].GetVar(engine).Double * 1000);
 
         switch (Parameters["Wait Type"].String)
         {

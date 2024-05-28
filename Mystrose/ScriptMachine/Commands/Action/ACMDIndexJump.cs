@@ -1,6 +1,7 @@
 ﻿using Mystrose.ScriptMachine.Enumerations;
 using Mystrose.ScriptMachine.Inputs;
 using Mystrose.ScriptMachine.Objects;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Mystrose.ScriptMachine.Commands.Action;
@@ -14,7 +15,7 @@ public class ACMDIndexJump : SCMDAction
         Parameters = new()
         {
             ["Jump Type"] = new ScriptOptions("Go To / Up / Down", "The type of jump to perform."),
-            ["Index"] = new ScriptParameter("0", "The index to jump to.")
+            ["Index"] = new ScriptParameter(0, "The index to jump to.")
         };
         SecondaryParameters = [];
     }
@@ -25,15 +26,15 @@ public class ACMDIndexJump : SCMDAction
     {
         return new ACMDIndexJump()
         {
-            Parameters = new(Parameters),
-            SecondaryParameters = new(SecondaryParameters),
-            EndResult = EndResult
+            Parameters = ScriptRepository.CloneToParameters(Parameters),
+            SecondaryParameters = ScriptRepository.CloneToSecondaryParameters(SecondaryParameters),
+            EndResult = JsonSerializer.Deserialize<ScriptResultType>(JsonSerializer.Serialize(EndResult))
         };
     }
 
     public override async Task Execute(ScriptEngine engine)
     {
-        int indexValue = (int)Parameters["Index"].RealValue(engine).Integer;
+        int indexValue = Parameters["Index"].GetVar(engine).Integer;
         int newIndex = Parameters["Jump Type"].String switch
         {
             "Go To" => indexValue,

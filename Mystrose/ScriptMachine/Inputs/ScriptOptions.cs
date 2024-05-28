@@ -1,23 +1,30 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Mystrose.ScriptMachine.Enumerations;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Mystrose.ScriptMachine.Inputs;
 
 /// <summary>
-/// A base class that represents a conditional statement object.
+/// An inheritor class that represents an optional object.
 /// </summary>
 public class ScriptOptions : ScriptParameter
 {
 
     #region Constructors
+    public ScriptOptions()
+    {
+        // Empty constructor for serialization and deserialization.
+    }
+
     public ScriptOptions(object value, string? hint = null) : base(value, hint)
     {
-        SetList(GetList());
+        InputType = ScriptParameterInputType.Options;
+        Options = value.ToString()!;
     }
     #endregion
 
     #region Private Fields
-    private List<string>? _list;
+    private string _options;
     #endregion
 
     #region Properties
@@ -27,42 +34,32 @@ public class ScriptOptions : ScriptParameter
     /// <returns>
     /// A list representing the parameter's specific values.
     /// </returns>
-    public List<string>? List
+    public string Options
     {
-        get => _list;
-        private set
+        get => _options;
+        set
         {
-            _list = value;
-            if (value?.Count > 0)
+            _options = value;
+            List<string> list = GetOptionsList();
+            if (list.Count > 0)
             {
-                SetValue(value[0]);
+                SetValue(list[0]);
             }
         }
     }
     #endregion
 
     #region Methods
-    public List<string> GetList()
+    public List<string> GetOptionsList()
     {
-        return Object switch
-        {
-            string stringValue => stringValue.Split(" / ").ToList(),
-            string[] arrayValue => arrayValue.ToList(),
-            List<string> listValue => listValue,
-            _ => []
-        };
-    }
-
-    public void SetList(List<string> list)
-    {
-        List = new(list);
+        return [.. Options.Split(" / ")];
     }
 
     public void Empty()
     {
-        base.Empty();
+        Options = string.Empty;
 
-        List = null;
+        base.Empty();
     }
     #endregion
 

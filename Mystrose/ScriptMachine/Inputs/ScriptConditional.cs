@@ -1,25 +1,35 @@
 ﻿using Mystrose.ScriptMachine.Enumerations;
 using System;
-using System.Text.Json;
 
 namespace Mystrose.ScriptMachine.Inputs;
 
 /// <summary>
-/// A base class that represents a conditional statement object.
+/// An inheritor class that represents a conditional statement object.
 /// </summary>
 public class ScriptConditional : ScriptParameter
 {
 
     #region Constructors
+    public ScriptConditional()
+    {
+        // Empty constructor for serialization and deserialization.
+    }
+
     public ScriptConditional(ScriptConditionalType condType) : base()
     {
+        InputType = ScriptParameterInputType.Conditional;
         SetCondition(condType);
     }
 
     public ScriptConditional(ScriptConditionalType condType, object value, string? hint = null) : base(value, hint)
     {
+        InputType = ScriptParameterInputType.Conditional;
         SetCondition(condType);
     }
+    #endregion
+
+    #region Private Fields
+    private ScriptConditionalType? _condition;
     #endregion
 
     #region Properties
@@ -31,8 +41,11 @@ public class ScriptConditional : ScriptParameter
     /// </returns>
     public ScriptConditionalType? Condition
     {
-        get;
-        private set;
+        get => _condition;
+        set
+        {
+            _condition = value;
+        }
     }
     #endregion
 
@@ -101,9 +114,9 @@ public class ScriptConditional : ScriptParameter
 
     public void Empty()
     {
-        base.Empty();
-
         Condition = null;
+
+        base.Empty();
     }
 
     public bool IsTrue(object value, ScriptParameter? alternative = null)
@@ -123,111 +136,6 @@ public class ScriptConditional : ScriptParameter
     {
         return reverse ? !IsTrue(value, alternative) : IsTrue(value, alternative);
     }
-
-    //public bool IsTrue(object value, ScriptParameter? alternative = null)
-    //{
-    //    bool boolean = false;
-
-    //    ScriptParameter target = alternative ?? this;
-
-    //    switch (value)
-    //    {
-    //        case string stringValue:
-    //            switch (Condition)
-    //            {
-    //                case ScriptConditionalType.Equal:
-    //                    if (stringValue.Equals(target.String, StringComparison.OrdinalIgnoreCase))
-    //                    {
-    //                        boolean = true;
-    //                    }    
-    //                    break;
-    //                case ScriptConditionalType.NotEqual:
-    //                    if (!stringValue.Equals(target.String, StringComparison.OrdinalIgnoreCase))
-    //                    {
-    //                        boolean = true;
-    //                    }
-    //                    break;
-    //            }
-    //            break;
-    //        case int intValue:
-    //            switch (Condition)
-    //            {
-    //                case ScriptConditionalType.Equal:
-    //                    if (intValue == target.Integer)
-    //                    {
-    //                        boolean = true;
-    //                    }
-    //                    break;
-    //                case ScriptConditionalType.NotEqual:
-    //                    if (intValue != target.Integer)
-    //                    {
-    //                        boolean = true;
-    //                    }
-    //                    break;
-    //                case ScriptConditionalType.LessThan:
-    //                    if (intValue < target.Integer)
-    //                    {
-    //                        boolean = true;
-    //                    }
-    //                    break;
-    //                case ScriptConditionalType.MoreThan:
-    //                    if (intValue > target.Integer)
-    //                    {
-    //                        boolean = true;
-    //                    }
-    //                    break;
-    //            }
-    //            break;
-    //        case double doubleValue:
-    //            switch (Condition)
-    //            {
-    //                case ScriptConditionalType.Equal:
-    //                    if (doubleValue == target.Double)
-    //                    {
-    //                        boolean = true;
-    //                    }
-    //                    break;
-    //                case ScriptConditionalType.NotEqual:
-    //                    if (doubleValue != target.Double)
-    //                    {
-    //                        boolean = true;
-    //                    }
-    //                    break;
-    //                case ScriptConditionalType.LessThan:
-    //                    if (doubleValue < target.Double)
-    //                    {
-    //                        boolean = true;
-    //                    }
-    //                    break;
-    //                case ScriptConditionalType.MoreThan:
-    //                    if (doubleValue > target.Double)
-    //                    {
-    //                        boolean = true;
-    //                    }
-    //                    break;
-    //            }
-    //            break;
-    //        case bool boolValue:
-    //            switch (Condition)
-    //            {
-    //                case ScriptConditionalType.Equal:
-    //                    if (boolValue == target.Boolean)
-    //                    {
-    //                        boolean = true;
-    //                    }
-    //                    break;
-    //                case ScriptConditionalType.NotEqual:
-    //                    if (boolValue != target.Boolean)
-    //                    {
-    //                        boolean = true;
-    //                    }
-    //                    break;
-    //            }
-    //            break;  
-    //    }
-
-    //    return boolean;
-    //}
     #endregion
 
 }

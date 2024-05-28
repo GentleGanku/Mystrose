@@ -3,6 +3,7 @@ using Mystrose.ScriptMachine.Inputs;
 using Mystrose.ScriptMachine.Objects;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Mystrose.ScriptMachine.Commands.Action;
@@ -27,9 +28,9 @@ public class ACMDRest : SCMDAction
     {
         return new ACMDRest()
         {
-            Parameters = new(Parameters),
-            SecondaryParameters = new(SecondaryParameters),
-            EndResult = EndResult
+            Parameters = ScriptRepository.CloneToParameters(Parameters),
+            SecondaryParameters = ScriptRepository.CloneToSecondaryParameters(SecondaryParameters),
+            EndResult = JsonSerializer.Deserialize<ScriptResultType>(JsonSerializer.Serialize(EndResult))
         };
     }
 
@@ -50,7 +51,7 @@ public class ACMDRest : SCMDAction
                 ["Minimum MP (%)"] = new ScriptParameter(-1.0, "Minimum MP percentage to start resting at"),
                 ["Maximum HP (%)"] = new ScriptParameter(-1.0, "Maximum HP percentage to stop resting at"),
                 ["Maximum MP (%)"] = new ScriptParameter(-1.0, "Maximum MP percentage to stop resting at"),
-                ["Skill Indexes"] = new ScriptParameter("0", "Indexes of skills to wait for while resting (0, ..., 5)")
+                ["Skill Indexes"] = new ScriptParameter("0, 1", "Indexes of skills to wait for while resting (0, ..., 5)")
             }
         };
 
@@ -59,7 +60,7 @@ public class ACMDRest : SCMDAction
 
     public override async Task Execute(ScriptEngine engine)
     {
-        if (Parameters["Safe"].RealValue(engine).Boolean == true)
+        if (Parameters["Safe"].GetVar(engine).Boolean)
         {
             engine.Flash.CallGameFunction("world.exitCombat");
             engine.Flash.CallGameFunction("world.moveToCell", engine.Master.Cell, engine.Master.Pad);
@@ -73,12 +74,12 @@ public class ACMDRest : SCMDAction
             case "Conditional Rest":
                 int restChecks = 0;
                 
-                if (SecondaryParameters["Conditional Rest"]["Minimum HP (%)"].Double != -1.0)
+                if (SecondaryParameters["Conditional Rest"]["Minimum HP (%)"].Double >= 0.0)
                 {
                     restChecks -= engine.Master.HP <= engine.Master.MaxHP * (SecondaryParameters["Conditional Rest"]["Minimum HP (%)"].Double / 100.0) ? 0 : 1;
                 }
 
-                if (SecondaryParameters["Conditional Rest"]["Minimum MP (%)"].Double != -1.0)
+                if (SecondaryParameters["Conditional Rest"]["Minimum MP (%)"].Double >= 0.0)
                 {
                     restChecks -= engine.Master.MP <= engine.Master.MaxMP * (SecondaryParameters["Conditional Rest"]["Minimum MP (%)"].Double / 100.0) ? 0 : 1;
                 }
@@ -110,12 +111,12 @@ public class ACMDRest : SCMDAction
 
                         int restChecks = 0;
 
-                        if (SecondaryParameters["Conditional Rest"]["Maximum HP (%)"].Double != -1.0)
+                        if (SecondaryParameters["Conditional Rest"]["Maximum HP (%)"].Double >= 0.0)
                         {
                             restChecks -= engine.Master.HP >= engine.Master.MaxHP * (SecondaryParameters["Conditional Rest"]["Maximum HP (%)"].Double / 100.0) ? 0 : 1;
                         }
 
-                        if (SecondaryParameters["Conditional Rest"]["Maximum MP (%)"].Double != -1.0)
+                        if (SecondaryParameters["Conditional Rest"]["Maximum MP (%)"].Double >= 0.0)
                         {
                             restChecks -= engine.Master.MP >= engine.Master.MaxMP * (SecondaryParameters["Conditional Rest"]["Maximum MP (%)"].Double / 100.0) ? 0 : 1;
                         }
@@ -138,8 +139,8 @@ public class ACMDRest : SCMDAction
     {
         return Parameters["Mode"].String switch
         {
-            "Regular Rest" => "Execute Rest",
-            "Conditional Rest" => "Execute Rest (Conditionally)"
+            "Regular Rest" => "Rest",
+            "Conditional Rest" => "Rest Conditionally"
         };
     }
     #endregion

@@ -4,6 +4,7 @@ using Mystrose.ScriptMachine.Objects;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using WpfControls = Wpf.Ui.Controls;
 
 namespace Mystrose.ScriptMachine;
 
@@ -14,15 +15,15 @@ public partial class ScriptParameterInput : UserControl
 {
 
     #region Constructors
-    public ScriptParameterInput(ScriptParameterType type, string name, ScriptEnginePanel panel, ScriptCommand command, ScriptParameter parameter, bool isDependable = false)
+    public ScriptParameterInput(ScriptParameterType type, string name, ScriptParameter parameter, ScriptEnginePanel panel, ScriptCommand command, bool isDependable = false)
     {
         InitializeComponent();
         IsDependable = isDependable;
         Panel = panel;
         ParentCommand = command;
-        Parameter = parameter;
         Type = type;
         Name = name;
+        Parameter = parameter;
     }
     #endregion
 
@@ -34,8 +35,8 @@ public partial class ScriptParameterInput : UserControl
     private ScriptParameterInputType _inputType;
     private string _name;
     private string _tooltip;
-    private string _primaryPlaceHolderText;
-    private string _secondaryPlaceHolderText;
+    private string _primaryValue;
+    private string _secondaryValue;
     private bool _isDependable;
     private Border? _primaryBorder;
     private Border? _secondaryBorder;
@@ -88,6 +89,7 @@ public partial class ScriptParameterInput : UserControl
         set
         {
             _type = value;
+            SwitchType(value);
         }
     }
 
@@ -131,30 +133,30 @@ public partial class ScriptParameterInput : UserControl
     }
 
     /// <summary>
-    /// The primary placeholder text of the input.
+    /// The primary text of the input.
     /// </summary>
-    public string PrimaryPlaceHolderText
+    public string PrimaryValue
     {
-        get => _primaryPlaceHolderText;
+        get => _primaryValue;
         set
         {
-            _primaryPlaceHolderText = value;
-            InputOpt.Text = _primaryPlaceHolderText;
-            InputTxt.Text = _primaryPlaceHolderText;
+            _primaryValue = value;
+            InputOpt.SelectedValue = _primaryValue;
+            InputTxt.Text = _primaryValue;
         }
     }
 
     /// <summary>
-    /// The secondary placeholder text of the input.
+    /// The secondary text of the input.
     /// </summary>
-    public string SecondaryPlaceHolderText
+    public string SecondaryValue
     {
-        get => _secondaryPlaceHolderText;
+        get => _secondaryValue;
         set
         {
-            _secondaryPlaceHolderText = value;
-            InputCb.Text = _secondaryPlaceHolderText;
-            InputLbl.Text = _secondaryPlaceHolderText;
+            _secondaryValue = value;
+            InputCb.SelectedValue = _secondaryValue;
+            InputLbl.Text = _secondaryValue;
         }
     }
 
@@ -217,18 +219,18 @@ public partial class ScriptParameterInput : UserControl
         switch (InputType)
         {
             case ScriptParameterInputType.Parameter:
-                InputTxt.Text = PrimaryPlaceHolderText;
+                InputTxt.Text = string.Empty;
                 break;
             case ScriptParameterInputType.Options:
-                InputOpt.SelectedItem = PrimaryPlaceHolderText;
+                InputOpt.SelectedIndex = 0;
                 break;
             case ScriptParameterInputType.Conditional:
-                InputTxt.Text = PrimaryPlaceHolderText;
-                InputCb.SelectedItem = SecondaryPlaceHolderText;
+                InputTxt.Text = string.Empty;
+                InputCb.SelectedIndex = 0;
                 break;
             case ScriptParameterInputType.KeyValuePair:
-                InputTxt.Text = PrimaryPlaceHolderText;
-                InputLbl.Text = SecondaryPlaceHolderText;
+                InputTxt.Text = string.Empty;
+                InputLbl.Text = string.Empty;
                 break;
         }
     }
@@ -248,6 +250,9 @@ public partial class ScriptParameterInput : UserControl
                     Width = new GridLength(0.25, GridUnitType.Star)
                 });
                 break;
+
+            default:
+                break;
         }
 
         InputGrid.ColumnDefinitions.Add(new ColumnDefinition()
@@ -265,35 +270,49 @@ public partial class ScriptParameterInput : UserControl
             case ScriptKeyValuePair keyValuePair:
                 InputType = ScriptParameterInputType.KeyValuePair;
                 Tooltip = "The key-value pair input of the parameter. Contains key and value. Its value can be either in String, Integer, Double, or Boolean.";
-                PrimaryPlaceHolderText = keyValuePair.PlaceholderText;
-                SecondaryPlaceHolderText = "Key name";
+
+                PrimaryValue = keyValuePair.Value.ToString()!;
+                SecondaryValue = keyValuePair.Key;
                 break;
             case ScriptConditional conditional:
                 InputType = ScriptParameterInputType.Conditional;
                 Tooltip = "The conditional input of the parameter. Contains comparison type and value to be compared with.\n" + "Note: " + conditional.Hint;
-                PrimaryPlaceHolderText = conditional.PlaceholderText;
+
                 foreach (ScriptConditionalType item in Enum.GetValues<ScriptConditionalType>())
                 {
                     InputCb.Items.Add(ScriptRepository.GetConditionString(item));
                 }
-                SecondaryPlaceHolderText = InputCb.Items[0].ToString();
+
+                PrimaryValue = conditional.ToString()!;
+                SecondaryValue = ScriptRepository.GetConditionString((ScriptConditionalType)conditional.Condition!);
                 break;
             case ScriptOptions options:
                 InputType = ScriptParameterInputType.Options;
-                Tooltip = "The selectable input of the parameter. Contains multiple options.\n" +
-                    "Note: " + options.Hint;
-                foreach (string item in options.List)
+                Tooltip = "The selectable input of the parameter. Contains multiple options.\n" + "Note: " + options.Hint;
+
+                foreach (string item in options.GetOptionsList())
                 {
                     InputOpt.Items.Add(item);
                 }
-                PrimaryPlaceHolderText = options.String;
+
+                PrimaryValue = options.ToString()!;
                 break;
             case ScriptParameter value:
                 InputType = ScriptParameterInputType.Parameter;
                 Tooltip = "The singular input of the parameter, either in String, Integer, Double, or Boolean.\n" + "Note: " + value.Hint;
-                PrimaryPlaceHolderText = value.PlaceholderText;
+
+                PrimaryValue = value.ToString()!;
                 break;
         }
+    }
+
+    private void SwitchType(ScriptParameterType type)
+    {
+        RemoveBtn.Visibility = type switch
+        {
+            ScriptParameterType.Primary or ScriptParameterType.Secondary => Visibility.Collapsed,
+            ScriptParameterType.Optional => Visibility.Visible
+        };
     }
 
     private void SwitchInputType(ScriptParameterInputType type)
@@ -317,6 +336,21 @@ public partial class ScriptParameterInput : UserControl
     #endregion
 
     #region Methods: Event
+    private void Btn_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not WpfControls.Button btn)
+        {
+            return;
+        }
+
+        switch (btn.Name)
+        {
+            case "RemoveBtn":
+                Panel.RemoveExtraParameter(ParentCommand, this);
+                break;
+        }
+    }
+
     private void Input_TextChanged(object sender, TextChangedEventArgs e)
     {
         switch (InputType)
@@ -327,6 +361,7 @@ public partial class ScriptParameterInput : UserControl
                 break;
             case ScriptParameterInputType.KeyValuePair:
                 ScriptKeyValuePair kvp = (ScriptKeyValuePair)Parameter;
+
                 kvp.SetKey(InputLbl.Text);
                 kvp.SetValue(InputTxt.Text);
                 break;
@@ -338,17 +373,17 @@ public partial class ScriptParameterInput : UserControl
         switch (InputType)
         {
             case ScriptParameterInputType.Options:
-                Parameter.SetValue(InputOpt.SelectedItem);
+                Parameter.SetValue((string)InputOpt.SelectedValue);
 
                 if (IsDependable)
                 {
                     Panel.PartialRefreshParameters();
-                    Panel.AddParameters(ParentCommand, (string)InputOpt.SelectedItem);
+                    Panel.AddParameters(ParentCommand, (ScriptOptions)Parameter);
                 }
                 break;
             case ScriptParameterInputType.Conditional:
                 ScriptConditional cond = (ScriptConditional)Parameter;
-                cond.SetCondition((string)InputCb.SelectedItem);
+                cond.SetCondition((string)InputCb.SelectedValue);
                 break;
         }
     }

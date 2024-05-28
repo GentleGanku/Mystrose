@@ -9,6 +9,8 @@ using Mystrose.ReadableModels.ScriptMachine;
 using Mystrose.ReadableModels.Environment;
 using Mystrose.ReadableModels.Base;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Mystrose.ScriptMachine.Objects;
 
@@ -31,6 +33,7 @@ public class SCMDTrigger : ScriptCommand, ITriggerCommand
     #endregion
 
     #region Properties
+    [JsonIgnore]
     public ScriptTriggerType? TriggerType
     {
         get => Enum.TryParse(Parameters["Trigger Type"].String.Replace(" ", ""), out ScriptTriggerType type) ? type : null;
@@ -42,9 +45,10 @@ public class SCMDTrigger : ScriptCommand, ITriggerCommand
         set;
     }
 
+    [JsonIgnore]
     public bool IsEnabled
     {
-        get => Parameters["Active"].Boolean ?? true;
+        get => Parameters["Active"].Boolean;
     }
     #endregion
 
@@ -52,12 +56,12 @@ public class SCMDTrigger : ScriptCommand, ITriggerCommand
     public bool IsValid(ScriptEngine engine, Dictionary<string, ScriptParameter> parameters)
     {
         bool isConditionTrue = false;
-        ScriptParameter reverseParameter = Parameters["Reverse Check"].RealValue(engine);
+        ScriptParameter reverseParameter = Parameters["Reverse Check"].GetVar(engine);
 
         foreach (KeyValuePair<string, ScriptParameter> parameter in SecondaryParameters[Parameters["Trigger Type"].String])
         {
             ScriptConditional condition = (ScriptConditional)parameter.Value;
-            isConditionTrue = condition.IsTrue(parameters[parameter.Key].Object, condition.RealValue(engine));
+            isConditionTrue = condition.IsTrue(parameters[parameter.Key].Object, condition.GetVar(engine));
 
             if (isConditionTrue != !reverseParameter.Boolean)
             {
@@ -74,10 +78,10 @@ public class SCMDTrigger : ScriptCommand, ITriggerCommand
     {
         return new SCMDTrigger()
         {
-            InternalCommands = new(InternalCommands),
-            Parameters = new(Parameters),
-            SecondaryParameters = new(SecondaryParameters),
-            EndResult = EndResult
+            InternalCommands = ScriptRepository.CloneToCommandsList(InternalCommands),
+            Parameters = ScriptRepository.CloneToParameters(Parameters),
+            SecondaryParameters = ScriptRepository.CloneToSecondaryParameters(SecondaryParameters),
+            EndResult = JsonSerializer.Deserialize<ScriptResultType>(JsonSerializer.Serialize(EndResult))
         };
     }
 
@@ -106,12 +110,12 @@ public class SCMDTrigger : ScriptCommand, ITriggerCommand
         };
 
         ReadableModel targetModel = (ReadableModel)targetStatement;
-        Dictionary<string, ScriptParameter> mandatoryParameters = ScriptRepository.ConvertToConditionals(targetModel.MandatorySearchProperties);
 
         SecondaryParameters.Clear();
-        SecondaryParameters[key] = ScriptRepository.ConvertToConditionals(targetStatement).Where(k => !mandatoryParameters.ContainsKey(k.Key)).ToDictionary();
+        SecondaryParameters[key] = ScriptRepository.ConvertToConditionals(targetModel.MandatorySearchProperties);
+        SecondaryParameters["Optional"] = ScriptRepository.ConvertToConditionals(targetStatement).Where(k => !SecondaryParameters[key].ContainsKey(k.Key)).ToDictionary();
 
-        return mandatoryParameters;
+        return SecondaryParameters[key];
     }
 
     public override async Task Execute(ScriptEngine engine)

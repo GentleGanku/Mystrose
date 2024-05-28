@@ -2,8 +2,10 @@
 using Mystrose.ScriptMachine.Enumerations;
 using Mystrose.ScriptMachine.Inputs;
 using Mystrose.ScriptMachine.Objects;
+using Mystrose.Utilities.Enumerations;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
@@ -250,34 +252,28 @@ public partial class ScriptEnginePanel : UserControl
         EditedCommand = item.Command;
         CodelinePosText.Text = item.Command.Type.ToString() + " Command | Index " + item.Index;
 
-        SelectCodeline(item.Command);
+        CodelineNameText.Text = item.Command.CommandName;
+        CodelineDescText.Text = item.Command.CommandDescription;
+
+        ClearParameters(CodelineParameterLabel, CodelineParameters);
+        ClearParameters(CodelineOptParameterLabel, CodelineOptParameters);
+
+        AddParameters(item.Command);
     }
 
     public void AddCodeline(ScriptCodelineType type, ScriptCommand cmd)
     {
         SwitchCurrentView(type);
 
-        switch (type)
+        ScriptCodelineItem item = new(this, cmd switch
         {
-            case ScriptCodelineType.Action:
-            case ScriptCodelineType.SpecialCommand:
-                Engine.CurrentStance.Commands.Add(cmd);
-                break;
-            case ScriptCodelineType.Trigger:
-                Engine.CurrentLoadout.Triggers.Add((SCMDTrigger)cmd);
-                break;
-            case ScriptCodelineType.Variable:
-                Engine.CurrentLoadout.PresetVariables.Add((SCMDVariable)cmd);
-                break;
-        }
-
-        ScriptCodelineItem item = new(this, cmd, CodelinesList.Items.Count + 1);
-        CodelinesList.Items.Add(item);
-    }
-
-    public void AddCodeline(ScriptCodelineType type, ScriptCodelineItem item)
-    {
-        SwitchCurrentView(type);
+            SCMDAction action => action.Clone(),
+            SCMDFiller filler => filler.Clone(),
+            SCMDList list => list.Clone(),
+            SCMDStatement statement => statement.Clone(),
+            SCMDTrigger trigger => trigger.Clone(),
+            SCMDVariable variable => variable.Clone()
+        }, CodelinesList.Items.Count + 1);
 
         switch (type)
         {
@@ -399,14 +395,8 @@ public partial class ScriptEnginePanel : UserControl
 
         ScriptCodelineType codelineType = (ScriptCodelineType)CodelineTypeBox.SelectedIndex;
 
-        List<ScriptCommand> commands = [];
-        foreach (ScriptCommand cmd in CodelineDict[codelineType])
-        {
-            commands.Add(cmd.Clone());
-        }
-
         CodelineTargetBox.Items.Clear();
-        foreach (ScriptCommand cmd in commands)
+        foreach (ScriptCommand cmd in CodelineDict[codelineType])
         {
             CodelineTargetBox.Items.Add(cmd);
         }
@@ -429,7 +419,8 @@ public partial class ScriptEnginePanel : UserControl
             return;
         }
 
-        SelectCodeline((ScriptCommand)CodelineTargetBox.SelectedItem);
+        ScriptCommand cmd = (ScriptCommand)CodelineTargetBox.SelectedItem;
+        SelectCodeline(cmd);
 
         Creator_CodelineView.Visibility = Visibility.Visible;
         Creator_CodelineMenu.Visibility = Visibility.Visible;
@@ -458,45 +449,50 @@ public partial class ScriptEnginePanel : UserControl
         }
     }
 
-    public void AddParameters(ScriptCommand cmd, string? optKey = null)
+    public void AddParameters(ScriptCommand cmd)
     {
-        ScriptParameterType targetType;
-        UIElementCollection collection;
-        Dictionary<string, ScriptParameter> parameters;
+        RefreshExtraParameters(string.Empty, []);
 
-        if (optKey is null)
-        {
-            targetType = ScriptParameterType.Parameter;
-            collection = CodelineParameters;
-            parameters = cmd.Parameters;
-            CodelineParameterLabel.Visibility = parameters.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-            RefreshExtraParameters(optKey, []);
-        }
-        else
-        {
-            targetType = ScriptParameterType.SecondaryParameter;
-            collection = CodelineOptParameters;
-            parameters = cmd.PassSecondaryParameters(optKey);
-            CodelineOptParameterLabel.Visibility = parameters.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-            RefreshExtraParameters(optKey, cmd.SecondaryParameters[optKey]);
-        }
+        Dictionary<string, ScriptParameter> parameters = cmd.Parameters;
+
+        CodelineParameterLabel.Visibility = parameters.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
         foreach (KeyValuePair<string, ScriptParameter> keyValuePair in parameters)
         {
-            ScriptParameterInput inputItem = new(targetType, keyValuePair.Key, this, cmd, keyValuePair.Value, keyValuePair.Value is ScriptOptions && optKey is null);
-            collection.Add(inputItem);
+            ScriptParameterInput inputItem = new(ScriptParameterType.Primary, keyValuePair.Key, keyValuePair.Value, this, cmd, keyValuePair.Value is ScriptOptions);
+            CodelineParameters.Add(inputItem);
+        }
+    }
+
+    public void AddParameters(ScriptCommand cmd, ScriptOptions options)
+    {
+        string selectedOpt = options.String;
+        Dictionary<string, ScriptParameter> parameters = cmd.PassSecondaryParameters(options.String);
+        bool isOptionalCoded = cmd.SecondaryParameters.ContainsKey("Optional");
+
+        CodelineOptParameterLabel.Visibility = parameters.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+        foreach (KeyValuePair<string, ScriptParameter> keyValuePair in parameters)
+        {
+            ScriptParameterInput inputItem = new(isOptionalCoded ? ScriptParameterType.Optional : ScriptParameterType.Secondary, keyValuePair.Key, keyValuePair.Value, this, cmd, false);
+            CodelineOptParameters.Add(inputItem);
+        }
+
+        if (isOptionalCoded)
+        {
+            RefreshExtraParameters(selectedOpt, cmd.SecondaryParameters["Optional"]);
         }
     }
 
     public void RefreshExtraParameters(string key, Dictionary<string, ScriptParameter> extras)
     {
+        CodelineExtrasLabel.Tag = key;
+
         if (extras.Count <= 0)
         {
             CodelineExtrasLabel.Visibility = Visibility.Collapsed;
             CodelineExtrasBox.Visibility = Visibility.Collapsed;
             CodelineExtrasBtn.Visibility = Visibility.Collapsed;
-
-            CodelineExtrasLabel.Tag = null;
             return;
         }
 
@@ -504,8 +500,7 @@ public partial class ScriptEnginePanel : UserControl
         CodelineExtrasBox.Visibility = Visibility.Visible;
         CodelineExtrasBtn.Visibility = Visibility.Visible;
 
-        CodelineExtrasLabel.Tag = key;
-
+        CodelineExtrasBox.Items.Clear();
         foreach (string extraPrmKey in extras.Keys)
         {
             CodelineExtrasBox.Items.Add(extraPrmKey);
@@ -516,11 +511,14 @@ public partial class ScriptEnginePanel : UserControl
 
     public void AddExtraParameter(ScriptCommand cmd)
     {
-        string optkey = (string)CodelineExtrasLabel.Tag;
+        string optKey = (string)CodelineExtrasLabel.Tag;
         string prmName = (string)CodelineExtrasBox.SelectedValue;
 
-        ScriptParameter prm = cmd.SecondaryParameters[optkey][prmName];
-        ScriptParameterInput prmInput = new(ScriptParameterType.SecondaryParameter, prmName, this, cmd, prm, false);
+        ScriptParameter prm = cmd.SecondaryParameters["Optional"][prmName];
+        ScriptParameterInput prmInput = new(ScriptParameterType.Optional, prmName, prm, this, cmd, false);
+
+        cmd.SecondaryParameters["Optional"].Remove(prmName);
+        cmd.SecondaryParameters[optKey].Add(prmName, prm);
 
         CodelineOptParameters.Add(prmInput);
         CodelineOptParameterLabel.Visibility = Visibility.Visible;
@@ -531,8 +529,16 @@ public partial class ScriptEnginePanel : UserControl
         CodelineScrollViewer.ScrollToEnd();
     }
 
-    public void RemoveExtraParameter(ScriptParameterInput input)
+    public void RemoveExtraParameter(ScriptCommand cmd, ScriptParameterInput input)
     {
+        string optKey = (string)CodelineExtrasLabel.Tag;
+        string prmName = input.Name;
+
+        ScriptParameter prm = input.Parameter;
+
+        cmd.SecondaryParameters["Optional"].Add(prmName, prm);
+        cmd.SecondaryParameters[optKey].Remove(prmName);
+
         CodelineOptParameters.Remove(input);
         CodelineOptParameterLabel.Visibility = CodelineOptParameters.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
@@ -683,7 +689,7 @@ public partial class ScriptEnginePanel : UserControl
 
     private void Menu_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is not Wpf.Ui.Controls.Button btn)
+        if (sender is not WpfControls.Button btn)
         {
             return;
         }
@@ -726,7 +732,7 @@ public partial class ScriptEnginePanel : UserControl
 
     private void CodelineItem_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (CodelinesList.SelectionMode is not SelectionMode.Single)
+        if (CodelinesList.SelectionMode is not SelectionMode.Single || CodelinesList.SelectedItem is null)
         {
             return;
         }
@@ -761,7 +767,7 @@ public partial class ScriptEnginePanel : UserControl
 
     private void CodelineMenu_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is not Wpf.Ui.Controls.Button btn)
+        if (sender is not WpfControls.Button btn)
         {
             return;
         }

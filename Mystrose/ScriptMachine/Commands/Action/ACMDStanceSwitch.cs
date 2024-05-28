@@ -2,6 +2,7 @@
 using Mystrose.ScriptMachine.Inputs;
 using Mystrose.ScriptMachine.Objects;
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Mystrose.ScriptMachine.Commands.Action;
@@ -10,12 +11,12 @@ public class ACMDStanceSwitch : SCMDAction
 {
 
     #region Constructor
-    public ACMDStanceSwitch() : base(ScriptCommandType.Action, "ACMD03", "Stance Switch", "A script command that changes the current stance of the script. If the Index value is set (not -1), the new current stance will start from that. Otherwise, it will start from its current index instead.")
+    public ACMDStanceSwitch() : base(ScriptCommandType.Action, "ACMD03", "Stance Switch", "A script command that changes the current stance of the script. The new current stance will start from a position depending on the Index value.")
     {
         Parameters = new()
         {
             ["Stance Name"] = new ScriptParameter("", "Name of the stance to switch to"),
-            ["Index"] = new ScriptParameter(-1, "Index of the stance to start from")
+            ["Index"] = new ScriptParameter(0, "Index of the stance to start from")
         };
         SecondaryParameters = [];
     }
@@ -26,9 +27,9 @@ public class ACMDStanceSwitch : SCMDAction
     {
         return new ACMDStanceSwitch()
         {
-            Parameters = new(Parameters),
-            SecondaryParameters = new(SecondaryParameters),
-            EndResult = EndResult
+            Parameters = ScriptRepository.CloneToParameters(Parameters),
+            SecondaryParameters = ScriptRepository.CloneToSecondaryParameters(SecondaryParameters),
+            EndResult = JsonSerializer.Deserialize<ScriptResultType>(JsonSerializer.Serialize(EndResult))
         };
     }
 
@@ -37,9 +38,9 @@ public class ACMDStanceSwitch : SCMDAction
         ScriptStance? scriptStance = engine.CurrentLoadout.Stances.Find(
             (s) =>
             {
-                return s.Name.Equals(Parameters["Stance Name"].RealValue(engine).String, StringComparison.OrdinalIgnoreCase);
+                return s.Name.Equals(Parameters["Stance Name"].GetVar(engine).String, StringComparison.OrdinalIgnoreCase);
             });
-        int index = (int)Parameters["Index"].RealValue(engine).Integer;
+        int index = Parameters["Index"].GetVar(engine).Integer;
 
         if (scriptStance is null || index < 0 || index >= engine.CurrentStance.Commands.Count)
         {

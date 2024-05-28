@@ -22,15 +22,19 @@ public class ScriptParameter
     }
     #endregion
 
-    #region Private Fields
-    private object? _object;
-    private string? _string;
-    private int? _integer;
-    private double? _double;
-    private bool? _boolean;
-    #endregion
-
     #region Properties
+    /// <summary>
+    /// The parameter's input type.
+    /// </summary>
+    /// <returns>
+    /// An enumeration representing the parameter's input type.
+    /// </returns>
+    public ScriptParameterInputType? InputType
+    {
+        get;
+        set;
+    } = ScriptParameterInputType.Parameter;
+
     /// <summary>
     /// The parameter's value type.
     /// </summary>
@@ -40,7 +44,7 @@ public class ScriptParameter
     public ScriptValueType? Type
     {
         get;
-        private set;
+        set;
     }
 
     /// <summary>
@@ -49,14 +53,10 @@ public class ScriptParameter
     /// <returns>
     /// An object representing the parameter's value.
     /// </returns>
-    public object? Object
+    public object Object
     {
-        get => _object;
-        private set
-        {
-            _object = value;
-            Type = ScriptValueType.Object;
-        }
+        get;
+        set;
     }
 
     /// <summary>
@@ -65,14 +65,10 @@ public class ScriptParameter
     /// <returns>
     /// A string representing the parameter's value.
     /// </returns>
-    public string? String
+    public string String
     {
-        get => _string;
-        private set
-        {
-            _string = value;
-            Type = ScriptValueType.String;
-        }
+        get;
+        set;
     }
 
     /// <summary>
@@ -81,14 +77,10 @@ public class ScriptParameter
     /// <returns>
     /// An integer representing the parameter's value.
     /// </returns>
-    public int? Integer
+    public int Integer
     {
-        get => _integer;
-        private set
-        {
-            _integer = value;
-            Type = ScriptValueType.Integer;
-        }
+        get;
+        set;
     }
 
     /// <summary>
@@ -97,14 +89,10 @@ public class ScriptParameter
     /// <returns>
     /// A double representing the parameter's value.
     /// </returns>
-    public double? Double
+    public double Double
     {
-        get => _double;
-        private set
-        {
-            _double = value;
-            Type = ScriptValueType.Double;
-        }
+        get;
+        set;
     }
 
     /// <summary>
@@ -113,14 +101,10 @@ public class ScriptParameter
     /// <returns>
     /// A boolean representing the parameter's value.
     /// </returns>
-    public bool? Boolean
+    public bool Boolean
     {
-        get => _boolean;
-        private set
-        {
-            _boolean = value;
-            Type = ScriptValueType.Boolean;
-        }
+        get;
+        set;
     }
 
     /// <summary>
@@ -129,27 +113,15 @@ public class ScriptParameter
     /// <returns>
     /// A string representing the parameter's input hint.
     /// </returns>
-    public string? Hint
+    public string Hint
     {
         get;
-        private set;
-    }
-
-    /// <summary>
-    /// The parameter's placeholder text.
-    /// </summary>
-    /// <returns>
-    /// A string representing the parameter's placeholder text.
-    /// </returns>
-    public string? PlaceholderText
-    {
-        get;
-        private set;
+        set;
     }
     #endregion
 
     #region Methods
-    public ScriptParameter RealValue(ScriptEngine engine)
+    public ScriptParameter GetVar(ScriptEngine engine)
     {
         return engine.GetVariableValue(this);
     }
@@ -157,65 +129,65 @@ public class ScriptParameter
     public void SetValue(object value)
     {
         Empty();
+
         Object = value;
+        Type = ScriptValueType.Object;
 
         switch (value)
         {
             case int intValue:
                 Integer = intValue;
+                Type = ScriptValueType.Integer;
                 break;
             case double doubleValue:
                 Double = doubleValue;
+                Type = ScriptValueType.Double;
                 break;
             case bool boolValue:
                 Boolean = boolValue;
+                Type = ScriptValueType.Boolean;
                 break;
 
             case string stringValue:
+                if (string.IsNullOrEmpty(stringValue))
+                {
+                    Empty();
+                    return;
+                }
+
                 if (int.TryParse(value.ToString(), out int parsedInt))
                 {
                     Integer = parsedInt;
+                    Type = ScriptValueType.Integer;
                 }
                 else if (double.TryParse(value.ToString(), out double parsedDouble))
                 {
                     Double = parsedDouble;
+                    Type = ScriptValueType.Double;
                 }
                 else if (bool.TryParse(value.ToString(), out bool parsedBool))
                 {
                     Boolean = parsedBool;
+                    Type = ScriptValueType.Boolean;
                 }
                 else
                 {
                     String = stringValue;
+                    Type = ScriptValueType.String;
                 }
                 break;
         }
-
-        SetPlaceholderText();
     }
 
     public void SetHint(string? hint)
     {
         Hint = hint ?? Type switch
         {
-            ScriptValueType.String => "Input a text string.\r\nExample: Text123",
+            ScriptValueType.String => "Input a text string.\r\nExample: Text",
             ScriptValueType.Integer => "Input a round number.\r\nExample: 1",
             ScriptValueType.Double => "Input a decimal number.\r\nExample: 1.0",
             ScriptValueType.Boolean => "Input True or False.\r\nExample: True",
             _ => "Input a corresponding value for the parameter."
-        };
-    }
-
-    public void SetPlaceholderText()
-    {
-        PlaceholderText = Type switch
-        {
-            ScriptValueType.String => "Text string",
-            ScriptValueType.Integer => "Round number",
-            ScriptValueType.Double => "Decimal number",
-            ScriptValueType.Boolean => "True or False",
-            ScriptValueType.Object => "Input value",
-            _ => null
         };
     }
 
@@ -224,23 +196,23 @@ public class ScriptParameter
         switch (Type)
         {
             case ScriptValueType.String:
-                String = null;
+                String = string.Empty;
                 break;
             case ScriptValueType.Integer:
-                Integer = null;
+                Integer = -1;
                 break;
             case ScriptValueType.Double:
-                Double = null;
+                Double = -1.0;
                 break;
             case ScriptValueType.Boolean:
-                Boolean = null;
+                Boolean = false;
                 break;
             case ScriptValueType.Object:
                 Object = null;
                 break;
         }
 
-        Type = null;
+        Type = ScriptValueType.Empty;
     }
 
     public override string? ToString()
@@ -252,7 +224,7 @@ public class ScriptParameter
             ScriptValueType.Double => Double.ToString(),
             ScriptValueType.Boolean => Boolean.ToString(),
             ScriptValueType.Object => Object?.ToString(),
-            _ => null
+            _ => string.Empty
         };
     }
     #endregion

@@ -10,18 +10,17 @@
     d:DesignWidth="400"
     mc:Ignorable="d">
 
-    <Grid Margin="0,0,0,7.5">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <StackPanel Margin="0,0,0,7.5">
+        <Grid Opacity="0.5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-        <StackPanel
-            Grid.Row="0"
-            Opacity="0.5"
-            Orientation="Horizontal">
             <ui:Button
                 Name="TooltipBtn"
+                Grid.Column="0"
                 Width="20"
                 Height="16"
                 Padding="0"
@@ -40,13 +39,36 @@
             </ui:Button>
             <TextBlock
                 Name="NameBlock"
+                Grid.Column="1"
                 Margin="2.5,0.5,0,0"
                 Padding="0"
                 FontSize="10"
                 FontWeight="SemiBold"
                 Text="Name" />
-        </StackPanel>
-        <Grid Name="InputGrid" Grid.Row="1">
+            <ui:Button
+                Name="RemoveBtn"
+                Grid.Column="2"
+                Width="16"
+                Height="16"
+                Padding="0"
+                HorizontalAlignment="Right"
+                Background="Transparent"
+                Click="Btn_Click"
+                MouseOverBackground="Transparent"
+                PressedBackground="Transparent"
+                ToolTipService.InitialShowDelay="100"
+                ToolTipService.Placement="MousePoint"
+                Visibility="Collapsed">
+
+                <ui:Button.ToolTip>
+                    <ToolTip Name="RemoveLbl" Content="Remove the parameter" />
+                </ui:Button.ToolTip>
+                <ui:Button.Content>
+                    <ui:SymbolIcon FontSize="12" Symbol="Delete16" />
+                </ui:Button.Content>
+            </ui:Button>
+        </Grid>
+        <Grid Name="InputGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
@@ -62,7 +84,7 @@
                     Name="InputCb"
                     Background="Transparent"
                     FontSize="10"
-                    IsEditable="True"
+                    IsTextSearchEnabled="True"
                     SelectionChanged="Input_SelectionChanged" />
             </Border>
             <Border
@@ -76,6 +98,7 @@
                     Name="InputLbl"
                     Background="Transparent"
                     FontSize="10"
+                    PlaceholderText="Input a corresponding value..."
                     TextChanged="Input_TextChanged" />
             </Border>
 
@@ -89,7 +112,7 @@
                     Name="InputOpt"
                     Background="Transparent"
                     FontSize="10"
-                    IsEditable="True"
+                    IsTextSearchEnabled="True"
                     SelectionChanged="Input_SelectionChanged" />
             </Border>
             <Border
@@ -102,8 +125,9 @@
                     Name="InputTxt"
                     Background="Transparent"
                     FontSize="10"
+                    PlaceholderText="Input a corresponding value..."
                     TextChanged="Input_TextChanged" />
             </Border>
         </Grid>
-    </Grid>
+    </StackPanel>
 </UserControl>

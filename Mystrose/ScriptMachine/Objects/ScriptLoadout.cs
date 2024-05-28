@@ -46,6 +46,7 @@ public class ScriptLoadout
         private set;
     }
 
+    [JsonIgnore]
     public ScriptVariableDictionary Variables
     {
         get;

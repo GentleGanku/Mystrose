@@ -9,8 +9,10 @@ namespace Mystrose.ScriptMachine.Enumerations;
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ScriptParameterType
 {
-    [EnumMember(Value = "Parameter")]
-    Parameter,
-    [EnumMember(Value = "SecondaryParameter")]
-    SecondaryParameter,
+    [EnumMember(Value = "Primary Parameter")]
+    Primary,
+    [EnumMember(Value = "Secondary Parameter")]
+    Secondary,
+    [EnumMember(Value = "Optional Parameter")]
+    Optional,
 }

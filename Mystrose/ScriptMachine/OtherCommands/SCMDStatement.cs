@@ -12,6 +12,7 @@ using Mystrose.ReadableModels.General;
 using Mystrose.ReadableModels.Environment;
 using Mystrose.ReadableModels.Base;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Mystrose.ScriptMachine.Objects;
 
@@ -31,6 +32,7 @@ public class SCMDStatement : ScriptCommand, IStatementCommand
     #endregion
 
     #region Properties
+    [JsonIgnore]
     public ScriptStatementType? StatementType
     {
         get => Enum.TryParse(Parameters["Statement Type"].String.Replace(" ", ""), out ScriptStatementType type) ? type : null;
@@ -42,9 +44,9 @@ public class SCMDStatement : ScriptCommand, IStatementCommand
     {
         return new SCMDStatement()
         {
-            Parameters = new(Parameters),
-            SecondaryParameters = new(SecondaryParameters),
-            EndResult = EndResult
+            Parameters = ScriptRepository.CloneToParameters(Parameters),
+            SecondaryParameters = ScriptRepository.CloneToSecondaryParameters(SecondaryParameters),
+            EndResult = JsonSerializer.Deserialize<ScriptResultType>(JsonSerializer.Serialize(EndResult))
         };
     }
 
@@ -71,12 +73,12 @@ public class SCMDStatement : ScriptCommand, IStatementCommand
         };
 
         ReadableModel targetModel = (ReadableModel)targetStatement;
-        Dictionary<string, ScriptParameter> mandatoryParameters = ScriptRepository.ConvertToConditionals(targetModel.MandatorySearchProperties);
 
         SecondaryParameters.Clear();
-        SecondaryParameters[key] = ScriptRepository.ConvertToConditionals(targetStatement).Where(k => !mandatoryParameters.ContainsKey(k.Key)).ToDictionary();
+        SecondaryParameters[key] = ScriptRepository.ConvertToConditionals(targetModel.MandatorySearchProperties);
+        SecondaryParameters["Optional"] = ScriptRepository.ConvertToConditionals(targetStatement).Where(k => !SecondaryParameters[key].ContainsKey(k.Key)).ToDictionary();
 
-        return mandatoryParameters;
+        return SecondaryParameters[key];
     }   
 
     public override async Task Execute(ScriptEngine engine)
@@ -86,15 +88,15 @@ public class SCMDStatement : ScriptCommand, IStatementCommand
         {
             ScriptStatementType.Variable => new RMScriptVariable(engine.CurrentLoadout.Variables[secondaryPrms["Key"].String]),
             ScriptStatementType.Self => new RMSelf(engine.Master),
-            ScriptStatementType.Player => new RMAvatar(engine.Area.Players.Find(p => p.Name.Equals(secondaryPrms["Name"].RealValue(engine).String, StringComparison.OrdinalIgnoreCase))),
-            ScriptStatementType.Monster => new RMMonster(engine.Area.Monsters.Find(m => m.MonMapID == secondaryPrms["Monster Map ID"].RealValue(engine).Integer)),
-            ScriptStatementType.Skill => new RMActiveSkill(engine.Skills.Find(s => s.Index == secondaryPrms["Index"].RealValue(engine).Integer)),
-            ScriptStatementType.Aura => new RMAura(engine.World.Auras[JsonSerializer.Deserialize<EntityType>(secondaryPrms["Target Type"].RealValue(engine).String), secondaryPrms["Target ID"].RealValue(engine).String, secondaryPrms["Name"].RealValue(engine).String]),
+            ScriptStatementType.Player => new RMAvatar(engine.Area.Players.Find(p => p.Name.Equals(secondaryPrms["Name"].GetVar(engine).String, StringComparison.OrdinalIgnoreCase))),
+            ScriptStatementType.Monster => new RMMonster(engine.Area.Monsters.Find(m => m.MonMapID == secondaryPrms["Monster Map ID"].GetVar(engine).Integer)),
+            ScriptStatementType.Skill => new RMActiveSkill(engine.Skills.Find(s => s.Index == secondaryPrms["Index"].GetVar(engine).Integer)),
+            ScriptStatementType.Aura => new RMAura(engine.World.Auras[JsonSerializer.Deserialize<EntityType>(secondaryPrms["Target Type"].GetVar(engine).String), secondaryPrms["Target ID"].GetVar(engine).String, secondaryPrms["Name"].GetVar(engine).String]),
             ScriptStatementType.Map => new RMArea(engine.Area),
-            ScriptStatementType.Faction => new RMFaction(engine.Master.Factions.Find(f => f.Name.Equals(secondaryPrms["Name"].RealValue(engine).String, StringComparison.OrdinalIgnoreCase))),
-            ScriptStatementType.Quest => new RMQuest(engine.Quests.Find(q => q.ID == secondaryPrms["ID"].RealValue(engine).Integer)),
-            ScriptStatementType.Item => new RMInventoryItem(engine.World.MasterInventory[JsonSerializer.Deserialize<InventoryType>(secondaryPrms["Inventory Type"].RealValue(engine).String)][secondaryPrms["Name"].RealValue(engine).String]),
-            ScriptStatementType.Drop => new RMItemDrop(engine.World.Drops.Find(d => d.Name.Equals(secondaryPrms["Name"].RealValue(engine).String, StringComparison.OrdinalIgnoreCase)))
+            ScriptStatementType.Faction => new RMFaction(engine.Master.Factions.Find(f => f.Name.Equals(secondaryPrms["Name"].GetVar(engine).String, StringComparison.OrdinalIgnoreCase))),
+            ScriptStatementType.Quest => new RMQuest(engine.Quests.Find(q => q.ID == secondaryPrms["ID"].GetVar(engine).Integer)),
+            ScriptStatementType.Item => new RMInventoryItem(engine.World.MasterInventory[JsonSerializer.Deserialize<InventoryType>(secondaryPrms["Inventory Type"].GetVar(engine).String)][secondaryPrms["Name"].GetVar(engine).String]),
+            ScriptStatementType.Drop => new RMItemDrop(engine.World.Drops.Find(d => d.Name.Equals(secondaryPrms["Name"].GetVar(engine).String, StringComparison.OrdinalIgnoreCase)))
         };
 
         if (target is null)
@@ -104,12 +106,12 @@ public class SCMDStatement : ScriptCommand, IStatementCommand
 
         JsonObject? jsonTarget = JsonSerializer.Deserialize<JsonObject>(JsonSerializer.Serialize(target));
         bool isConditionTrue = false;
-        ScriptParameter reverseParameter = Parameters["Reverse Check"].RealValue(engine);
+        ScriptParameter reverseParameter = Parameters["Reverse Check"].GetVar(engine);
 
         foreach (KeyValuePair<string, ScriptParameter> parameter in secondaryPrms)
         {
             ScriptConditional condition = (ScriptConditional)parameter.Value;
-            isConditionTrue = condition.IsTrue(jsonTarget?[parameter.Key].Deserialize<object>(), condition.RealValue(engine));
+            isConditionTrue = condition.IsTrue(jsonTarget?[parameter.Key].Deserialize<object>(), condition.GetVar(engine));
 
             if (isConditionTrue != !reverseParameter.Boolean)
             {

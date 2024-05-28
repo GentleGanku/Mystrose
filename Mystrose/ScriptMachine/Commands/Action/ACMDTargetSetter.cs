@@ -6,6 +6,7 @@ using Mystrose.ScriptMachine.Inputs;
 using System.Collections.Generic;
 using Mystrose.GameModels.General;
 using Mystrose.GameModels.Environment;
+using System.Text.Json;
 
 namespace Mystrose.ScriptMachine.Commands.Action;
 
@@ -28,9 +29,9 @@ public class ACMDTargetSetter : SCMDAction
     {
         return new ACMDTargetSetter()
         {
-            Parameters = new(Parameters),
-            SecondaryParameters = new(SecondaryParameters),
-            EndResult = EndResult
+            Parameters = ScriptRepository.CloneToParameters(Parameters),
+            SecondaryParameters = ScriptRepository.CloneToSecondaryParameters(SecondaryParameters),
+            EndResult = JsonSerializer.Deserialize<ScriptResultType>(JsonSerializer.Serialize(EndResult))
         };
     }
 
@@ -51,7 +52,7 @@ public class ACMDTargetSetter : SCMDAction
             },
             "Monster" => new()
             {
-                ["Tag"] = new ScriptParameter("", "The name of the monster (Random), or the Monster Map ID of it (Specific), to set as the target")
+                ["Tag"] = new ScriptParameter("", "The name of the monster (random), or the Monster Map ID of it (specific), to set as the target")
             },
             "Random" => new()
             {
@@ -73,7 +74,7 @@ public class ACMDTargetSetter : SCMDAction
                 engine.Flash.CallGameFunctionOnFunc("world.setTarget", "world.getAvatarByUserName", engine.Master.Name);
                 break;
             case "Player":
-                engine.Flash.CallGameFunctionOnFunc("world.setTarget", "world.getAvatarByUserName", SecondaryParameters["Player"]["Player Name"].RealValue(engine).String);
+                engine.Flash.CallGameFunctionOnFunc("world.setTarget", "world.getAvatarByUserName", SecondaryParameters["Player"]["Player Name"].GetVar(engine).String);
                 break;
             case "Monster":
                 if (SecondaryParameters["Monster"]["Tag"].Type == ScriptValueType.String)
@@ -84,7 +85,7 @@ public class ACMDTargetSetter : SCMDAction
                     Monster[] monsters = [.. engine.Area.Monsters.FindAll(
                         (m) =>
                         {
-                            MonsterFormat? monsterFormat = engine.Area.Format.MonsterFormats.Find(mf => mf.Name.Equals(SecondaryParameters["Monster"]["Tag"].RealValue(engine).String, StringComparison.OrdinalIgnoreCase));
+                            MonsterFormat? monsterFormat = engine.Area.Format.MonsterFormats.Find(mf => mf.Name.Equals(SecondaryParameters["Monster"]["Tag"].GetVar(engine).String, StringComparison.OrdinalIgnoreCase));
 
                             if (monsterFormat is null)
                             {
@@ -105,7 +106,7 @@ public class ACMDTargetSetter : SCMDAction
                 }
                 else if (SecondaryParameters["Monster"]["Tag"].Type == ScriptValueType.Integer)
                 {
-                    engine.Flash.CallGameFunctionOnFunc("world.setTarget", "world.getMonster", SecondaryParameters["Monster"]["Tag"].RealValue(engine).Integer);
+                    engine.Flash.CallGameFunctionOnFunc("world.setTarget", "world.getMonster", SecondaryParameters["Monster"]["Tag"].GetVar(engine).Integer);
                 }
                 break;
             case "Random":
