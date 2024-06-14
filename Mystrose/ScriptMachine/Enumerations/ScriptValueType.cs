@@ -6,7 +6,6 @@ namespace Mystrose.ScriptMachine.Enumerations;
 /// <summary>
 /// An enumeration that represents every value type available in a Script Parameter.
 /// </summary>
-[JsonStringEnumMemberConverterOptions(deserializationFailureFallbackValue: Empty)]
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ScriptValueType
 {
@@ -20,7 +19,4 @@ public enum ScriptValueType
     Boolean,
     [EnumMember(Value = "Object")]
     Object,
-
-    [EnumMember(Value = "Empty")]
-    Empty
 }

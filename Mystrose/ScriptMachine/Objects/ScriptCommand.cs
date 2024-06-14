@@ -1,6 +1,7 @@
 ﻿using Mystrose.ScriptMachine.Enumerations;
 using Mystrose.ScriptMachine.Inputs;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Mystrose.ScriptMachine.Objects;
@@ -8,15 +9,14 @@ namespace Mystrose.ScriptMachine.Objects;
 public abstract class ScriptCommand
 {
 
-    #region Constructor
+    #region Constructors
     public ScriptCommand(ScriptCommandType type, string id, string commandName, string commandDescription)
     {
         Type = type;
         ID = id;
         CommandName = commandName;
         CommandDescription = commandDescription;
-
-        EndResult = ScriptResultType.Failure;
+        EndResult = ScriptResultType.Idle;
     }
     #endregion
 
@@ -28,28 +28,31 @@ public abstract class ScriptCommand
     #endregion
 
     #region Properties
+    [JsonIgnore]
     public ScriptCommandType Type
     {
         get;
-        private set;
+        set;
     }
 
     public string ID
     {
         get;
-        private set;
+        set;
     }
 
+    [JsonIgnore]
     public string CommandName
     {
         get;
-        private set;
+        set;
     }
 
+    [JsonIgnore]
     public string CommandDescription
     {
         get;
-        private set;
+        set;
     }
     #endregion
 
@@ -66,6 +69,7 @@ public abstract class ScriptCommand
         set;
     }
 
+    [JsonIgnore]
     public ScriptResultType EndResult
     {
         get;

@@ -10,6 +10,7 @@ public class Client
     public Client()
     {
         GameHost = new();
+        ScriptManager = new(this, GameHost);
         CombatManager = new(this, GameHost);
         Profile = new();
     }
@@ -22,6 +23,12 @@ public class Client
         set;
     }
 
+    public ScriptManagerWindow ScriptManager
+    {
+        get;
+        set;
+    }
+    
     public CombatManagerWindow CombatManager
     {
         get;

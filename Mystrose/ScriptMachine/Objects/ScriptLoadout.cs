@@ -24,38 +24,9 @@ public class ScriptLoadout
     }
     #endregion
 
-    #region Fields
-    [JsonInclude]
-    public List<ScriptStance> Stances
-    {
-        get;
-        private set;
-    }
-
-    [JsonInclude]
-    public List<SCMDTrigger> Triggers
-    {
-        get;
-        private set;
-    }
-
-    [JsonInclude]
-    public List<SCMDVariable> PresetVariables
-    {
-        get;
-        private set;
-    }
-
-    [JsonIgnore]
-    public ScriptVariableDictionary Variables
-    {
-        get;
-        private set;
-    }
-    #endregion
-
-    #region Properties
-    public string Codex
+    #region Properties: Information
+    [JsonIgnore] // This attribute is temporary.
+    public string UID
     {
         get;
         private set;
@@ -64,16 +35,46 @@ public class ScriptLoadout
     public string Name
     {
         get;
-        private set;
+        set;
     }
 
     public string Description
     {
         get;
-        private set;
+        set;
     }
 
     public string Author
+    {
+        get;
+        set;
+    }
+    #endregion
+
+    #region Properties: Collection
+    [JsonInclude]
+    public List<ScriptStance> Stances
+    {
+        get;
+        set;
+    }
+
+    [JsonInclude]
+    public List<SCMDTrigger> Triggers
+    {
+        get;
+        set;
+    }
+
+    [JsonInclude]
+    public List<SCMDVariable> PresetVariables
+    {
+        get;
+        set;
+    }
+
+    [JsonIgnore]
+    public ScriptVariableDictionary Variables
     {
         get;
         private set;

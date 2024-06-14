@@ -18,20 +18,20 @@ public class ScriptStance
     public string Name
     {
         get;
-        private set;
+        set;
     }
 
     [JsonIgnore]
     public int Index
     {
         get;
-        private set;
+        set;
     } = 0;
 
     public List<ScriptCommand> Commands
     {
         get;
-        private set;
+        set;
     }
     #endregion
 

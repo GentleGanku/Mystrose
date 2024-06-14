@@ -212,7 +212,7 @@ public class ScriptParameter
                 break;
         }
 
-        Type = ScriptValueType.Empty;
+        Type = null;
     }
 
     public override string? ToString()

@@ -32,9 +32,7 @@
             Height="40"
             VerticalAlignment="Top"
             Background="{DynamicResource ControlBarFillColorDefaultBrush}"
-            ShowClose="False"
-            ShowMaximize="False"
-            ShowMinimize="False">
+>
 
             <ui:TitleBar.Header>
                 <Grid Margin="3">
@@ -82,23 +80,6 @@
                         Margin="3,0"
                         Background="{DynamicResource SeparatorStrokeColorDefaultBrush}"
                         CornerRadius="0.25" />
-                    <StackPanel
-                        Grid.Column="3"
-                        Margin="3,0,0,0"
-                        Orientation="Horizontal">
-                        <ui:TitleBarButton
-                            Width="34"
-                            Height="34"
-                            ButtonType="Minimize" />
-                        <ui:TitleBarButton
-                            Width="34"
-                            Height="34"
-                            ButtonType="Maximize" />
-                        <ui:TitleBarButton
-                            Width="34"
-                            Height="34"
-                            ButtonType="Close" />
-                    </StackPanel>
                 </Grid>
             </ui:TitleBar.Header>
         </ui:TitleBar>

@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Mystrose.ScriptMachine;
 
@@ -79,16 +80,35 @@ public partial class ScriptCodelineItem : UserControl
     public void Refresh()
     {
         Label = Command.ToString();
+
         CommandsPnl.Visibility = Command switch
         {
             SCMDList => Visibility.Visible,
             SCMDTrigger => Visibility.Visible,
             _ => Visibility.Collapsed
         };
+
+        IndexTxt.Opacity = Command switch
+        {
+            SCMDFiller fillerCmd => 0.25,
+            _ => 1
+        };
+
+        IndexTxt.Foreground = Command switch
+        {
+            SCMDFiller fillerCmd => new SolidColorBrush(Colors.LightGreen),
+            _ => new SolidColorBrush(Colors.DodgerBlue)
+        };
+
+        LabelTxt.Foreground = Command switch
+        {
+            SCMDFiller fillerCmd => new SolidColorBrush(Colors.LightGreen),
+            _ => new SolidColorBrush(Colors.WhiteSmoke)
+        };
     }
     #endregion
 
-    #region Methods: Command
+    #region Methods: Command TODO
     public void AddInternalCommand(ScriptCommand command)
     {
         if (Command is not SCMDList or SCMDTrigger)
@@ -132,13 +152,6 @@ public partial class ScriptCodelineItem : UserControl
         }
 
         CommandsLst.Items.Remove(item);
-    }
-    #endregion
-
-    #region Methods: Event
-    private void Item_Click(object sender, MouseButtonEventArgs e)
-    {
-        Panel.SelectCodeline(this);
     }
     #endregion
 

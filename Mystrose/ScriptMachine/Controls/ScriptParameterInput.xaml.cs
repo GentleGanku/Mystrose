@@ -237,6 +237,24 @@ public partial class ScriptParameterInput : UserControl
     #endregion
 
     #region Methods: Utility
+    private void Refresh()
+    {
+        int index = Panel.ViewType switch
+        {
+            ScriptCodelineType.Action or ScriptCodelineType.SpecialCommand => Panel.Engine.CurrentStance.Commands.IndexOf(ParentCommand),
+            ScriptCodelineType.Trigger => Panel.Engine.CurrentLoadout.Triggers.IndexOf((SCMDTrigger)ParentCommand),
+            ScriptCodelineType.Variable => Panel.Engine.CurrentLoadout.PresetVariables.IndexOf((SCMDVariable)ParentCommand),
+        };
+
+        if (index == -1)
+        {
+            return;
+        }
+
+        ScriptCodelineItem item = (Panel.CodelinesList.Items[index] as ScriptCodelineItem)!;
+        item.Refresh();
+    }
+
     private void SetGridDefs(ScriptParameterInputType inputType)
     {
         InputGrid.ColumnDefinitions.Clear();
@@ -366,6 +384,8 @@ public partial class ScriptParameterInput : UserControl
                 kvp.SetValue(InputTxt.Text);
                 break;
         }
+
+        Refresh();
     }
 
     private void Input_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -386,6 +406,8 @@ public partial class ScriptParameterInput : UserControl
                 cond.SetCondition((string)InputCb.SelectedValue);
                 break;
         }
+
+        Refresh();
     }
     #endregion
 

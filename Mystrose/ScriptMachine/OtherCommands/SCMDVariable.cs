@@ -3,6 +3,7 @@ using Mystrose.ScriptMachine.Inputs;
 using Mystrose.ScriptMachine.Interfaces;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Mystrose.ScriptMachine.Objects;
@@ -23,6 +24,7 @@ public class SCMDVariable : ScriptCommand, IVariableCommand
     #endregion
 
     #region Inputs & Outputs
+    [JsonIgnore]
     public ScriptVariable Variable
     {
         get;
@@ -53,7 +55,7 @@ public class SCMDVariable : ScriptCommand, IVariableCommand
 
         bool isSuccess = engine.CurrentLoadout.Variables.Add(Variable);
 
-        EndResult = isSuccess ? ScriptResultType.Success : ScriptResultType.Failure;
+        EndResult = ScriptResultType.Success;
     }
 
     public override string ToString()

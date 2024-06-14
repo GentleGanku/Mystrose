@@ -86,7 +86,7 @@ public class ACMDRest : SCMDAction
 
                 if (restChecks < 0)
                 {
-                    EndResult = ScriptResultType.Failure;
+                    EndResult = ScriptResultType.Success;
                     return;
                 }
 
@@ -103,7 +103,7 @@ public class ACMDRest : SCMDAction
                             {
                                 if (engine.Skills[index].Cooldown > 0)
                                 {
-                                    EndResult = ScriptResultType.Failure;
+                                    EndResult = ScriptResultType.Success;
                                     return false;
                                 }
                             }
@@ -123,7 +123,7 @@ public class ACMDRest : SCMDAction
 
                         if (restChecks < 0)
                         {
-                            EndResult = ScriptResultType.Failure;
+                            EndResult = ScriptResultType.Success;
                             return false;
                         }
 

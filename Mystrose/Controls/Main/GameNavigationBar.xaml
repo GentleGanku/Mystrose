@@ -107,7 +107,8 @@
                 Margin="0,0,3,0"
                 Padding="7,0,0,0"
                 HorizontalContentAlignment="Left"
-                Background="Transparent">
+                Background="Transparent"
+                Click="OnButtonClick">
                 <!--
                     MouseOverBackground="{DynamicResource ControlFillColorSecondaryBrush}"
                     PressedBackground="{DynamicResource ControlFillColorTertiaryBrush}"

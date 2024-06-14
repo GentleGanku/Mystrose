@@ -67,16 +67,16 @@ public class ACMDVariableSetter : SCMDAction
             "Update" => engine.CurrentLoadout.Variables.Update(engine, Parameters["Variable Name"], SecondaryParameters["Update"]["Variable Value"], (ScriptOptions)SecondaryParameters["Update"]["Operator Type"])
         };
 
-        EndResult = isSuccess ? ScriptResultType.Success : ScriptResultType.Failure;
+        EndResult = ScriptResultType.Success;
     }
 
     public override string ToString()
     {
         return Parameters["Setting Type"].String switch
         {
-            "Add" => $"Add Variable {Parameters["Variable Name"].String} with Value {SecondaryParameters["Add"]["Variable Value"]}",
-            "Remove" => $"Remove Variable {Parameters["Variable Name"].String}",
-            "Update" => $"Update Variable {Parameters["Variable Name"].String} with Value {SecondaryParameters["Update"]["Variable Value"]} ({SecondaryParameters["Update"]["Operator Type"]})"
+            "Add" => $"Add variable '{Parameters["Variable Name"].String}' with value '{SecondaryParameters["Add"]["Variable Value"]}'",
+            "Remove" => $"Remove variable '{Parameters["Variable Name"].String}'",
+            "Update" => $"Update variable '{Parameters["Variable Name"].String}' with value '{SecondaryParameters["Update"]["Variable Value"]}' ({SecondaryParameters["Update"]["Operator Type"]})"
         };
     }
     #endregion

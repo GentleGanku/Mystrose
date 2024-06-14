@@ -17,7 +17,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Mystrose.Controls.Main;
 using Mystrose.GameModels.Network;
-using Mystrose.Network.Handlers.XT;
 
 namespace Mystrose.Systems;
 
@@ -179,6 +178,25 @@ public class FlashPlayer
 
     #region Methods: ActionScript
     /// <summary>
+    /// Calls the Send Packet function in the actionscript object with the given packet string.
+    /// </summary>
+    /// <param name="packetString">The string of the packet to apply with.</param>
+    public void SendPacket(string packetString)
+    {
+        Call("sendPacket", packetString);
+    }
+
+    /// <summary>
+    /// <summary>
+    /// Calls the Send Client Packet function in the actionscript object with the given packet string.
+    /// </summary>
+    /// <param name="packetString">The string of the packet to apply with.</param>
+    public void SendClientPacket(string packetString)
+    {
+        Call("sendClientPacket", packetString);
+    }
+
+    /// <summary>
     /// Checks if the actionscript object at the given path is null.
     /// </summary>
     /// <param name="path">The path of the object to check.</param>
@@ -215,7 +233,7 @@ public class FlashPlayer
     {
         try
         {
-            return JsonSerializer.Deserialize<T>(GetGameObject(path));
+            return JsonSerializer.Deserialize<T>(GetGameObject(path)) ?? def;
         }
         catch
         {
@@ -277,7 +295,7 @@ public class FlashPlayer
     /// <returns>The value of the object returned by calling the function as a serialzied JSON string.</returns>
     public string CallGameFunction(string path, params object[] args)
     {
-        return args.Length > 0 ? Call("callGameFunctionOnArgs", path, true, args) : Call("callGameFunction", path, true);
+        return args.Length > 0 ? Call("callGameFunctionOnArgs", [path, true, .. args]) : Call("callGameFunction", path, true);
     }
 
     /// <summary>
@@ -308,7 +326,7 @@ public class FlashPlayer
     /// <returns>The value of the object returned by calling the function as a serialzied JSON string.</returns>
     public string CallGameFunctionOnFunc(string path, string path2, params object[] args)
     {
-        return args.Length > 0 ? Call("callGameFunctionOnFuncArgs", path, path2, true, args) : Call("callGameFunctionOnFunc", path, path2, true);
+        return args.Length > 0 ? Call("callGameFunctionOnFuncArgs", [path, path2, true, .. args]) : Call("callGameFunctionOnFunc", path, path2, true);
     }
 
     /// <summary>

@@ -65,7 +65,7 @@ public class ACMDSkillUse : SCMDAction
             case "Non-Ruling":
                 if (!engine.Skills[index].IsSafeToUse)
                 {
-                    EndResult = ScriptResultType.Failure;
+                    EndResult = ScriptResultType.Success;
                     return;
                 }
                 break;
@@ -84,7 +84,7 @@ public class ACMDSkillUse : SCMDAction
 
                 if (safeChecks < 0 || !engine.Skills[index].IsSafeToUse)
                 {
-                    EndResult = ScriptResultType.Failure;
+                    EndResult = ScriptResultType.Success;
                     return;
                 }
 

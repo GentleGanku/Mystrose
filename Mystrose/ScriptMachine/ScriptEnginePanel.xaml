@@ -2,13 +2,14 @@
     x:Class="Mystrose.ScriptMachine.ScriptEnginePanel"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mystrose.ScriptMachine.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Mystrose.ScriptMachine"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    xmlns:controls="clr-namespace:Mystrose.ScriptMachine.Controls"
     d:DesignHeight="600"
     d:DesignWidth="750"
+    Loaded="Engine_Loaded"
     mc:Ignorable="d">
 
     <Grid>
@@ -206,12 +207,30 @@
                             Background="Transparent"
                             Click="Menu_Click"
                             ToolTipService.InitialShowDelay="100"
-                            ToolTipService.Placement="MousePoint">
+                            ToolTipService.Placement="MousePoint"
+                            Visibility="Collapsed">
                             <ui:Button.ToolTip>
                                 <ToolTip Content="Search Codeline" />
                             </ui:Button.ToolTip>
                             <ui:Button.Content>
                                 <ui:SymbolIcon FontSize="16" Symbol="Search16" />
+                            </ui:Button.Content>
+                        </ui:Button>
+                        <ui:Button
+                            Name="Script_ClearBtn"
+                            Width="20"
+                            Height="20"
+                            Margin="0,0,3,0"
+                            Padding="0"
+                            Background="Transparent"
+                            Click="Menu_Click"
+                            ToolTipService.InitialShowDelay="100"
+                            ToolTipService.Placement="MousePoint">
+                            <ui:Button.ToolTip>
+                                <ToolTip Content="Clear List" />
+                            </ui:Button.ToolTip>
+                            <ui:Button.Content>
+                                <ui:SymbolIcon FontSize="16" Symbol="SlideEraser16" />
                             </ui:Button.Content>
                         </ui:Button>
                         <Rectangle
@@ -259,7 +278,7 @@
                             Margin="0,0,3,0"
                             Fill="#373640" />
                         <ui:Button
-                            Name="Script_ClearBtn"
+                            Name="Script_LoadBtn"
                             Width="20"
                             Height="20"
                             Margin="0,0,3,0"
@@ -269,10 +288,10 @@
                             ToolTipService.InitialShowDelay="100"
                             ToolTipService.Placement="MousePoint">
                             <ui:Button.ToolTip>
-                                <ToolTip Content="Clear List" />
+                                <ToolTip Content="Load Script" />
                             </ui:Button.ToolTip>
                             <ui:Button.Content>
-                                <ui:SymbolIcon FontSize="16" Symbol="SlideEraser16" />
+                                <ui:SymbolIcon FontSize="16" Symbol="FolderOpen16" />
                             </ui:Button.Content>
                         </ui:Button>
                         <ui:Button
@@ -324,13 +343,12 @@
                             ToolTipService.InitialShowDelay="100"
                             ToolTipService.Placement="MousePoint">
                             <ui:Button.ToolTip>
-                                <ToolTip Content="Engine Notes" />
+                                <ToolTip Content="Important Tips" />
                             </ui:Button.ToolTip>
                             <ui:Button.Content>
                                 <ui:SymbolIcon FontSize="16" Symbol="NotePin16" />
                             </ui:Button.Content>
                         </ui:Button>
-                        <controls:StanceManager />
                     </StackPanel>
                 </Grid>
                 <Border
@@ -379,7 +397,13 @@
                                 x:Name="Script_StanceBox"
                                 Grid.Row="1"
                                 Background="Transparent"
-                                SelectionChanged="Stance_SelectionChanged" />
+                                IsEditable="True"
+                                KeyDown="Stance_KeyDown"
+                                SelectedValuePath="Label"
+                                SelectionChanged="Stance_SelectionChanged"
+                                TextElement.FontFamily="{StaticResource Poppins}"
+                                TextElement.FontSize="12"
+                                TextElement.FontWeight="SemiBold" />
                         </Border>
                     </Grid>
                 </Border>
@@ -971,16 +995,6 @@
                                 <ui:SymbolIcon FontSize="20" Symbol="LightbulbCircle20" />
                             </ui:Button.Content>
                         </ui:Button>
-                        <ui:Button
-                            Name="Editor_CodelineUpdBtn"
-                            Margin="0,0,5,0"
-                            Background="#2b2a33"
-                            BorderBrush="#0c0c0d"
-                            BorderThickness="1"
-                            Click="CodelineMenu_Click"
-                            Content="Update Codeline"
-                            FontSize="12"
-                            FontWeight="Medium" />
                         <ui:Button
                             Name="Editor_CodelineRemBtn"
                             Background="#2b2a33"

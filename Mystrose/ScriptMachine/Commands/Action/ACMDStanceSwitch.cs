@@ -44,7 +44,7 @@ public class ACMDStanceSwitch : SCMDAction
 
         if (scriptStance is null || index < 0 || index >= engine.CurrentStance.Commands.Count)
         {
-            EndResult = ScriptResultType.Failure;
+            EndResult = ScriptResultType.Success;
             return;
         }
 

@@ -9,10 +9,14 @@ namespace Mystrose.ScriptMachine.Enumerations;
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ScriptResultType
 {
+    [EnumMember(Value = "Idle")]
+    Idle,
     [EnumMember(Value = "Failure")]
     Failure,
     [EnumMember(Value = "Success")]
     Success,
+    [EnumMember(Value = "Cancel")]
+    Cancel,
     [EnumMember(Value = "Error")]
     Error
 }

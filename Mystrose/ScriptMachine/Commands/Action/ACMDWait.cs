@@ -16,7 +16,7 @@ public class ACMDWait : SCMDAction
         Parameters = new()
         {
             ["Wait Type"] = new ScriptOptions("Timeout"/*"Timeout / Condition"*/, "The type of wait to execute"),
-            ["Delay Time"] = new ScriptParameter(0.0, "The time to wait for, in seconds")
+            ["Delay Time"] = new ScriptParameter(0.1, "The time to wait for, in seconds")
         };
         SecondaryParameters = [];
     }

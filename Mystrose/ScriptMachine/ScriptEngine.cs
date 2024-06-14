@@ -23,11 +23,17 @@ public class ScriptEngine
         Type = type;
         Host = host;
 
-        Task = new(() => OnScriptRun());
+        IsRunning = false;
     }
     #endregion
 
     #region Delegates & Handlers
+    public delegate void ScriptRunEvent(ScriptCommand cmd);
+    public event ScriptRunEvent ScriptRunHandler;
+
+    public delegate void ScriptResultEvent(ScriptResultType result, string msg = "");
+    public event ScriptResultEvent ScriptResultHandler;
+
     private delegate void ScriptTriggerEvent(ScriptTriggerType type, Dictionary<string, ScriptParameter> objectOnEvent);
     private event ScriptTriggerEvent ScriptTriggerHandler;
     #endregion
@@ -104,7 +110,9 @@ public class ScriptEngine
 
     public bool IsRunning
     {
-        get => Task.Status == TaskStatus.Running;
+        //get => Task.Status == TaskStatus.Running;
+        get;
+        set;
     }
     #endregion
 
@@ -131,6 +139,7 @@ public class ScriptEngine
     #region Methods: Script
     public void StartScript()
     {
+        IsRunning = true;
         CurrentIndex = 0;
 
         CTSource = new CancellationTokenSource();
@@ -142,6 +151,7 @@ public class ScriptEngine
 
     public void StopScript()
     {
+        IsRunning = false;
         CTSource.Cancel();
         ScriptTriggerHandler -= OnTriggerCall;
         ResetCurrentVariables();
@@ -172,9 +182,13 @@ public class ScriptEngine
 
     public async Task OnScriptRun()
     {
+        string errorMsg = string.Empty;
+
         while (!CTSource.IsCancellationRequested)
         {
             ScriptCommand targetCommand = CurrentStance.Commands[CurrentIndex];
+
+            ScriptRunHandler.Invoke(targetCommand);
 
             try
             {
@@ -182,21 +196,47 @@ public class ScriptEngine
             }
             catch (Exception e)
             {
-                // TODO: Handle exception
+                errorMsg = e.Message;
                 targetCommand.EndResult = ScriptResultType.Error;
-                StopScript();
+                break;
             }
-            // TODO: Handle the command's Result
 
-            CurrentIndex += targetCommand.EndResult == ScriptResultType.Success ? 1 : 2;
+            switch (targetCommand.EndResult)
+            {
+                case ScriptResultType.Idle:
+                    ScriptResultHandler.Invoke(targetCommand.EndResult);
+                    break;
+                case ScriptResultType.Failure:
+                    CurrentIndex += 2;
+
+                    ScriptResultHandler.Invoke(targetCommand.EndResult);
+                    break;
+                case ScriptResultType.Success:
+                    CurrentIndex += 1;
+
+                    ScriptResultHandler.Invoke(targetCommand.EndResult);
+                    break;
+
+                case ScriptResultType.Cancel:
+                    StopScript();
+
+                    ScriptResultHandler.Invoke(targetCommand.EndResult, "The script has been stopped.");
+                    return;
+                case ScriptResultType.Error:
+                    StopScript();
+
+                    ScriptResultHandler.Invoke(targetCommand.EndResult, "An error has occurred while executing the script.");
+                    return;
+            };
+
             CurrentStance.SetIndex(CurrentIndex);
-
             if (CurrentIndex >= CurrentStance.Commands.Count)
             {
                 CurrentIndex = 0;
                 CurrentStance.SetIndex(0);
             }
 
+            targetCommand.EndResult = ScriptResultType.Idle;
             await Task.Delay(100);
         }
     }

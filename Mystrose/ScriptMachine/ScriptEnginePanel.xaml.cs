@@ -1,15 +1,16 @@
 ﻿using Microsoft.Win32;
+using Mystrose.ScriptMachine.Controls;
 using Mystrose.ScriptMachine.Enumerations;
 using Mystrose.ScriptMachine.Inputs;
 using Mystrose.ScriptMachine.Objects;
-using Mystrose.Utilities.Enumerations;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Wpf.Ui.Common;
 using WpfControls = Wpf.Ui.Controls;
 
@@ -35,7 +36,6 @@ public partial class ScriptEnginePanel : UserControl
         Creator_CodelineMenu.Visibility = Visibility.Hidden;
         
         RefreshDictionary();
-        SetLoadout(new("Loadout"));
     }
     #endregion
 
@@ -159,6 +159,12 @@ public partial class ScriptEnginePanel : UserControl
         private set;
     }
 
+    public ScriptStanceItem SelectedStanceItem
+    {
+        get;
+        set;
+    }
+
     public ScriptCommand? SelectedCommand
     {
         get;
@@ -175,11 +181,14 @@ public partial class ScriptEnginePanel : UserControl
     #region Methods: View
     public void RefreshCodelines(List<ScriptCommand> commands)
     {
-        CodelinesList.Items.Clear();
-        foreach (ScriptCommand cmd in commands)
+        Dispatcher.Invoke(() =>
         {
-            CodelinesList.Items.Add(new ScriptCodelineItem(this, cmd, CodelinesList.Items.Count + 1));
-        }
+            CodelinesList.Items.Clear();
+            foreach (ScriptCommand cmd in commands)
+            {
+                CodelinesList.Items.Add(new ScriptCodelineItem(this, cmd, CodelinesList.Items.Count + 1));
+            }
+        });
     }
 
     public void SwitchCurrentView(ScriptCodelineType type)
@@ -242,14 +251,13 @@ public partial class ScriptEnginePanel : UserControl
 
     public void SelectCodeline(ScriptCodelineItem item)
     {
-        if (EditedCommand == item.Command)
+        if (EditedCommand is null)
         {
-            return;
+            SwitchCurrentPanel();
         }
 
-        SwitchCurrentPanel();
-
         EditedCommand = item.Command;
+
         CodelinePosText.Text = item.Command.Type.ToString() + " Command | Index " + item.Index;
 
         CodelineNameText.Text = item.Command.CommandName;
@@ -261,11 +269,20 @@ public partial class ScriptEnginePanel : UserControl
         AddParameters(item.Command);
     }
 
+    public void UnselectCodeline()
+    {
+        CodelinesList.SelectedItem = null;
+        EditedCommand = null;
+
+        ClearParameters(CodelineParameterLabel, CodelineParameters);
+        ClearParameters(CodelineOptParameterLabel, CodelineOptParameters);
+
+        SwitchCurrentPanel();
+    }
+
     public void AddCodeline(ScriptCodelineType type, ScriptCommand cmd)
     {
-        SwitchCurrentView(type);
-
-        ScriptCodelineItem item = new(this, cmd switch
+        ScriptCommand clonedCmd = cmd switch
         {
             SCMDAction action => action.Clone(),
             SCMDFiller filler => filler.Clone(),
@@ -273,29 +290,27 @@ public partial class ScriptEnginePanel : UserControl
             SCMDStatement statement => statement.Clone(),
             SCMDTrigger trigger => trigger.Clone(),
             SCMDVariable variable => variable.Clone()
-        }, CodelinesList.Items.Count + 1);
+        };
 
         switch (type)
         {
             case ScriptCodelineType.Action:
             case ScriptCodelineType.SpecialCommand:
-                Engine.CurrentStance.Commands.Add(item.Command);
+                Engine.CurrentStance.Commands.Add(clonedCmd);
                 break;
             case ScriptCodelineType.Trigger:
-                Engine.CurrentLoadout.Triggers.Add((SCMDTrigger)item.Command);
+                Engine.CurrentLoadout.Triggers.Add((SCMDTrigger)clonedCmd);
                 break;
             case ScriptCodelineType.Variable:
-                Engine.CurrentLoadout.PresetVariables.Add((SCMDVariable)item.Command);
+                Engine.CurrentLoadout.PresetVariables.Add((SCMDVariable)clonedCmd);
                 break;
         }
 
-        CodelinesList.Items.Add(item);
+        SwitchCurrentView(type);
     }
 
     public void RemoveCodeline(ScriptCodelineType type, ScriptCodelineItem item)
     {
-        SwitchCurrentView(type);
-
         switch (type)
         {
             case ScriptCodelineType.Action:
@@ -310,80 +325,65 @@ public partial class ScriptEnginePanel : UserControl
                 break;
         }
 
-        CodelinesList.Items.Remove(item);
-    }
-
-    public void UpdateCodeline(ScriptCodelineType type, ScriptCodelineItem item)
-    {
-        SwitchCurrentView(type);
-
-        item.Refresh();
+        UnselectCodeline();
+        SwitchCurrentView(type);    
     }
 
     public void MoveCodelineUp()
     {
-        CodelinesList.Dispatcher.Invoke(() =>
+        foreach (ScriptCodelineItem item in CodelinesList.SelectedItems)
         {
-            foreach (ScriptCodelineItem item in CodelinesList.SelectedItems)
+            if (item.Index == 0)
             {
-                if (item.Index == 0)
-                {
-                    break;
-                }
-
-                int index = item.Index - 1;
-
-                CodelinesList.Items.RemoveAt(index);
-                CodelinesList.Items.Insert(index - 1, item);
-                Engine.CurrentStance.Commands.RemoveAt(index);
-                Engine.CurrentStance.Commands.Insert(index - 1, Engine.CurrentStance.Commands[index]);
-
-                item.Index--;
+                break;
             }
-        });
+
+            int index = item.Index - 1;
+
+            CodelinesList.Items.RemoveAt(index);
+            CodelinesList.Items.Insert(index - 1, item);
+            Engine.CurrentStance.Commands.RemoveAt(index);
+            Engine.CurrentStance.Commands.Insert(index - 1, Engine.CurrentStance.Commands[index]);
+
+            item.Index--;
+        }
     }
 
     public void MoveCodelineDown()
     {
-        CodelinesList.Dispatcher.Invoke(() =>
+        foreach (ScriptCodelineItem item in CodelinesList.SelectedItems)
         {
-            foreach (ScriptCodelineItem item in CodelinesList.SelectedItems)
+            if (item.Index == CodelinesList.Items.Count - 1)
             {
-                if (item.Index == CodelinesList.Items.Count - 1)
-                {
-                    break;
-                }
-
-                int index = item.Index - 1;
-
-                CodelinesList.Items.RemoveAt(index);
-                CodelinesList.Items.Insert(index + 1, item);
-                Engine.CurrentStance.Commands.RemoveAt(index);
-                Engine.CurrentStance.Commands.Insert(index + 1, Engine.CurrentStance.Commands[index]);
-
-                item.Index++;
+                break;
             }
-        });
+
+            int index = item.Index - 1;
+
+            CodelinesList.Items.RemoveAt(index);
+            CodelinesList.Items.Insert(index + 1, item);
+            Engine.CurrentStance.Commands.RemoveAt(index);
+            Engine.CurrentStance.Commands.Insert(index + 1, Engine.CurrentStance.Commands[index]);
+
+            item.Index++;
+        }
     }
 
     public void ClearSelectedCodelines()
     {
-        CodelinesList.Dispatcher.Invoke(() =>
+        if (CodelinesList.SelectedItems.Count > 0)
         {
-            if (CodelinesList.SelectedItems.Count > 0)
+            foreach (ScriptCodelineItem item in CodelinesList.SelectedItems)
             {
-                foreach (ScriptCodelineItem item in CodelinesList.SelectedItems)
-                {
-                    CodelinesList.Items.Remove(item);
-                    Engine.CurrentStance.Commands.Remove(item.Command);
-                }
+                CodelinesList.Items.Remove(item);
+                Engine.CurrentStance.Commands.Remove(item.Command);
             }
-            else
-            {
-                CodelinesList.Items.Clear();
-                Engine.CurrentStance.Commands.Clear();
-            }
-        });
+        }
+        else
+        {
+            CodelinesList.Items.Clear();
+            Engine.CurrentStance.Commands.Clear();
+        }
     }
 
     public void SelectCodelineType()
@@ -554,26 +554,66 @@ public partial class ScriptEnginePanel : UserControl
     {
         Engine.CurrentLoadout = loadout;
         RefreshStancesList();
-        SwitchCurrentView(ScriptCodelineType.Action);
+
+        ViewType = ScriptCodelineType.Action;
     }
     #endregion
 
     #region Methods: Stance
-    public void SwitchCurrentStance(ScriptStance stance)
+    public void SwitchStance(ScriptStanceItem stanceItem)
     {
-        StancesBox.SelectedItem = stance;
-        Engine.CurrentStance = stance;
-        RefreshCodelines(stance.Commands);
+        if (SelectedStanceItem is not null)
+        {
+            SelectedStanceItem.ToggleButtonMode(false);
+        }
+
+        SelectedStanceItem = stanceItem;
+        SelectedStanceItem.ToggleButtonMode(true);
+
+        Engine.CurrentStance = stanceItem.Stance;
+
+        SwitchCurrentView(ScriptCodelineType.Action);
+    }
+
+    public void SelectStance(ScriptStanceItem stanceItem)
+    {
+        StancesBox.SelectedItem = stanceItem;
     }
 
     public void RefreshStancesList()
     {
         StancesBox.Items.Clear();
+
         foreach (ScriptStance stance in Engine.CurrentLoadout.Stances)
         {
-            StancesBox.Items.Add(stance);
+            ScriptStanceItem item = new(this, stance);
+
+            StancesBox.Items.Add(item);
         }
-        SwitchCurrentStance((ScriptStance)StancesBox.Items[0]);
+
+        SelectStance((StancesBox.Items[0] as ScriptStanceItem)!);
+    }
+
+    public void AddStance(string label)
+    {
+        if (string.IsNullOrEmpty(label) || Engine.CurrentLoadout.Stances.Find(s => s.Name == label) is ScriptStance existingStance)
+        {
+            return;
+        }
+
+        ScriptStance stance = new(label);
+        ScriptStanceItem stanceItem = new(this, stance);
+
+        Engine.CurrentLoadout.Stances.Add(stance);
+        StancesBox.Items.Add(stanceItem);
+
+        SelectStance(stanceItem);
+    }
+
+    public void RemoveStance(ScriptStanceItem item)
+    {
+        Engine.CurrentLoadout.Stances.Remove(item.Stance);
+        StancesBox.Items.Remove(item);
     }
     #endregion
 
@@ -583,7 +623,7 @@ public partial class ScriptEnginePanel : UserControl
         OpenFileDialog openFileDialog = new()
         {
             Title = "Load Script",
-            InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\Scripts\\" + Engine.Type.ToString(),
+            InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "Scripts\\" + Engine.Type.ToString(),
             DefaultExt = ".json",
             Filter = "Mystrose Scripts|*.json",
             CheckFileExists = true
@@ -591,17 +631,10 @@ public partial class ScriptEnginePanel : UserControl
 
         if (openFileDialog.ShowDialog() == true)
         {
-            try
-            {
                 string jsonString = File.ReadAllText(openFileDialog.FileName);
-                ScriptLoadout loadout = JsonSerializer.Deserialize<ScriptLoadout>(jsonString);
+                ScriptLoadout loadout = ScriptRepository.ConvertToLoadout(jsonString);
 
                 SetLoadout(loadout);
-            }
-            catch (Exception ex)
-            {
-                // TODO: Log error
-            }
         }
     }
 
@@ -610,7 +643,8 @@ public partial class ScriptEnginePanel : UserControl
         SaveFileDialog saveFileDialog = new()
         {
             Title = "Save Script",
-            InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "\\Scripts\\" + Engine.Type.ToString(),
+            InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "Scripts\\" + Engine.Type.ToString(),
+            FileName = Engine.CurrentLoadout.Name + ".json",
             DefaultExt = ".json",
             Filter = "Mystrose Scripts|*.json",
             CheckFileExists = false,
@@ -621,25 +655,22 @@ public partial class ScriptEnginePanel : UserControl
         {
             try
             {
-                JsonSerializerOptions options = new()
-                {
-                    WriteIndented = true
-                };
-
-                string jsonString = JsonSerializer.Serialize(Engine.CurrentLoadout, options);
+                string jsonString = ScriptRepository.ConvertFromLoadout(Engine.CurrentLoadout);
                 File.WriteAllText(saveFileDialog.FileName, jsonString);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
                 // TODO: Log error
             }
         }
     }
 
-    public void ToggleScript()
+    public async void ToggleScript()
     {
         if (!Engine.IsRunning)
         {
+            Engine.ScriptRunHandler += OnScriptRun;
+            Engine.ScriptResultHandler += OnScriptResult;
             Engine.StartScript();
 
             Script_SwitchIcon.Filled = true;
@@ -647,11 +678,15 @@ public partial class ScriptEnginePanel : UserControl
         }
         else
         {
+            Engine.ScriptRunHandler -= OnScriptRun;
+            Engine.ScriptResultHandler -= OnScriptResult;
             Engine.StopScript();
 
             Script_SwitchIcon.Filled = false;
             Script_TempSwitchIcon.Symbol = SymbolRegular.PauseOff16;
         }
+
+        ToggleButtons();
     }
 
     public void TemporaryToggleScript()
@@ -668,10 +703,81 @@ public partial class ScriptEnginePanel : UserControl
 
             Script_SwitchIcon.Filled = false;
         }
+
+        ToggleButtons();
+    }
+
+    public async void ToggleButtons()
+    {
+        Script_SwitchBtn.Opacity = 0.25;
+        Script_SwitchBtn.IsEnabled = false;
+
+        Script_TempSwitchBtn.Opacity = 0.25;
+        Script_TempSwitchBtn.IsEnabled = false;
+
+        await Task.Delay(2000);
+
+        Script_SwitchBtn.Opacity = 1;
+        Script_SwitchBtn.IsEnabled = true;
+
+        Script_TempSwitchBtn.Opacity = 1;
+        Script_TempSwitchBtn.IsEnabled = true;
+    }
+    #endregion
+
+    #region Methods: Delegate
+    public void OnScriptRun(ScriptCommand cmd)
+    {
+        Dispatcher.Invoke(() =>
+        {
+            switch (ViewType)
+            {
+                case ScriptCodelineType.Action:
+                case ScriptCodelineType.SpecialCommand:
+                    int index = Engine.CurrentStance.Commands.IndexOf(cmd);
+                    CodelinesList.SelectedIndex = index;
+                    break;
+            }
+        });
+    }
+
+    public void OnScriptResult(ScriptResultType type, string msg = "")
+    {
+        Dispatcher.Invoke(() =>
+        {
+            switch (type)
+            {
+                case ScriptResultType.Idle:
+                    break;
+                case ScriptResultType.Failure:
+                    break;
+                case ScriptResultType.Success:
+                    break;
+                case ScriptResultType.Cancel:
+                    Script_SwitchIcon.Filled = false;
+                    Script_TempSwitchIcon.Symbol = SymbolRegular.PauseOff16;
+
+                    ToggleButtons();
+                    break;
+                case ScriptResultType.Error:
+                    Script_SwitchIcon.Filled = false;
+                    Script_TempSwitchIcon.Symbol = SymbolRegular.PauseOff16;
+
+                    ToggleButtons();
+
+                    System.Diagnostics.Debug.WriteLine(msg);
+                    break;
+            }
+        });
     }
     #endregion
 
     #region Methods: Event
+    private void Engine_Loaded(object sender, RoutedEventArgs e)
+    {
+        SetLoadout(new("Loadout"));
+    }
+
     private void View_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not WpfControls.Button btn)
@@ -732,12 +838,17 @@ public partial class ScriptEnginePanel : UserControl
 
     private void CodelineItem_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (CodelinesList.SelectionMode is not SelectionMode.Single || CodelinesList.SelectedItem is null)
+        if (SelectedCodeline is null)
         {
             return;
         }
 
-        SelectCodeline((ScriptCodelineItem)CodelinesList.SelectedItem);
+        if (Engine.IsRunning)
+        {
+            return;
+        }
+
+        SelectCodeline(SelectedCodeline);
     }
 
     private void Stance_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -747,22 +858,25 @@ public partial class ScriptEnginePanel : UserControl
             return;
         }
 
-        if (cb.SelectedItem is not ScriptStance stance)
+        if (cb.SelectedItem is not ScriptStanceItem item)
         {
             return;
         }
 
-        SwitchCurrentStance(stance);
+        SwitchStance(item);
+    }
+
+    private void Stance_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            AddStance(StancesBox.Text);
+        }
     }
 
     private void Return_Click(object sender, RoutedEventArgs e)
     {
-        CodelinesList.SelectedItem = null;
-
-        ClearParameters(CodelineParameterLabel, CodelineParameters);
-        ClearParameters(CodelineOptParameterLabel, CodelineOptParameters);
-
-        SwitchCurrentPanel();
+        UnselectCodeline();
     }
 
     private void CodelineMenu_Click(object sender, RoutedEventArgs e)
@@ -779,9 +893,6 @@ public partial class ScriptEnginePanel : UserControl
                 break;
             case "Editor_CodelineRemBtn":
                 RemoveCodeline(CodelineDict[SelectedCodeline.Command], SelectedCodeline);
-                break;
-            case "Editor_CodelineUpdBtn":
-                UpdateCodeline(CodelineDict[SelectedCodeline.Command], SelectedCodeline);
                 break;
 
             case "Creator_CodelineInfoBtn":

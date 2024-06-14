@@ -19,7 +19,8 @@ public class ScriptDictionary : Dictionary<ScriptCodelineType, List<ScriptComman
             new ACMDVariableSetter(),
             new ACMDWait(),
             new ACMDSkillUse(),
-            new ACMDRest()
+            new ACMDRest(),
+            new ACMDMapMovement()
         ];
         base[ScriptCodelineType.Trigger] =
         [
@@ -69,10 +70,16 @@ public class ScriptDictionary : Dictionary<ScriptCodelineType, List<ScriptComman
         get => base[(ScriptCodelineType)key].Find(command => command.ID == id);
     }
 
+    public ScriptCommand? this[string id]
+    {
+        get => Values.SelectMany(list => list).FirstOrDefault(command => command.ID.Equals(id));
+    }
+
     public ScriptCodelineType this[ScriptCommand command]
     {
         get => Keys.FirstOrDefault(type => this[type].Find(cmd => cmd.ID == command.ID) != null);
     }
+
     #endregion
 
     #region Methods

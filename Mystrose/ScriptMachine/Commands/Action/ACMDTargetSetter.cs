@@ -153,7 +153,7 @@ public class ACMDTargetSetter : SCMDAction
                 break;
         }
 
-        EndResult = isSuccess ? ScriptResultType.Success : ScriptResultType.Failure;
+        EndResult = ScriptResultType.Success;
     }
 
     public override string ToString()
