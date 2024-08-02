@@ -316,7 +316,7 @@ public static class ScriptRepository
 
         if (cmd is IStackable stackableCmd)
         {
-            jsonObj["InternalCommands"] = JsonSerializer.Deserialize<JsonNode>(JsonSerializer.Serialize(stackableCmd.InternalCommands.Select(ConvertFromCommand))),
+            jsonObj["InternalCommands"] = JsonSerializer.Deserialize<JsonNode>(JsonSerializer.Serialize(stackableCmd.InternalCommands.Select(ConvertFromCommand)));
         }
 
         jsonObj["Parameters"] = JsonSerializer.Deserialize<JsonNode>(ConvertFromParameters(cmd.Parameters));
