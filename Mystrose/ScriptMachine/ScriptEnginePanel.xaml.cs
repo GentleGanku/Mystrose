@@ -38,7 +38,7 @@ public partial class ScriptEnginePanel : UserControl
 
         Creator_CodelineView.Visibility = Visibility.Hidden;
         Creator_CodelineMenu.Visibility = Visibility.Hidden;
-        
+
         RefreshDictionary();
     }
     #endregion
@@ -322,7 +322,7 @@ public partial class ScriptEnginePanel : UserControl
 
         CodelineNameText.Foreground = cmd switch
         {
-            SCMDAction actionCmd => new SolidColorBrush(Colors.DarkRed),
+            SCMDAction actionCmd => new SolidColorBrush(Colors.OrangeRed),
             SCMDFiller fillerCmd => new SolidColorBrush(Colors.LightGreen),
             SCMDStack listCmd => new SolidColorBrush(Colors.BlueViolet),
             SCMDStatement statementCmd => new SolidColorBrush(Colors.RoyalBlue),
@@ -354,7 +354,7 @@ public partial class ScriptEnginePanel : UserControl
 
         CodelineNameText.Foreground = item.Command switch
         {
-            SCMDAction actionCmd => new SolidColorBrush(Colors.DarkRed),
+            SCMDAction actionCmd => new SolidColorBrush(Colors.OrangeRed),
             SCMDFiller fillerCmd => new SolidColorBrush(Colors.LightGreen),
             SCMDStack listCmd => new SolidColorBrush(Colors.BlueViolet),
             SCMDStatement statementCmd => new SolidColorBrush(Colors.RoyalBlue),
@@ -424,16 +424,10 @@ public partial class ScriptEnginePanel : UserControl
 
     public void AddInternalCodeline(ScriptCommand cmd)
     {
-        switch (SelectedInternalList)
+        if (SelectedInternalList is IStackable stackableCmd)
         {
-            case SCMDStack list:
-                list.InternalCommands.Add(cmd);
-                RefreshCodelines(list.InternalCommands);
-                break;
-            case SCMDTrigger trigger:
-                trigger.InternalCommands.Add(cmd);
-                RefreshCodelines(trigger.InternalCommands);
-                break;
+            stackableCmd.InternalCommands.Add(cmd);
+            RefreshCodelines(stackableCmd.InternalCommands);
         }
     }
 
@@ -471,16 +465,10 @@ public partial class ScriptEnginePanel : UserControl
 
     public void RemoveInternalCodeline(ScriptCodelineItem item)
     {
-        switch (SelectedInternalList)
+        if (SelectedInternalList is IStackable stackableCmd)
         {
-            case SCMDStack list:
-                list.InternalCommands.Remove(item.Command);
-                RefreshCodelines(list.InternalCommands);
-                break;
-            case SCMDTrigger trigger:
-                trigger.InternalCommands.Remove(item.Command);
-                RefreshCodelines(trigger.InternalCommands);
-                break;
+            stackableCmd.InternalCommands.Remove(item.Command);
+            RefreshCodelines(stackableCmd.InternalCommands);
         }
 
         UnselectCodeline();
@@ -1000,11 +988,6 @@ public partial class ScriptEnginePanel : UserControl
         if (Engine.IsRunning)
         {
             return;
-        }
-
-        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
-        {
-            System.Diagnostics.Debug.WriteLine("Sex");
         }
 
         SelectCodeline(SelectedCodeline);

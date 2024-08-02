@@ -90,7 +90,7 @@ public partial class ScriptCodelineItem : UserControl
 
         IndexTxt.Foreground = LabelTxt.Foreground = Command switch
         {
-            SCMDAction actionCmd => new SolidColorBrush(Colors.DarkRed),
+            SCMDAction actionCmd => new SolidColorBrush(Colors.OrangeRed),
             SCMDFiller fillerCmd => new SolidColorBrush(Colors.LightGreen),
             SCMDStack listCmd => new SolidColorBrush(Colors.BlueViolet),
             SCMDStatement statementCmd => new SolidColorBrush(Colors.RoyalBlue),
@@ -108,7 +108,8 @@ public partial class ScriptCodelineItem : UserControl
         if (Command is IStackable stackableCmd)
         {
             InternalCommandsTxt.Visibility = Visibility.Visible;
-            InternalCommandsTxt.Text = stackableCmd.InternalCommands.Count + " internal commands";
+            InternalCommandsTxt.Text = stackableCmd.InternalCommands.Count + (stackableCmd.InternalCommands.Count == 1 ? " internal command" : " internal commands");
+
         }
         else
         {

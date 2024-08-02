@@ -399,11 +399,11 @@
                             Grid.Row="1"
                             BorderBrush="#2b2a33"
                             BorderThickness="0,1,0,0">
-                            <Grid x:Name="Script_ListedGrid">
+                            <Grid x:Name="Script_ListedGrid" Height="36">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                
+
                                 <ui:Button
                                     Name="InternalCmds_ExitBtn"
                                     Width="24"
@@ -416,19 +416,22 @@
                                         <ui:SymbolIcon FontSize="20" Symbol="ArrowExit20" />
                                     </ui:Button.Content>
                                 </ui:Button>
-                                <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center">
+                                <StackPanel
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    Orientation="Vertical">
                                     <TextBlock
                                         Name="InternalCmds_MasterTxt"
-                                        FontSize="12"
                                         HorizontalAlignment="Center"
+                                        FontSize="12"
                                         FontWeight="Bold"
                                         Text="Lorem Ipsum" />
                                     <TextBlock
                                         Name="InternalCmds_TypeTxt"
-                                        FontSize="8"
-                                        Text="Statement Command"
                                         HorizontalAlignment="Center"
-                                        Opacity="0.5"/>
+                                        FontSize="8"
+                                        Opacity="0.5"
+                                        Text="Statement Command" />
                                 </StackPanel>
                             </Grid>
                         </Border>
