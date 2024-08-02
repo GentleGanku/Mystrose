@@ -86,7 +86,7 @@ public class ACMDRest : SCMDAction
 
                 if (restChecks < 0)
                 {
-                    EndResult = ScriptResultType.Success;
+                    EndResult = ScriptResultType.Failure;
                     return;
                 }
 
@@ -103,7 +103,6 @@ public class ACMDRest : SCMDAction
                             {
                                 if (engine.Skills[index].Cooldown > 0)
                                 {
-                                    EndResult = ScriptResultType.Success;
                                     return false;
                                 }
                             }
@@ -123,7 +122,7 @@ public class ACMDRest : SCMDAction
 
                         if (restChecks < 0)
                         {
-                            EndResult = ScriptResultType.Success;
+                            EndResult = ScriptResultType.Failure;
                             return false;
                         }
 
@@ -140,7 +139,7 @@ public class ACMDRest : SCMDAction
         return Parameters["Mode"].String switch
         {
             "Regular Rest" => "Rest",
-            "Conditional Rest" => "Rest Conditionally"
+            "Conditional Rest" => "Rest conditionally"
         };
     }
     #endregion

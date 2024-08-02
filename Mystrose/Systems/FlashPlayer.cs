@@ -105,29 +105,30 @@ public class FlashPlayer
 
     protected internal string RegisterServers(string response)
     {
-        if (response.StartsWith("{") && response.EndsWith("}"))
+        JsonObject responsePacket = JsonSerializer.Deserialize<JsonObject>(response)!;
+
+        if (responsePacket["bSuccess"] is not null && responsePacket["bSuccess"].Deserialize<int>() == 0)
         {
-            JsonObject? responsePacket = JsonSerializer.Deserialize<JsonObject>(response);
-
-            JsonObject? loginObj = responsePacket["login"].Deserialize<JsonObject>();
-            JsonArray? serversArr = responsePacket["servers"].Deserialize<JsonArray>();
-            JsonObject? pollDataObj = responsePacket["polldata"].Deserialize<JsonObject>();
-
-            ClientMaster.DataManager.Servers = serversArr.Deserialize<List<Server>>();
-            ClientMaster.DataManager.Save("Servers");
-
-            // TODO: A proper log for choosing server
-            Host.World = new(Host, ClientMaster.DataManager.Servers[0]);
-
-            loginObj["iAge"] = 99;
-            loginObj["iEmailStatus"] = 5;
-
-            RegisterMaster(loginObj.ToJsonString());
-
-            return responsePacket.ToJsonString();
+            Host.State = GameStateType.Rejected;
+            return response;
         }
 
-        return response;
+        JsonObject? loginObj = responsePacket["login"].Deserialize<JsonObject>();
+        JsonArray? serversArr = responsePacket["servers"].Deserialize<JsonArray>();
+        JsonObject? pollDataObj = responsePacket["polldata"].Deserialize<JsonObject>();
+
+        ClientMaster.DataManager.Servers = serversArr.Deserialize<List<Server>>()!;
+        ClientMaster.DataManager.Save("Servers");
+
+        // TODO: A proper log for choosing server
+        Host.World = new(Host, ClientMaster.DataManager.Servers[0]);
+
+        loginObj["iAge"] = 99;
+        loginObj["iEmailStatus"] = 5;
+
+        RegisterMaster(loginObj.ToJsonString());
+
+        return responsePacket.ToJsonString();
     }
 
     protected internal void RegisterMaster(string masterData)
@@ -143,7 +144,8 @@ public class FlashPlayer
             ActivationFlag = masterObj["iEmailStatus"].GetValue<int>(),
             Username = masterObj["unm"].GetValue<string>(),
         };
-        Host.State = GameStateType.Unlogged;
+
+        Host.State = GameStateType.Standby;
     }
 
     protected internal async void OpenExternalLink(string args)

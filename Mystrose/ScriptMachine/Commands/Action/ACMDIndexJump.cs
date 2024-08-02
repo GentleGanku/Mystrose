@@ -44,7 +44,7 @@ public class ACMDIndexJump : SCMDAction
 
         if (newIndex < 0 || newIndex >= engine.CurrentStance.Commands.Count)
         {
-            EndResult = ScriptResultType.Success;
+            EndResult = ScriptResultType.Failure;
             return;
         }
 

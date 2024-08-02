@@ -1,14 +1,18 @@
-﻿using Mystrose.ScriptMachine.Enumerations;
-using Mystrose.ScriptMachine.Objects;
+﻿using Mystrose.ScriptMachine.Objects;
 using System.Collections.Generic;
 
 namespace Mystrose.ScriptMachine.Interfaces;
 
-public interface IListCommand
+public interface IStackable
 {
 
     #region Inputs & Outputs
-    ScriptListType? ListType
+    string LabelName
+    {
+        get;
+    }
+
+    int StackLimit
     {
         get;
     }
@@ -18,6 +22,10 @@ public interface IListCommand
         get;
         set;
     }
+    #endregion
+
+    #region Methods
+    bool IsInputValid(ScriptCommand cmd);
     #endregion
 
 }

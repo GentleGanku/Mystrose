@@ -10,6 +10,11 @@ public interface IStatementCommand
     {
         get;
     }
+
+    bool IsReverseChecked
+    {
+        get;
+    }
     #endregion
 
 }

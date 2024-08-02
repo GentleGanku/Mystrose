@@ -55,7 +55,7 @@ public class SCMDVariable : ScriptCommand, IVariableCommand
 
         bool isSuccess = engine.CurrentLoadout.Variables.Add(Variable);
 
-        EndResult = ScriptResultType.Success;
+        EndResult = isSuccess ? ScriptResultType.Success : ScriptResultType.Failure;
     }
 
     public override string ToString()

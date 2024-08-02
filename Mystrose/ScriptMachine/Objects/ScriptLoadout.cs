@@ -126,7 +126,7 @@ public class ScriptLoadout
     #region Methods: Trigger
     public SCMDTrigger? GetTrigger(string name)
     {
-        return Triggers.Find(trigger => trigger["Trigger Name"].String.Equals(name, StringComparison.OrdinalIgnoreCase));
+        return Triggers.Find(trigger => trigger.LabelName.Equals(name, StringComparison.OrdinalIgnoreCase));
     }
 
     public SCMDTrigger? GetTrigger(int index)

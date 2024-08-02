@@ -1,5 +1,6 @@
 ﻿using Mystrose.ScriptMachine.Enumerations;
 using Mystrose.ScriptMachine.Inputs;
+using Mystrose.ScriptMachine.Interfaces;
 using Mystrose.ScriptMachine.Objects;
 using System;
 using System.Windows;
@@ -241,9 +242,13 @@ public partial class ScriptParameterInput : UserControl
     {
         int index = Panel.ViewType switch
         {
-            ScriptCodelineType.Action or ScriptCodelineType.SpecialCommand => Panel.Engine.CurrentStance.Commands.IndexOf(ParentCommand),
-            ScriptCodelineType.Trigger => Panel.Engine.CurrentLoadout.Triggers.IndexOf((SCMDTrigger)ParentCommand),
-            ScriptCodelineType.Variable => Panel.Engine.CurrentLoadout.PresetVariables.IndexOf((SCMDVariable)ParentCommand),
+            ScriptViewType.Action => Panel.Engine.CurrentStance.Commands.IndexOf(ParentCommand),
+            ScriptViewType.Trigger => Panel.Engine.CurrentLoadout.Triggers.IndexOf((SCMDTrigger)ParentCommand),
+            ScriptViewType.Variable => Panel.Engine.CurrentLoadout.PresetVariables.IndexOf((SCMDVariable)ParentCommand),
+
+            ScriptViewType.Listed => (Panel.SelectedInternalList as IStackable)!.InternalCommands.IndexOf(ParentCommand),
+
+            _ => -1
         };
 
         if (index == -1)

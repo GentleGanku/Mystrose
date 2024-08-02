@@ -16,7 +16,7 @@ public abstract class ScriptCommand
         ID = id;
         CommandName = commandName;
         CommandDescription = commandDescription;
-        EndResult = ScriptResultType.Idle;
+        EndResult = ScriptResultType.Busy;
     }
     #endregion
 

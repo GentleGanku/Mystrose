@@ -34,7 +34,7 @@ public class ScriptDictionary : Dictionary<ScriptCodelineType, List<ScriptComman
         [
             new SCMDFiller(),
             new SCMDStatement(),
-            new SCMDList()
+            new SCMDStack()
         ];
     }
     #endregion

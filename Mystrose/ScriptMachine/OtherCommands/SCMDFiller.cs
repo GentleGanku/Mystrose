@@ -47,7 +47,7 @@ public class SCMDFiller : ScriptCommand, IFillerCommand
 
     public override string ToString()
     {
-        return Parameters["Text"].String.Length > 0 ? ($"// " + Parameters["Text"]) : "";
+        return Parameters["Text"].ToString()!.Length > 0 ? ($"// " + Parameters["Text"].ToString()) : "";
     }
     #endregion
 

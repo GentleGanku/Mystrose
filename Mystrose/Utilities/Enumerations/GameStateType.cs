@@ -6,7 +6,8 @@
 public enum GameStateType
 {
     Idle,
-    Unlogged,
+    Standby,
     Logged,
+    Rejected,
     Locked
 }

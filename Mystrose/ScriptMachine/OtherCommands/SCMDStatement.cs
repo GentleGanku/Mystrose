@@ -16,26 +16,59 @@ using System.Text.Json.Serialization;
 
 namespace Mystrose.ScriptMachine.Objects;
 
-public class SCMDStatement : ScriptCommand, IStatementCommand
+public class SCMDStatement : ScriptCommand, IStatementCommand, IStackable
 {
 
     #region Constructor
-    public SCMDStatement() : base(ScriptCommandType.Statement, "SCMD03", "Statement", "A script command that executes an index jump, when its prerequisites are met (True - first next command; False - second next command). It executes otherwise if the Reverse Check is set to True.")
+    public SCMDStatement() : base(ScriptCommandType.Statement, "SCMD03", "Statement", "A script command that executes a set of internal commands within its scope, when its prerequisites are met. It executes otherwise if the Reverse Check is set to True. Any kinds of commands, other than Trigger and Variable ones, are executable in this scope. Stacks up to 20 internal commands.")
     {
         Parameters = new()
         {
+            ["Label Name"] = new ScriptParameter("Label", "The label name of the statement to be used."),
             ["Statement Type"] = new ScriptOptions("Variable / Self / Player / Monster / Skill / Aura / Map / Faction / Quest / Item / Drop", "The type of the statement to be checked."),
-            ["Reverse Check"] = new ScriptParameter(false, "If True, the command will execute if the statement is False.")
+            ["Reverse Check"] = new ScriptParameter(false, "If True, the command will execute with the statement being False.")
         };
         SecondaryParameters = [];
+        InternalCommands = [];
     }
     #endregion
 
     #region Properties
     [JsonIgnore]
+    public string LabelName
+    {
+        get => Parameters["Label Name"].ToString()!;
+    }
+
+    [JsonIgnore]
+    public int StackLimit
+    {
+        get => 20;
+    }
+
+    public List<ScriptCommand> InternalCommands
+    {
+        get;
+        set;
+    }
+
+    [JsonIgnore]
     public ScriptStatementType? StatementType
     {
         get => Enum.TryParse(Parameters["Statement Type"].String.Replace(" ", ""), out ScriptStatementType type) ? type : null;
+    }
+
+    [JsonIgnore]
+    public bool IsReverseChecked
+    {
+        get => Parameters["Reverse Check"].Boolean;
+    }
+    #endregion
+
+    #region Methods: Interface
+    public bool IsInputValid(ScriptCommand cmd)
+    {
+        return cmd.Type != ScriptCommandType.Trigger && cmd.Type != ScriptCommandType.Variable && InternalCommands.Count <= StackLimit;
     }
     #endregion
 
@@ -44,6 +77,7 @@ public class SCMDStatement : ScriptCommand, IStatementCommand
     {
         return new SCMDStatement()
         {
+            InternalCommands = ScriptRepository.CloneToCommandsList(InternalCommands),
             Parameters = ScriptRepository.CloneToParameters(Parameters),
             SecondaryParameters = ScriptRepository.CloneToSecondaryParameters(SecondaryParameters),
             EndResult = JsonSerializer.Deserialize<ScriptResultType>(JsonSerializer.Serialize(EndResult))
@@ -101,25 +135,25 @@ public class SCMDStatement : ScriptCommand, IStatementCommand
 
         if (target is null)
         {
+            EndResult = ScriptResultType.Failure;
             return;
         }
 
         JsonObject? jsonTarget = JsonSerializer.Deserialize<JsonObject>(JsonSerializer.Serialize(target));
         bool isConditionTrue = false;
-        ScriptParameter reverseParameter = Parameters["Reverse Check"].GetVar(engine);
 
         foreach (KeyValuePair<string, ScriptParameter> parameter in secondaryPrms)
         {
             ScriptConditional condition = (ScriptConditional)parameter.Value;
             isConditionTrue = condition.IsTrue(jsonTarget?[parameter.Key].Deserialize<object>(), condition.GetVar(engine));
 
-            if (isConditionTrue != !reverseParameter.Boolean)
+            if (isConditionTrue != !IsReverseChecked)
             {
                 break;
             }
         }
 
-        if (reverseParameter.Boolean == true)
+        if (IsReverseChecked == true)
         {
             EndResult = isConditionTrue == false ? ScriptResultType.Success : ScriptResultType.Failure;
         }
@@ -127,11 +161,27 @@ public class SCMDStatement : ScriptCommand, IStatementCommand
         {
             EndResult = isConditionTrue == true ? ScriptResultType.Success : ScriptResultType.Failure;
         }
+
+        if (EndResult == ScriptResultType.Success)
+        {
+            foreach (ScriptCommand cmd in InternalCommands)
+            {
+                try
+                {
+                    await cmd.Execute(engine);
+                }
+                catch (Exception e)
+                {
+                    EndResult = ScriptResultType.Error;
+                    return;
+                }
+            }
+        }
     }
 
     public override string ToString()
     {
-        return "If such statement is true: " + JsonSerializer.Serialize(StatementType);
+        return $"If the {LabelName} statement is " + (IsReverseChecked ? "False" : "True") + ", then ...";
     }
     #endregion
 

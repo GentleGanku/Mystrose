@@ -6,6 +6,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Mystrose.ScriptMachine.Inputs;
 using Mystrose.Systems;
 using Mystrose.GameModels.Master;
@@ -203,32 +204,26 @@ public class ScriptEngine
 
             switch (targetCommand.EndResult)
             {
-                case ScriptResultType.Idle:
-                    ScriptResultHandler.Invoke(targetCommand.EndResult);
-                    break;
                 case ScriptResultType.Failure:
-                    CurrentIndex += 2;
-
-                    ScriptResultHandler.Invoke(targetCommand.EndResult);
+                    ScriptResultHandler.Invoke(targetCommand.EndResult, $"[Stance: {CurrentStance.Name}, Index: {CurrentIndex}] The command has been skipped due to it returning a False result.");
                     break;
                 case ScriptResultType.Success:
-                    CurrentIndex += 1;
-
-                    ScriptResultHandler.Invoke(targetCommand.EndResult);
+                    ScriptResultHandler.Invoke(targetCommand.EndResult, $"[Stance: {CurrentStance.Name}, Index: {CurrentIndex}] Continuing the script as usual.");
                     break;
 
                 case ScriptResultType.Cancel:
                     StopScript();
 
-                    ScriptResultHandler.Invoke(targetCommand.EndResult, "The script has been stopped.");
+                    ScriptResultHandler.Invoke(targetCommand.EndResult, $"[Stance: {CurrentStance.Name}, Index: {CurrentIndex}] The script has been stopped.");
                     return;
                 case ScriptResultType.Error:
                     StopScript();
 
-                    ScriptResultHandler.Invoke(targetCommand.EndResult, "An error has occurred while executing the script.");
+                    ScriptResultHandler.Invoke(targetCommand.EndResult, $"[Stance: {CurrentStance.Name}, Index: {CurrentIndex}] An error has occurred while executing the script.\r\nError: {errorMsg}");
                     return;
             };
 
+            CurrentIndex += 1;
             CurrentStance.SetIndex(CurrentIndex);
             if (CurrentIndex >= CurrentStance.Commands.Count)
             {
@@ -236,7 +231,7 @@ public class ScriptEngine
                 CurrentStance.SetIndex(0);
             }
 
-            targetCommand.EndResult = ScriptResultType.Idle;
+            targetCommand.EndResult = ScriptResultType.Busy;
             await Task.Delay(100);
         }
     }
@@ -286,7 +281,7 @@ public class ScriptEngine
 
     public bool GetVariableValidation(ScriptParameter var)
     {
-        if (var.String == null)
+        if (string.IsNullOrEmpty(var.String))
         {
             return false;
         }
@@ -294,9 +289,29 @@ public class ScriptEngine
         return Regexes.ScriptVariable().IsMatch(var.String);
     }
 
-    public ScriptParameter GetVariableValue(ScriptParameter var)
+    public ScriptParameter GetVariableValue(ScriptParameter param)
     {
-        return GetVariableValidation(var) ? CurrentLoadout.Variables[Regexes.ScriptVariable().Replace(var.String, "")].KeyValuePair : var;
+        if (GetVariableValidation(param))
+        {
+            string combinedValue = param.String;
+
+            foreach (Match match in Regexes.ScriptVariable().Matches(param.String))
+            {
+                string varName = match.Value.Replace("{", "").Replace("}", "");
+
+                if (!CurrentLoadout.Variables.ContainsKey(varName))
+                {
+                    continue;
+                }
+
+                combinedValue = combinedValue.Replace(match.Value, CurrentLoadout.Variables[varName]!.Value);
+            }
+
+            ScriptParameter varParam = new(combinedValue);
+            return varParam;
+        }
+
+        return param;
     }
     #endregion
 

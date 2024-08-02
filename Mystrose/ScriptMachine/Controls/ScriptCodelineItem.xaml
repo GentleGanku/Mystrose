@@ -8,10 +8,13 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     d:DesignHeight="50"
     d:DesignWidth="400"
+    MouseDoubleClick="Item_DoubleClick"
+    MouseEnter="Item_MouseEnter"
+    MouseLeave="Item_MouseLeave"
     mc:Ignorable="d">
 
-    <StackPanel Margin="2.5" Orientation="Vertical">
-        <Grid>
+    <StackPanel Orientation="Vertical">
+        <Grid Margin="5,2.5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -25,30 +28,26 @@
                 FontFamily="{StaticResource Poppins}"
                 FontSize="10"
                 FontWeight="SemiBold"
-                Foreground="DodgerBlue"
+                Foreground="#80b9ee"
                 Text="[100]" />
-            <TextBlock
-                Name="LabelTxt"
-                Grid.Column="1"
-                Padding="5,0,0,0"
-                FontSize="12"
-                FontWeight="SemiBold"
-                Text="Attack"
-                TextWrapping="Wrap" />
+            <StackPanel Grid.Column="1" Orientation="Vertical">
+                <TextBlock
+                    Name="LabelTxt"
+                    Padding="5,0,0,0"
+                    FontSize="12"
+                    FontWeight="SemiBold"
+                    Text="Attack"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Name="InternalCommandsTxt"
+                    Padding="5,0,0,0"
+                    FontSize="12"
+                    FontStyle="Italic"
+                    FontWeight="SemiBold"
+                    Opacity="0.5"
+                    Text="0 internal commands"
+                    TextWrapping="Wrap" />
+            </StackPanel>
         </Grid>
-        <VirtualizingStackPanel
-            Name="CommandsPnl"
-            Margin="30,2.5,0,0"
-            Opacity="0.5"
-            Orientation="Vertical"
-            Visibility="Collapsed">
-            <TextBlock
-                Padding="0"
-                FontSize="12"
-                FontStyle="Italic"
-                FontWeight="SemiBold"
-                Text="Commands" />
-            <ListView Name="CommandsLst" />
-        </VirtualizingStackPanel>
     </StackPanel>
 </UserControl>

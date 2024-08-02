@@ -14,10 +14,9 @@ public interface ITriggerCommand
         get;
     }
 
-    List<ScriptCommand> InternalCommands
+    bool IsReverseChecked
     {
         get;
-        set;
     }
 
     bool IsEnabled

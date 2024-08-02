@@ -65,7 +65,7 @@ public class ACMDSkillUse : SCMDAction
             case "Non-Ruling":
                 if (!engine.Skills[index].IsSafeToUse)
                 {
-                    EndResult = ScriptResultType.Success;
+                    EndResult = ScriptResultType.Failure;
                     return;
                 }
                 break;
@@ -84,7 +84,7 @@ public class ACMDSkillUse : SCMDAction
 
                 if (safeChecks < 0 || !engine.Skills[index].IsSafeToUse)
                 {
-                    EndResult = ScriptResultType.Success;
+                    EndResult = ScriptResultType.Failure;
                     return;
                 }
 
@@ -121,8 +121,8 @@ public class ACMDSkillUse : SCMDAction
     {
         return Parameters["Rule Type"].String switch
         {
-            "Non-Ruling" => "Use Skill " + Parameters["Skill Index"],
-            "Ruling" => "(Ruled) Use Skill " + Parameters["Skill Index"]
+            "Non-Ruling" => "Use skill at index " + Parameters["Skill Index"],
+            "Ruling" => "(Ruled) Use skill at index " + Parameters["Skill Index"]
         };
     }
     #endregion

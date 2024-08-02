@@ -44,7 +44,7 @@ public class ACMDStanceSwitch : SCMDAction
 
         if (scriptStance is null || index < 0 || index >= engine.CurrentStance.Commands.Count)
         {
-            EndResult = ScriptResultType.Success;
+            EndResult = ScriptResultType.Failure;
             return;
         }
 
@@ -65,7 +65,7 @@ public class ACMDStanceSwitch : SCMDAction
 
     public override string ToString()
     {
-        return "Switch to Stance " + Parameters["Stance Name"] + " on index " + Parameters["Index"];
+        return "Switch to the " + Parameters["Stance Name"] + " stance on index " + Parameters["Index"];
     }
     #endregion
 

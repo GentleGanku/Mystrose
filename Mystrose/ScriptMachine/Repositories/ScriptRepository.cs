@@ -1,5 +1,6 @@
 ﻿using Mystrose.ScriptMachine.Enumerations;
 using Mystrose.ScriptMachine.Inputs;
+using Mystrose.ScriptMachine.Interfaces;
 using Mystrose.ScriptMachine.Objects;
 using System;
 using System.Collections.Generic;
@@ -51,7 +52,7 @@ public static class ScriptRepository
                 SCMDAction actionCmd => actionCmd.Clone(),
                 SCMDStatement statementCmd => statementCmd.Clone(),
                 SCMDTrigger triggerCmd => triggerCmd.Clone(),
-                SCMDList listCmd => listCmd.Clone(),
+                SCMDStack listCmd => listCmd.Clone(),
                 SCMDVariable variableCmd => variableCmd.Clone(),
             });
         }
@@ -147,14 +148,9 @@ public static class ScriptRepository
 
         ScriptCommand scriptCommand = ScriptDictionary[id]!.Clone();
 
-        switch (scriptCommand)
+        if (scriptCommand is IStackable stackableCmd)
         {
-            case SCMDTrigger triggerCmd:
-                triggerCmd.InternalCommands = ConvertToCommandsList(jsonObj["InternalCommands"]!.ToString());
-                break;
-            case SCMDList listCmd:
-                listCmd.InternalCommands = ConvertToCommandsList(jsonObj["InternalCommands"]!.ToString());
-                break;
+            stackableCmd.InternalCommands = ConvertToCommandsList(jsonObj["InternalCommands"]!.ToString());
         }
 
         scriptCommand.Parameters = ConvertToParameters(jsonObj["Parameters"]!.ToString());
@@ -318,13 +314,9 @@ public static class ScriptRepository
     {
         JsonObject jsonObj = JsonSerializer.Deserialize<JsonObject>(JsonSerializer.Serialize(cmd))!;
 
-        if (jsonObj.ContainsKey("InternalCommands"))
+        if (cmd is IStackable stackableCmd)
         {
-            jsonObj["InternalCommands"] = JsonSerializer.Deserialize<JsonNode>(cmd switch
-            {
-                SCMDTrigger triggerCmd => JsonSerializer.Serialize(triggerCmd.InternalCommands.Select(ConvertFromCommand)),
-                SCMDList listCmd => JsonSerializer.Serialize(listCmd.InternalCommands.Select(ConvertFromCommand))
-            });
+            jsonObj["InternalCommands"] = JsonSerializer.Deserialize<JsonNode>(JsonSerializer.Serialize(stackableCmd.InternalCommands.Select(ConvertFromCommand))),
         }
 
         jsonObj["Parameters"] = JsonSerializer.Deserialize<JsonNode>(ConvertFromParameters(cmd.Parameters));

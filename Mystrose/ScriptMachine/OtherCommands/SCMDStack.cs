@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace Mystrose.ScriptMachine.Objects;
 
-public class SCMDList : ScriptCommand, IListCommand
+public class SCMDStack : ScriptCommand, IStackCommand, IStackable
 {
 
     #region Constructor
-    public SCMDList() : base(ScriptCommandType.List, "SCMD05", "List", "A script command that executes a set of one-type commands.")
+    public SCMDStack() : base(ScriptCommandType.Stack, "SCMD05", "List", "A script command that executes a set of internal commands within its scope. Any kinds of commands, other than Trigger and Variable ones, are executable in this scope. Stacks up to 20 internal commands.")
     {
         Parameters = new()
         {
-            ["List Type"] = new ScriptOptions("Action / Statement", "The type of the list.")
+            ["Label Name"] = new ScriptParameter("Label", "The label name of the stack to be used.")
         };
         SecondaryParameters = [];
         InternalCommands = [];
@@ -26,9 +26,15 @@ public class SCMDList : ScriptCommand, IListCommand
 
     #region Properties
     [JsonIgnore]
-    public ScriptListType? ListType
+    public string LabelName
     {
-        get => Enum.TryParse(Parameters["List Type"].String, out ScriptListType type) ? type : null;
+        get => Parameters["Label Name"].ToString()!;
+    }
+
+    [JsonIgnore]
+    public int StackLimit
+    {
+        get => 20;
     }
 
     public List<ScriptCommand> InternalCommands
@@ -38,10 +44,17 @@ public class SCMDList : ScriptCommand, IListCommand
     }
     #endregion
 
+    #region Methods: Interface
+    public bool IsInputValid(ScriptCommand cmd)
+    {
+        return cmd.Type != ScriptCommandType.Trigger && cmd.Type != ScriptCommandType.Variable && InternalCommands.Count <= StackLimit;
+    }
+    #endregion
+
     #region Methods: Override
     public override ScriptCommand Clone()
     {
-        return new SCMDList()
+        return new SCMDStack()
         {
             InternalCommands = ScriptRepository.CloneToCommandsList(InternalCommands),
             Parameters = ScriptRepository.CloneToParameters(Parameters),
@@ -66,15 +79,7 @@ public class SCMDList : ScriptCommand, IListCommand
             }
             catch (Exception e)
             {
-                // TODO: Handle exception
                 EndResult = ScriptResultType.Error;
-                return;
-            }
-            // TODO: Handle the command's result
-
-            if (cmd.EndResult == ScriptResultType.Failure)
-            {
-                EndResult = ScriptResultType.Failure;
                 return;
             }
         }
@@ -84,13 +89,7 @@ public class SCMDList : ScriptCommand, IListCommand
 
     public override string ToString()
     {
-        return ListType switch
-        {
-            ScriptListType.Action => $"Execute {InternalCommands.Count} listed action commands",
-            ScriptListType.Statement => $"Execute {InternalCommands.Count} listed statement commands",
-            //ScriptListType.Statement => $"If (not) such {InternalCommands.Count} targets have properties in-game",
-            _ => "" 
-        };
+        return $"Executes the {LabelName} stack";
     }
     #endregion
 

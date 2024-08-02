@@ -17,8 +17,8 @@ public enum ScriptCommandType
     Statement,
     [EnumMember(Value = "Trigger")]
     Trigger,
-    [EnumMember(Value = "List")]
-    List,
+    [EnumMember(Value = "Stack")]
+    Stack,
     [EnumMember(Value = "Variable")]
     Variable
 }

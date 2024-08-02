@@ -2,6 +2,7 @@
 using Mystrose.ScriptMachine.Controls;
 using Mystrose.ScriptMachine.Enumerations;
 using Mystrose.ScriptMachine.Inputs;
+using Mystrose.ScriptMachine.Interfaces;
 using Mystrose.ScriptMachine.Objects;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using Wpf.Ui.Common;
 using WpfControls = Wpf.Ui.Controls;
 
@@ -27,10 +29,12 @@ public partial class ScriptEnginePanel : UserControl
     {
         InitializeComponent();
         Engine = engine;
-        ViewType = ScriptCodelineType.Action;
 
         ActivePanel = Creator_CodelinePnl;
         InactivePanel = Editor_CodelinePnl;
+
+        SelectedViewIcon = CommandsIcn;
+        SelectedViewText = CommandsTxt;
 
         Creator_CodelineView.Visibility = Visibility.Hidden;
         Creator_CodelineMenu.Visibility = Visibility.Hidden;
@@ -48,6 +52,21 @@ public partial class ScriptEnginePanel : UserControl
     public ListView CodelinesList
     {
         get => Script_List;
+    }
+
+    public Grid InternalListGrid
+    {
+        get => Script_ListedGrid;
+    }
+
+    public TextBlock InternalListName
+    {
+        get => InternalCmds_MasterTxt;
+    }
+
+    public TextBlock InternalListType
+    {
+        get => InternalCmds_TypeTxt;
     }
 
     public ComboBox StancesBox
@@ -135,7 +154,7 @@ public partial class ScriptEnginePanel : UserControl
         private set;
     }
 
-    public ScriptCodelineType ViewType
+    public ScriptViewType? ViewType
     {
         get;
         private set;
@@ -159,6 +178,18 @@ public partial class ScriptEnginePanel : UserControl
         private set;
     }
 
+    public WpfControls.SymbolIcon SelectedViewIcon
+    {
+        get;
+        set;
+    }
+
+    public TextBlock SelectedViewText
+    {
+        get;
+        set;
+    }
+
     public ScriptStanceItem SelectedStanceItem
     {
         get;
@@ -172,6 +203,12 @@ public partial class ScriptEnginePanel : UserControl
     }
 
     public ScriptCommand? EditedCommand
+    {
+        get;
+        private set;
+    }
+
+    public ScriptCommand? SelectedInternalList
     {
         get;
         private set;
@@ -191,25 +228,65 @@ public partial class ScriptEnginePanel : UserControl
         });
     }
 
-    public void SwitchCurrentView(ScriptCodelineType type)
+    public void SwitchCurrentView(ScriptViewType type)
     {
         ViewType = type;
+
+        InternalListGrid.Visibility = Visibility.Collapsed;
+
+        SelectedViewIcon.Filled = false;
+        SelectedViewIcon.Foreground = new SolidColorBrush(Colors.White);
+        SelectedViewText.Foreground = new SolidColorBrush(Colors.White);
+
         switch (type)
         {
-            case ScriptCodelineType.Action:
-            case ScriptCodelineType.SpecialCommand:
+            case ScriptViewType.Action:
+                SelectedViewIcon = CommandsIcn;
+                SelectedViewText = CommandsTxt;
+
                 StancesBox.Visibility = Visibility.Visible;
                 RefreshCodelines(Engine.CurrentStance.Commands);
                 break;
-            case ScriptCodelineType.Trigger:
+            case ScriptViewType.Trigger:
+                SelectedViewIcon = TriggersIcn;
+                SelectedViewText = TriggersTxt;
+
                 StancesBox.Visibility = Visibility.Collapsed;
                 RefreshCodelines([.. Engine.CurrentLoadout.Triggers]);
                 break;
-            case ScriptCodelineType.Variable:
+            case ScriptViewType.Variable:
+                SelectedViewIcon = VariablesIcn;
+                SelectedViewText = VariablesTxt;
+
                 StancesBox.Visibility = Visibility.Collapsed;
                 RefreshCodelines([.. Engine.CurrentLoadout.PresetVariables]);
                 break;
         }
+
+        SelectedViewIcon.Filled = true;
+        SelectedViewIcon.Foreground = new SolidColorBrush(Colors.DodgerBlue);
+        SelectedViewText.Foreground = new SolidColorBrush(Colors.DodgerBlue);
+    }
+
+    public void SwitchInternalView(ScriptCommand command)
+    {
+        SelectedInternalList = command;
+        SelectedViewIcon.Filled = false;
+        SelectedViewIcon.Foreground = new SolidColorBrush(Colors.White);
+        SelectedViewText.Foreground = new SolidColorBrush(Colors.White);
+
+        InternalListGrid.Visibility = Visibility.Visible;
+        StancesBox.Visibility = Visibility.Collapsed;
+
+        IStackable stackableCmd = (command as IStackable)!;
+
+        InternalListName.Text = stackableCmd.LabelName;
+        InternalListType.Text = command.Type.ToString() + " Command";
+
+        RefreshCodelines(stackableCmd.InternalCommands);
+
+        ViewType = ScriptViewType.Listed;
+        UnselectCodeline();
     }
 
     public void RefreshDictionary()
@@ -243,6 +320,18 @@ public partial class ScriptEnginePanel : UserControl
         CodelineNameText.Text = cmd.CommandName;
         CodelineDescText.Text = cmd.CommandDescription;
 
+        CodelineNameText.Foreground = cmd switch
+        {
+            SCMDAction actionCmd => new SolidColorBrush(Colors.DarkRed),
+            SCMDFiller fillerCmd => new SolidColorBrush(Colors.LightGreen),
+            SCMDStack listCmd => new SolidColorBrush(Colors.BlueViolet),
+            SCMDStatement statementCmd => new SolidColorBrush(Colors.RoyalBlue),
+            SCMDTrigger triggerCmd => new SolidColorBrush(Colors.DarkOrange),
+            SCMDVariable variableCmd => new SolidColorBrush(Colors.LightPink),
+
+            _ => new SolidColorBrush(Colors.White)
+        };
+
         ClearParameters(CodelineParameterLabel, CodelineParameters);
         ClearParameters(CodelineOptParameterLabel, CodelineOptParameters);
 
@@ -262,6 +351,18 @@ public partial class ScriptEnginePanel : UserControl
 
         CodelineNameText.Text = item.Command.CommandName;
         CodelineDescText.Text = item.Command.CommandDescription;
+
+        CodelineNameText.Foreground = item.Command switch
+        {
+            SCMDAction actionCmd => new SolidColorBrush(Colors.DarkRed),
+            SCMDFiller fillerCmd => new SolidColorBrush(Colors.LightGreen),
+            SCMDStack listCmd => new SolidColorBrush(Colors.BlueViolet),
+            SCMDStatement statementCmd => new SolidColorBrush(Colors.RoyalBlue),
+            SCMDTrigger triggerCmd => new SolidColorBrush(Colors.DarkOrange),
+            SCMDVariable variableCmd => new SolidColorBrush(Colors.LightPink),
+
+            _ => new SolidColorBrush(Colors.White)
+        };
 
         ClearParameters(CodelineParameterLabel, CodelineParameters);
         ClearParameters(CodelineOptParameterLabel, CodelineOptParameters);
@@ -286,47 +387,103 @@ public partial class ScriptEnginePanel : UserControl
         {
             SCMDAction action => action.Clone(),
             SCMDFiller filler => filler.Clone(),
-            SCMDList list => list.Clone(),
+            SCMDStack list => list.Clone(),
             SCMDStatement statement => statement.Clone(),
             SCMDTrigger trigger => trigger.Clone(),
             SCMDVariable variable => variable.Clone()
         };
 
-        switch (type)
+        ScriptViewType targetedViewType = type switch
         {
-            case ScriptCodelineType.Action:
-            case ScriptCodelineType.SpecialCommand:
+            ScriptCodelineType.Action or ScriptCodelineType.SpecialCommand => ScriptViewType.Action,
+            ScriptCodelineType.Trigger => ScriptViewType.Trigger,
+            ScriptCodelineType.Variable => ScriptViewType.Variable
+        };
+
+        switch (targetedViewType)
+        {
+            case ScriptViewType.Action:
+                if (ViewType == ScriptViewType.Listed)
+                {
+                    AddInternalCodeline(clonedCmd);
+                    return;
+                }
+
                 Engine.CurrentStance.Commands.Add(clonedCmd);
                 break;
-            case ScriptCodelineType.Trigger:
+            case ScriptViewType.Trigger:
                 Engine.CurrentLoadout.Triggers.Add((SCMDTrigger)clonedCmd);
                 break;
-            case ScriptCodelineType.Variable:
+            case ScriptViewType.Variable:
                 Engine.CurrentLoadout.PresetVariables.Add((SCMDVariable)clonedCmd);
                 break;
         }
 
-        SwitchCurrentView(type);
+        SwitchCurrentView(targetedViewType);
+    }
+
+    public void AddInternalCodeline(ScriptCommand cmd)
+    {
+        switch (SelectedInternalList)
+        {
+            case SCMDStack list:
+                list.InternalCommands.Add(cmd);
+                RefreshCodelines(list.InternalCommands);
+                break;
+            case SCMDTrigger trigger:
+                trigger.InternalCommands.Add(cmd);
+                RefreshCodelines(trigger.InternalCommands);
+                break;
+        }
     }
 
     public void RemoveCodeline(ScriptCodelineType type, ScriptCodelineItem item)
     {
-        switch (type)
+        ScriptViewType targetedViewType = type switch
         {
-            case ScriptCodelineType.Action:
-            case ScriptCodelineType.SpecialCommand:
+            ScriptCodelineType.Action or ScriptCodelineType.SpecialCommand => ScriptViewType.Action,
+            ScriptCodelineType.Trigger => ScriptViewType.Trigger,
+            ScriptCodelineType.Variable => ScriptViewType.Variable
+        };
+
+        switch (targetedViewType)
+        {
+            case ScriptViewType.Action:
+                if (ViewType == ScriptViewType.Listed)
+                {
+                    RemoveInternalCodeline(item);
+                    return;
+                }
+
                 Engine.CurrentStance.Commands.Remove(item.Command);
                 break;
-            case ScriptCodelineType.Trigger:
+            case ScriptViewType.Trigger:
                 Engine.CurrentLoadout.Triggers.Remove((SCMDTrigger)item.Command);
                 break;
-            case ScriptCodelineType.Variable:
+            case ScriptViewType.Variable:
                 Engine.CurrentLoadout.PresetVariables.Remove((SCMDVariable)item.Command);
                 break;
         }
 
         UnselectCodeline();
-        SwitchCurrentView(type);    
+        SwitchCurrentView(targetedViewType);    
+    }
+
+    public void RemoveInternalCodeline(ScriptCodelineItem item)
+    {
+        switch (SelectedInternalList)
+        {
+            case SCMDStack list:
+                list.InternalCommands.Remove(item.Command);
+                RefreshCodelines(list.InternalCommands);
+                break;
+            case SCMDTrigger trigger:
+                trigger.InternalCommands.Remove(item.Command);
+                RefreshCodelines(trigger.InternalCommands);
+                break;
+        }
+
+        UnselectCodeline();
     }
 
     public void MoveCodelineUp()
@@ -554,8 +711,6 @@ public partial class ScriptEnginePanel : UserControl
     {
         Engine.CurrentLoadout = loadout;
         RefreshStancesList();
-
-        ViewType = ScriptCodelineType.Action;
     }
     #endregion
 
@@ -572,7 +727,7 @@ public partial class ScriptEnginePanel : UserControl
 
         Engine.CurrentStance = stanceItem.Stance;
 
-        SwitchCurrentView(ScriptCodelineType.Action);
+        SwitchCurrentView(ScriptViewType.Action);
     }
 
     public void SelectStance(ScriptStanceItem stanceItem)
@@ -732,8 +887,7 @@ public partial class ScriptEnginePanel : UserControl
         {
             switch (ViewType)
             {
-                case ScriptCodelineType.Action:
-                case ScriptCodelineType.SpecialCommand:
+                case ScriptViewType.Action:
                     int index = Engine.CurrentStance.Commands.IndexOf(cmd);
                     CodelinesList.SelectedIndex = index;
                     break;
@@ -747,7 +901,7 @@ public partial class ScriptEnginePanel : UserControl
         {
             switch (type)
             {
-                case ScriptResultType.Idle:
+                case ScriptResultType.Busy:
                     break;
                 case ScriptResultType.Failure:
                     break;
@@ -787,9 +941,9 @@ public partial class ScriptEnginePanel : UserControl
 
         SwitchCurrentView(btn.Name switch
         {
-            "CommandsBtn" => ScriptCodelineType.Action,
-            "TriggersBtn" => ScriptCodelineType.Trigger,
-            "VariablesBtn" => ScriptCodelineType.Variable,
+            "CommandsBtn" => ScriptViewType.Action,
+            "TriggersBtn" => ScriptViewType.Trigger,
+            "VariablesBtn" => ScriptViewType.Variable,
         });
     }
 
@@ -848,6 +1002,11 @@ public partial class ScriptEnginePanel : UserControl
             return;
         }
 
+        if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+        {
+            System.Diagnostics.Debug.WriteLine("Sex");
+        }
+
         SelectCodeline(SelectedCodeline);
     }
 
@@ -874,6 +1033,26 @@ public partial class ScriptEnginePanel : UserControl
         }
     }
 
+    private void InternalExit_Click(object sender, RoutedEventArgs e)
+    {
+        SwitchCurrentView(SelectedViewText.Text switch
+        {
+            "Commands" => ScriptViewType.Action,
+            "Triggers" => ScriptViewType.Trigger,
+            "Variables" => ScriptViewType.Variable,
+            _ => ScriptViewType.Action
+        });
+        
+        foreach (ScriptCodelineItem item in CodelinesList.Items)
+        {
+            if (item.Command == SelectedCommand)
+            {
+                CodelinesList.SelectedItem = item;
+                break;
+            }
+        }
+    }
+
     private void Return_Click(object sender, RoutedEventArgs e)
     {
         UnselectCodeline();
@@ -885,7 +1064,7 @@ public partial class ScriptEnginePanel : UserControl
         {
             return;
         }
-
+        
         switch (btn.Name)
         {
             case "Creator_CodelineAddBtn":

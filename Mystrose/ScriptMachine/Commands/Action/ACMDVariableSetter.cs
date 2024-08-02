@@ -67,7 +67,7 @@ public class ACMDVariableSetter : SCMDAction
             "Update" => engine.CurrentLoadout.Variables.Update(engine, Parameters["Variable Name"], SecondaryParameters["Update"]["Variable Value"], (ScriptOptions)SecondaryParameters["Update"]["Operator Type"])
         };
 
-        EndResult = ScriptResultType.Success;
+        EndResult = isSuccess ? ScriptResultType.Success : ScriptResultType.Failure;
     }
 
     public override string ToString()

@@ -1,4 +1,5 @@
-﻿using Mystrose.ScriptMachine.Objects;
+﻿using Mystrose.ScriptMachine.Interfaces;
+using Mystrose.ScriptMachine.Objects;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -20,6 +21,9 @@ public partial class ScriptCodelineItem : UserControl
         Panel = panel;
         Command = command;
         Index = index;
+
+        DefineStyle();
+        Refresh();
     }
     #endregion
 
@@ -46,7 +50,6 @@ public partial class ScriptCodelineItem : UserControl
         set
         {
             _command = value;
-            Refresh();
         }
     }
 
@@ -77,81 +80,60 @@ public partial class ScriptCodelineItem : UserControl
     #endregion
 
     #region Methods: Utility
+    public void DefineStyle()
+    {
+        IndexTxt.Opacity = Command switch
+        {
+            SCMDFiller fillerCmd => 0.5,
+            _ => 1
+        };
+
+        IndexTxt.Foreground = LabelTxt.Foreground = Command switch
+        {
+            SCMDAction actionCmd => new SolidColorBrush(Colors.DarkRed),
+            SCMDFiller fillerCmd => new SolidColorBrush(Colors.LightGreen),
+            SCMDStack listCmd => new SolidColorBrush(Colors.BlueViolet),
+            SCMDStatement statementCmd => new SolidColorBrush(Colors.RoyalBlue),
+            SCMDTrigger triggerCmd => new SolidColorBrush(Colors.DarkOrange),
+            SCMDVariable variableCmd => new SolidColorBrush(Colors.LightPink),
+
+            _ => IndexTxt.Foreground
+        };
+    }
+
     public void Refresh()
     {
         Label = Command.ToString();
 
-        CommandsPnl.Visibility = Command switch
+        if (Command is IStackable stackableCmd)
         {
-            SCMDList => Visibility.Visible,
-            SCMDTrigger => Visibility.Visible,
-            _ => Visibility.Collapsed
-        };
-
-        IndexTxt.Opacity = Command switch
+            InternalCommandsTxt.Visibility = Visibility.Visible;
+            InternalCommandsTxt.Text = stackableCmd.InternalCommands.Count + " internal commands";
+        }
+        else
         {
-            SCMDFiller fillerCmd => 0.25,
-            _ => 1
-        };
-
-        IndexTxt.Foreground = Command switch
-        {
-            SCMDFiller fillerCmd => new SolidColorBrush(Colors.LightGreen),
-            _ => new SolidColorBrush(Colors.DodgerBlue)
-        };
-
-        LabelTxt.Foreground = Command switch
-        {
-            SCMDFiller fillerCmd => new SolidColorBrush(Colors.LightGreen),
-            _ => new SolidColorBrush(Colors.WhiteSmoke)
-        };
+            InternalCommandsTxt.Visibility = Visibility.Collapsed;
+        }
     }
     #endregion
 
-    #region Methods: Command TODO
-    public void AddInternalCommand(ScriptCommand command)
+    #region Methods: Events
+    private void Item_DoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (Command is not SCMDList or SCMDTrigger)
+        if (Command is IStackable)
         {
-            return;
+            Panel.SwitchInternalView(Command);
         }
-
-        int index = 0;
-        switch (Command)
-        {
-            case SCMDList list:
-                index = list.InternalCommands.Count + 1;
-                list.InternalCommands.Add(command);
-                break;
-            case SCMDTrigger trigger:
-                index = trigger.InternalCommands.Count + 1;
-                trigger.InternalCommands.Add(command);
-                break;
-        }
-
-        // Panel.AddCodelineItem(ScriptCodelineType.Command, index, Panel, command);
-        ScriptCodelineItem item = new(Panel, command, index);
-        CommandsLst.Items.Add(item);
     }
 
-    public void RemoveInternalCommand(ScriptCommand command, ScriptCodelineItem item)
+    private void Item_MouseEnter(object sender, MouseEventArgs e)
     {
-        if (Command is not SCMDList or SCMDTrigger)
-        {
-            return;
-        }
+        InternalCommandsTxt.Text += " (double-click to view)";
+    }
 
-        switch (Command)
-        {
-            case SCMDList list:
-                list.InternalCommands.Remove(command);
-                break;
-            case SCMDTrigger trigger:
-                trigger.InternalCommands.Remove(command);
-                break;
-        }
-
-        CommandsLst.Items.Remove(item);
+    private void Item_MouseLeave(object sender, MouseEventArgs e)
+    {
+        InternalCommandsTxt.Text = InternalCommandsTxt.Text.Replace(" (double-click to view)", "");
     }
     #endregion
 
