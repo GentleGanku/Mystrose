@@ -242,7 +242,7 @@ public static class ScriptRepository
         foreach (KeyValuePair<string, JsonNode> property in jsonTarget)
         {
             string propertyKey = property.Key.Replace("_", " ");
-            string propertyValue = property.Value.ToJsonString().Replace("\"", "");
+            string propertyValue = property.Value.ToString();
 
             ScriptParameter param = new(propertyValue);
             parameters.Add(propertyKey, param);
@@ -259,7 +259,7 @@ public static class ScriptRepository
         foreach (KeyValuePair<string, JsonNode> property in jsonTarget)
         {
             string propertyKey = property.Key.Replace("_", " ");
-            string propertyValue = property.Value.ToJsonString().Replace("\"", "");
+            string propertyValue = property.Value.ToString();
 
             ScriptConditional cond = new(ScriptConditionalType.Equal, propertyValue);
             conditionals.Add(propertyKey, cond);
@@ -316,7 +316,7 @@ public static class ScriptRepository
 
         if (cmd is IStackable stackableCmd)
         {
-            jsonObj["InternalCommands"] = JsonSerializer.Deserialize<JsonNode>(JsonSerializer.Serialize(stackableCmd.InternalCommands.Select(ConvertFromCommand)));
+            jsonObj["InternalCommands"] = JsonSerializer.Deserialize<JsonNode>(ConvertFromCommands(stackableCmd.InternalCommands));
         }
 
         jsonObj["Parameters"] = JsonSerializer.Deserialize<JsonNode>(ConvertFromParameters(cmd.Parameters));
@@ -358,7 +358,6 @@ public static class ScriptRepository
             prmValue.Remove("Integer");
             prmValue.Remove("Double");
             prmValue.Remove("Boolean");
-            prmValue.Remove("Object");
 
             prmValue[prmValue["Type"]!.ToString()] = value;
 

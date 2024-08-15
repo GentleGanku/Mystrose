@@ -321,7 +321,8 @@
                             Width="0.5"
                             Height="20"
                             Margin="0,0,3,0"
-                            Fill="#373640" />
+                            Fill="#373640"
+                            Visibility="Collapsed" />
                         <ui:Button
                             Name="Script_InfoBtn"
                             Width="20"
@@ -331,7 +332,8 @@
                             Background="Transparent"
                             Click="Menu_Click"
                             ToolTipService.InitialShowDelay="100"
-                            ToolTipService.Placement="MousePoint">
+                            ToolTipService.Placement="MousePoint"
+                            Visibility="Collapsed">
                             <ui:Button.ToolTip>
                                 <ToolTip Content="Script Info" />
                             </ui:Button.ToolTip>
@@ -347,7 +349,8 @@
                             Background="Transparent"
                             Click="Menu_Click"
                             ToolTipService.InitialShowDelay="100"
-                            ToolTipService.Placement="MousePoint">
+                            ToolTipService.Placement="MousePoint"
+                            Visibility="Collapsed">
                             <ui:Button.ToolTip>
                                 <ToolTip Content="Important Tips" />
                             </ui:Button.ToolTip>
@@ -761,7 +764,8 @@
                             Background="Transparent"
                             Click="CodelineMenu_Click"
                             ToolTipService.InitialShowDelay="100"
-                            ToolTipService.Placement="MousePoint">
+                            ToolTipService.Placement="MousePoint"
+                            Visibility="Collapsed">
                             <ui:Button.ToolTip>
                                 <ToolTip Content="Codeline Info" />
                             </ui:Button.ToolTip>
@@ -1033,7 +1037,8 @@
                             Background="Transparent"
                             Click="CodelineMenu_Click"
                             ToolTipService.InitialShowDelay="100"
-                            ToolTipService.Placement="MousePoint">
+                            ToolTipService.Placement="MousePoint"
+                            Visibility="Collapsed">
                             <ui:Button.ToolTip>
                                 <ToolTip Content="Codeline Info" />
                             </ui:Button.ToolTip>

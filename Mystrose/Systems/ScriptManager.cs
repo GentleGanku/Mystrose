@@ -68,8 +68,8 @@ public class ScriptManager
             _ => new()
         };
 
-        RegularEngine.InvokeTrigger(type, ScriptRepository.ConvertToParameters(readableObj));
-        CombatEngine.InvokeTrigger(type, ScriptRepository.ConvertToParameters(readableObj));
+        RegularEngine.InvokeTrigger(type, readableObj);
+        CombatEngine.InvokeTrigger(type, readableObj);
     }
     #endregion
 

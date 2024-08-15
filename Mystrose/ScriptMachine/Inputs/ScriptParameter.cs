@@ -1,4 +1,5 @@
 ﻿using Mystrose.ScriptMachine.Enumerations;
+using System.Text.Json.Serialization;
 
 namespace Mystrose.ScriptMachine.Inputs;
 
@@ -53,10 +54,17 @@ public class ScriptParameter
     /// <returns>
     /// An object representing the parameter's value.
     /// </returns>
+    [JsonIgnore]
     public object Object
     {
-        get;
-        set;
+        get => Type switch
+        {
+            ScriptValueType.String => String,
+            ScriptValueType.Integer => Integer,
+            ScriptValueType.Double => Double,
+            ScriptValueType.Boolean => Boolean,
+            _ => string.Empty
+        };
     }
 
     /// <summary>
@@ -130,9 +138,6 @@ public class ScriptParameter
     {
         Empty();
 
-        Object = value;
-        Type = ScriptValueType.Object;
-
         switch (value)
         {
             case int intValue:
@@ -149,12 +154,6 @@ public class ScriptParameter
                 break;
 
             case string stringValue:
-                if (string.IsNullOrEmpty(stringValue))
-                {
-                    Empty();
-                    return;
-                }
-
                 if (int.TryParse(value.ToString(), out int parsedInt))
                 {
                     Integer = parsedInt;
@@ -207,9 +206,6 @@ public class ScriptParameter
             case ScriptValueType.Boolean:
                 Boolean = false;
                 break;
-            case ScriptValueType.Object:
-                Object = null;
-                break;
         }
 
         Type = null;
@@ -223,7 +219,6 @@ public class ScriptParameter
             ScriptValueType.Integer => Integer.ToString(),
             ScriptValueType.Double => Double.ToString(),
             ScriptValueType.Boolean => Boolean.ToString(),
-            ScriptValueType.Object => Object?.ToString(),
             _ => string.Empty
         };
     }

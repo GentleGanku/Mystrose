@@ -139,13 +139,14 @@ public class SCMDStatement : ScriptCommand, IStatementCommand, IStackable
             return;
         }
 
-        JsonObject? jsonTarget = JsonSerializer.Deserialize<JsonObject>(JsonSerializer.Serialize(target));
+        JsonObject jsonTarget = JsonSerializer.Deserialize<JsonObject>(JsonSerializer.Serialize(target))!;
         bool isConditionTrue = false;
 
         foreach (KeyValuePair<string, ScriptParameter> parameter in secondaryPrms)
         {
+            ScriptParameter value = new(jsonTarget[parameter.Key]!.ToString());
             ScriptConditional condition = (ScriptConditional)parameter.Value;
-            isConditionTrue = condition.IsTrue(jsonTarget?[parameter.Key].Deserialize<object>(), condition.GetVar(engine));
+            isConditionTrue = condition.IsTrue(value.Object, condition.GetVar(engine));
 
             if (isConditionTrue != !IsReverseChecked)
             {

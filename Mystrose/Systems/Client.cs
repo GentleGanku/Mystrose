@@ -16,6 +16,15 @@ public class Client
     }
     #endregion
 
+    #region Destructor
+    ~Client()
+    {
+        GameHost.Dispose();
+        ScriptManager.Dispatcher.Invoke(() => ScriptManager.Close());
+        CombatManager.Dispatcher.Invoke(() => CombatManager.Close());
+    }
+    #endregion
+
     #region Properties
     public GameHost GameHost
     {

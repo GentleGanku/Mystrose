@@ -254,14 +254,15 @@ public class ScriptEngine
         }
     }
 
-    public void InvokeTrigger(ScriptTriggerType type, Dictionary<string, ScriptParameter> objectOnEvent)
+    public void InvokeTrigger(ScriptTriggerType type, object objectOnEvent)
     {
         if (!IsRunning)
         {
             return;
         }
 
-        ScriptTriggerHandler.Invoke(type, objectOnEvent);
+        Dictionary<string, ScriptParameter> parameters = ScriptRepository.ConvertToParameters(objectOnEvent);
+        ScriptTriggerHandler.Invoke(type, parameters);
     }
     #endregion
 

@@ -100,7 +100,11 @@ public class JHAction : IJSONMessageHandler
             return;
         }
 
-        monster.Targets = obj["targets"].Deserialize<List<string>>();
+        if (obj.ContainsKey("targets"))
+        {
+            monster.Targets = obj["targets"].Deserialize<List<string>>()!;
+        }
+
         monster.SetProperties(obj["o"].Deserialize<JsonObject>());
         
         host.ScriptManager.InvokeTriggerSystems(ScriptTriggerType.Monster, monster);

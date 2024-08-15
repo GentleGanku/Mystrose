@@ -27,7 +27,6 @@ public class ScriptVariable
     {
         get => KeyValuePair.Type switch
         {
-            ScriptValueType.Object => ScriptVariableType.Object,
             ScriptValueType.String => ScriptVariableType.String,
             ScriptValueType.Integer => ScriptVariableType.Integer,
             ScriptValueType.Double => ScriptVariableType.Double,

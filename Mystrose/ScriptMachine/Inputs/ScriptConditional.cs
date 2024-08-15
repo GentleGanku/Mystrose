@@ -122,14 +122,34 @@ public class ScriptConditional : ScriptParameter
     public bool IsTrue(object value, ScriptParameter? alternative = null)
     {
         ScriptParameter target = alternative ?? this;
-        return value switch
+
+        switch (value)
         {
-            string stringValue => EvaluateString(stringValue, target),
-            int intValue => EvaluateInteger(intValue, target),
-            double doubleValue => EvaluateDouble(doubleValue, target),
-            bool boolValue => EvaluateBool(boolValue, target),
-            _ => false
-        };
+            case int intValue:
+                return EvaluateInteger(intValue, target);
+            case double doubleValue:
+                return EvaluateDouble(doubleValue, target);
+            case bool boolValue:
+                return EvaluateBool(boolValue, target);
+
+            case string stringValue:
+                if (int.TryParse(value.ToString(), out int parsedInt))
+                {
+                    return EvaluateInteger(parsedInt, target);
+                }
+                else if (double.TryParse(value.ToString(), out double parsedDouble))
+                {
+                    return EvaluateDouble(parsedDouble, target);
+                }
+                else if (bool.TryParse(value.ToString(), out bool parsedBool))
+                {
+                    return EvaluateBool(parsedBool, target);
+                }
+                return EvaluateString(stringValue, target);
+
+            default:
+                return false;
+        }
     }
 
     public bool IsTrue(object value, bool reverse, ScriptParameter? alternative = null)

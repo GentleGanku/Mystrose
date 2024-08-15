@@ -20,11 +20,21 @@ public class Area
     /// The instance for the current map area.
     /// </summary>
     /// <returns>
-    /// A string representing the instance, which can be either a number or an identifier.
+    /// An integer representing the instance, which can be either a number or an identifier.
     /// </returns>
-    public string Instance
+    public int Instance
     {
-        get => Name.Contains("-") ? Name.Split("-")[1] : string.Empty;
+        get
+        {
+            if (Name.Contains('-') && int.TryParse(Name.Split('-')[1], out int instanceNumber))
+            {
+                return instanceNumber;
+            }
+            else
+            {
+                return 0;
+            }
+        }
     }
     #endregion
 

@@ -36,10 +36,10 @@ public class RMArea : ReadableModel
 
     public string Name
     {
-        get => Area.Name;
+        get => Area.Format.Name;
     }
 
-    public string Instance
+    public int Instance_Number
     {
         get => Area.Instance;
     }

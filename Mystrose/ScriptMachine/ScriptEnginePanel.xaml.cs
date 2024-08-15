@@ -424,7 +424,7 @@ public partial class ScriptEnginePanel : UserControl
 
     public void AddInternalCodeline(ScriptCommand cmd)
     {
-        if (SelectedInternalList is IStackable stackableCmd)
+        if (SelectedInternalList is IStackable stackableCmd && stackableCmd.IsInputValid(cmd))
         {
             stackableCmd.InternalCommands.Add(cmd);
             RefreshCodelines(stackableCmd.InternalCommands);
@@ -487,8 +487,29 @@ public partial class ScriptEnginePanel : UserControl
 
             CodelinesList.Items.RemoveAt(index);
             CodelinesList.Items.Insert(index - 1, item);
-            Engine.CurrentStance.Commands.RemoveAt(index);
-            Engine.CurrentStance.Commands.Insert(index - 1, Engine.CurrentStance.Commands[index]);
+
+            switch (ViewType)
+            {
+                case ScriptViewType.Action:
+                    Engine.CurrentStance.Commands.RemoveAt(index);
+                    Engine.CurrentStance.Commands.Insert(index - 1, Engine.CurrentStance.Commands[index]);
+                    break;
+                case ScriptViewType.Trigger:
+                    Engine.CurrentLoadout.Triggers.RemoveAt(index);
+                    Engine.CurrentLoadout.Triggers.Insert(index - 1, Engine.CurrentLoadout.Triggers[index]);
+                    break;
+                case ScriptViewType.Variable:
+                    Engine.CurrentLoadout.PresetVariables.RemoveAt(index);
+                    Engine.CurrentLoadout.PresetVariables.Insert(index - 1, Engine.CurrentLoadout.PresetVariables[index]);
+                    break;
+                case ScriptViewType.Listed:
+                    if (SelectedInternalList is IStackable stackableCmd)
+                    {
+                        stackableCmd.InternalCommands.RemoveAt(index);
+                        stackableCmd.InternalCommands.Insert(index - 1, stackableCmd.InternalCommands[index]);
+                    }
+                    break;
+            }
 
             item.Index--;
         }
@@ -507,8 +528,29 @@ public partial class ScriptEnginePanel : UserControl
 
             CodelinesList.Items.RemoveAt(index);
             CodelinesList.Items.Insert(index + 1, item);
-            Engine.CurrentStance.Commands.RemoveAt(index);
-            Engine.CurrentStance.Commands.Insert(index + 1, Engine.CurrentStance.Commands[index]);
+
+            switch (ViewType)
+            {
+                case ScriptViewType.Action:
+                    Engine.CurrentStance.Commands.RemoveAt(index);
+                    Engine.CurrentStance.Commands.Insert(index + 1, Engine.CurrentStance.Commands[index]);
+                    break;
+                case ScriptViewType.Trigger:
+                    Engine.CurrentLoadout.Triggers.RemoveAt(index);
+                    Engine.CurrentLoadout.Triggers.Insert(index + 1, Engine.CurrentLoadout.Triggers[index]);
+                    break;
+                case ScriptViewType.Variable:
+                    Engine.CurrentLoadout.PresetVariables.RemoveAt(index);
+                    Engine.CurrentLoadout.PresetVariables.Insert(index + 1, Engine.CurrentLoadout.PresetVariables[index]);
+                    break;
+                case ScriptViewType.Listed:
+                    if (SelectedInternalList is IStackable stackableCmd)
+                    {
+                        stackableCmd.InternalCommands.RemoveAt(index);
+                        stackableCmd.InternalCommands.Insert(index + 1, stackableCmd.InternalCommands[index]);
+                    }
+                    break;
+            }
 
             item.Index++;
         }
@@ -516,19 +558,27 @@ public partial class ScriptEnginePanel : UserControl
 
     public void ClearSelectedCodelines()
     {
-        if (CodelinesList.SelectedItems.Count > 0)
+        switch (ViewType)
         {
-            foreach (ScriptCodelineItem item in CodelinesList.SelectedItems)
-            {
-                CodelinesList.Items.Remove(item);
-                Engine.CurrentStance.Commands.Remove(item.Command);
-            }
+            case ScriptViewType.Action:
+                Engine.CurrentStance.Commands.Clear();
+                break;
+            case ScriptViewType.Trigger:
+                Engine.CurrentLoadout.Triggers.Clear();
+                break;
+            case ScriptViewType.Variable:
+                Engine.CurrentLoadout.PresetVariables.Clear();
+                break;
+            case ScriptViewType.Listed:
+                if (SelectedInternalList is IStackable stackableCmd)
+                {
+                    stackableCmd.InternalCommands.Clear();
+                }
+                break;
+
         }
-        else
-        {
-            CodelinesList.Items.Clear();
-            Engine.CurrentStance.Commands.Clear();
-        }
+
+        CodelinesList.Items.Clear();
     }
 
     public void SelectCodelineType()

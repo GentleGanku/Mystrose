@@ -17,6 +17,4 @@ public enum ScriptValueType
     Double,
     [EnumMember(Value = "Boolean")]
     Boolean,
-    [EnumMember(Value = "Object")]
-    Object,
 }

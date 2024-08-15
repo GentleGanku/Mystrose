@@ -60,7 +60,7 @@ public class ScriptVariableDictionary : Dictionary<string, ScriptVariable>
         ScriptVariable var = new(keyPrm.String, valuePrm.Object);
 
         Add(keyPrm.String, var);
-        engine.InvokeTrigger(ScriptTriggerType.Variable, ScriptRepository.ConvertToParameters(var.KeyValuePair));
+        engine.InvokeTrigger(ScriptTriggerType.Variable, var.KeyValuePair);
         return true;
     }
     #endregion
@@ -88,7 +88,7 @@ public class ScriptVariableDictionary : Dictionary<string, ScriptVariable>
         var.KeyValuePair.SetValue(null);
 
         base.Remove(key);
-        engine.InvokeTrigger(ScriptTriggerType.Variable, ScriptRepository.ConvertToParameters(var.KeyValuePair));
+        engine.InvokeTrigger(ScriptTriggerType.Variable, var.KeyValuePair);
         return true;
     }
     #endregion
@@ -146,7 +146,7 @@ public class ScriptVariableDictionary : Dictionary<string, ScriptVariable>
 
         ScriptVariable var = this[key];
 
-        engine.InvokeTrigger(ScriptTriggerType.Variable, ScriptRepository.ConvertToParameters(var.KeyValuePair));
+        engine.InvokeTrigger(ScriptTriggerType.Variable, var.KeyValuePair);
         return true;
     }
     #endregion
