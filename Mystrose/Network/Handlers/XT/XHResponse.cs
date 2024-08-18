@@ -1,9 +1,4 @@
-﻿using Mystrose.Network.Messages.Interfaces;
-using Mystrose.Network.Messages;
-using Mystrose.Controls.Main;
-using Mystrose.Utilities.Enumerations;
-
-namespace Mystrose.Network.Handlers.XT;
+﻿namespace Mystrose.Network.Handlers.XT;
 
 public class XHResponse : IXTMessageHandler
 {

@@ -1,12 +1,4 @@
-﻿using Mystrose.Controls.Main;
-using Mystrose.GameModels.SkillObjects;
-using Mystrose.Network.Messages;
-using Mystrose.Network.Messages.Interfaces;
-using Mystrose.ScriptMachine.Enumerations;
-using System.Collections.Generic;
-using System.Text.Json.Nodes;
-
-namespace Mystrose.Network.Handlers.JSON;
+﻿namespace Mystrose.Network.Handlers.JSON;
 
 public class JHEvent : IJSONMessageHandler
 {

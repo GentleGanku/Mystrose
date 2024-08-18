@@ -1,12 +1,4 @@
-﻿using Mystrose.Network.Messages.Interfaces;
-using Mystrose.Network.Messages;
-using System.Text.Json;
-using System.IO;
-using System;
-using Mystrose.Controls.Main;
-using System.Linq;
-
-namespace Mystrose.Network.Handlers;
+﻿namespace Mystrose.Network.Handlers;
 
 public class TestXT : IXTMessageHandler
 {

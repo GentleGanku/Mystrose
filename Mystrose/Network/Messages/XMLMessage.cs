@@ -1,6 +1,4 @@
-﻿using System.Xml;
-
-namespace Mystrose.Network.Messages;
+﻿namespace Mystrose.Network.Messages;
 
 public class XMLMessage : Message
 {

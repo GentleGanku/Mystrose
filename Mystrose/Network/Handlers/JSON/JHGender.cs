@@ -1,12 +1,4 @@
-﻿using Mystrose.Controls.Main;
-using Mystrose.GameModels.General;
-using Mystrose.Network.Messages;
-using Mystrose.Network.Messages.Interfaces;
-using Mystrose.ScriptMachine.Enumerations;
-using Mystrose.Utilities.Enumerations;
-using System.Text.Json;
-
-namespace Mystrose.Network.Handlers.JSON;
+﻿namespace Mystrose.Network.Handlers.JSON;
 
 public class JHGender : IJSONMessageHandler
 {

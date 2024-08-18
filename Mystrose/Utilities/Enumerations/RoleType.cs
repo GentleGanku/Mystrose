@@ -1,7 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using System.Runtime.Serialization;
-
-namespace Mystrose.Utilities.Enumerations;
+﻿namespace Mystrose.Utilities.Enumerations;
 
 /// <summary>
 /// An enumeration that represents every Boost Type in the game.

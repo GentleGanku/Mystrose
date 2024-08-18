@@ -1,7 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using System.Text;
-
-namespace Mystrose.Modifiers;
+﻿namespace Mystrose.Modifiers;
 
 /// USER-AGENT MODIFIER
 /// urlmon.dll must be on the solution

@@ -1,7 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Nodes;
-
-namespace Mystrose.Network.Messages;
+﻿namespace Mystrose.Network.Messages;
 
 public class JSONMessage : Message
 {

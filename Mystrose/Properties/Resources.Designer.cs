@@ -61,15 +61,6 @@ namespace Mystrose.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
-        /// </summary>
-        public static System.IO.UnmanagedMemoryStream BattleHaven {
-            get {
-                return ResourceManager.GetStream("BattleHaven", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         public static byte[] Mystrose {

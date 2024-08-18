@@ -1,8 +1,4 @@
-﻿using Mystrose.Controls.Main;
-using Mystrose.Network.Messages;
-using Mystrose.Network.Messages.Interfaces;
-
-namespace Mystrose.Network.Handlers.XT;
+﻿namespace Mystrose.Network.Handlers.XT;
 
 public class XHRespawn : IXTMessageHandler
 {

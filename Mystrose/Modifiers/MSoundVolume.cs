@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace Mystrose.Modifiers;
+﻿namespace Mystrose.Modifiers;
 
 /// SOUND VOLUME MODIFIER
 public class MSoundVolume

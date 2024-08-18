@@ -1,6 +1,4 @@
-﻿using Mystrose.Modifiers;
-using System;
-using System.Windows;
+﻿using Application = System.Windows.Application;
 
 namespace Mystrose;
 

@@ -1,10 +1,4 @@
-﻿using Mystrose.Controls.Main;
-using Mystrose.GameModels.General;
-using Mystrose.Network.Messages;
-using Mystrose.Network.Messages.Interfaces;
-using Mystrose.ScriptMachine.Enumerations;
-
-namespace Mystrose.Network.Handlers.XT;
+﻿namespace Mystrose.Network.Handlers.XT;
 
 public class XHMap : IXTMessageHandler
 {

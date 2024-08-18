@@ -1,9 +1,4 @@
-﻿using Mystrose.Controls.Main;
-using Mystrose.GameModels.General;
-using Mystrose.Network.Messages;
-using Mystrose.Network.Messages.Interfaces;
-
-namespace Mystrose.Network.Handlers.JSON;
+﻿namespace Mystrose.Network.Handlers.Unused;
 
 public class HItemTransfer : IJSONMessageHandler
 {

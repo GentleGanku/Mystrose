@@ -1,8 +1,4 @@
-﻿using Mystrose.Controls.Main;
-using Mystrose.Network.Messages;
-using Mystrose.Network.Messages.Interfaces;
-
-namespace Mystrose.Network.Handlers.WIP;
+﻿namespace Mystrose.Network.Handlers.WIP;
 
 public class HFriendship : IJSONMessageHandler
 {

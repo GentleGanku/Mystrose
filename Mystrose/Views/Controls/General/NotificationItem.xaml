@@ -1,0 +1,55 @@
+﻿<UserControl
+    x:Class="Mystrose.Views.Controls.General.NotificationItem"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    d:DesignHeight="100"
+    d:DesignWidth="280"
+    mc:Ignorable="d">
+
+    <Grid Margin="2.5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <ui:SymbolIcon
+            x:Name="TypeIcon"
+            Grid.Column="0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            Filled="True"
+            FontSize="24"
+            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+            Symbol="{Binding Icon}" />
+        <StackPanel Grid.Column="1" Margin="10,1.5">
+            <TextBlock
+                x:Name="MessageBlock"
+                FontFamily="{StaticResource Poppins}"
+                FontSize="12"
+                Text="{Binding Message}"
+                TextWrapping="Wrap" />
+            <TextBlock
+                x:Name="SourceBlock"
+                Margin="0,5,0,2.5"
+                FontFamily="{StaticResource Poppins}"
+                FontSize="10"
+                Opacity="0.5"
+                Text="{Binding SourceText}"
+                TextWrapping="Wrap" />
+        </StackPanel>
+        <ui:SymbolIcon
+            x:Name="UnreadIcon"
+            Grid.Column="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            Filled="True"
+            FontSize="12"
+            Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
+            Symbol="Circle24"
+            Visibility="Visible" />
+    </Grid>
+</UserControl>

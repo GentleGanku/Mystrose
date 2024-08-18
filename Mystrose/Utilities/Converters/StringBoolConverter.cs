@@ -1,8 +1,4 @@
-﻿using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-namespace Mystrose.Utilities.Converters;
+﻿namespace Mystrose.Utilities.Converters;
 
 public class StringBoolConverter : JsonConverter<bool>
 {

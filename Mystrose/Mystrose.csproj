@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>True</UseWindowsForms>
     <StartupObject>Mystrose.App</StartupObject>
-    <ApplicationIcon>Resources\Icons\Mystrose.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Graphics\Mystrose.ico</ApplicationIcon>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Title>Mystrose</Title>
     <Authors>GentleGanku</Authors>
@@ -34,7 +34,10 @@
     <None Remove="Resources\Fonts\BD-Merced-Regular.ttf" />
     <None Remove="Resources\Fonts\Poppins-Bold.ttf" />
     <None Remove="Resources\Fonts\Poppins-Regular.ttf" />
-    <None Remove="Resources\Images\Mystrose.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\Graphics\Mystrose.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,14 +49,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Fody" Version="6.8.0">
+    <PackageReference Include="Fody" Version="6.8.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="4.11.0" />
-    <PackageReference Include="NAudio" Version="2.1.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.3" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
   </ItemGroup>
 
@@ -83,13 +85,13 @@
     <Resource Include="Resources\Fonts\Poppins-Regular.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resources\Images\Mystrose.png">
+    <Resource Include="Resources\Graphics\Mystrose.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Panels\General\FrozenPanel.xaml.cs">
+    <Compile Update="Views\Panels\General\FrozenPanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
@@ -97,7 +99,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="ScriptMachine\Controls\ScriptCodelineItem.xaml.cs">
+    <Compile Update="Core\ScriptMachine\Panels\Controls\ScriptCodelineItem.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -110,7 +112,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ReadableModels\Network\" />
+    <Folder Include="Core\Logger\" />
+    <Folder Include="Views\Base\" />
   </ItemGroup>
 
 </Project>

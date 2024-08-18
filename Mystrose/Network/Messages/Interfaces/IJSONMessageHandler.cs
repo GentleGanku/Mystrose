@@ -1,6 +1,4 @@
-﻿using Mystrose.Controls.Main;
-
-namespace Mystrose.Network.Messages.Interfaces;
+﻿namespace Mystrose.Network.Messages.Interfaces;
 
 public interface IJSONMessageHandler
 {

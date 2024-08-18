@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Mystrose.Network.Messages;
+﻿namespace Mystrose.Network.Messages;
 
 public class XTMessage : Message
 {
