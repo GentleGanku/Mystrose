@@ -1,7 +1,4 @@
-﻿using Mystrose.DataFormats.ReadableModels.Game;
-using Mystrose.DataFormats.ReadableModels.ScriptMachine;
-
-namespace Mystrose.Core.ScriptMachine.Commands.Others;
+﻿namespace Mystrose.Core.ScriptMachine.Commands.Others;
 
 public class SCMDTrigger : ScriptCommand, ITriggerCommand, IStackable
 {

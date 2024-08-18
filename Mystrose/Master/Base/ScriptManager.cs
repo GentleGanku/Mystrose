@@ -1,7 +1,4 @@
-﻿using Mystrose.DataFormats.ReadableModels.Game;
-using Mystrose.DataFormats.ReadableModels.ScriptMachine;
-
-namespace Mystrose.Master.Base;
+﻿namespace Mystrose.Master.Base;
 
 public class ScriptManager
 {

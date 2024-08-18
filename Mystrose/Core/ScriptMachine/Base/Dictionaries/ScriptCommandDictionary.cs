@@ -1,6 +1,4 @@
-﻿using Mystrose.Core.ScriptMachine.Commands.Action;
-
-namespace Mystrose.Core.ScriptMachine.Base.Dictionaries;
+﻿namespace Mystrose.Core.ScriptMachine.Base.Dictionaries;
 
 public class ScriptCommandDictionary : Dictionary<ScriptCodelineType, List<ScriptCommand>>
 {

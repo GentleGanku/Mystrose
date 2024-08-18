@@ -1,4 +1,4 @@
-﻿namespace Mystrose.DataFormats.GameModels.Messages;
+﻿namespace Mystrose.DataFormats.GameModels.Message;
 
 /// <summary>
 /// A class that represents a combat message (fielding a yellow text) in the game.
