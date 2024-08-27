@@ -127,10 +127,10 @@
                     Padding="0"
                     HorizontalAlignment="Stretch">
                     <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconUnicons
+                        <ui:SymbolIcon
                             Width="16"
                             Height="16"
-                            Kind="Plus" />
+                            Symbol="Add20" />
                         <TextBlock
                             Name="PlayTxt"
                             Height="16"
@@ -150,10 +150,10 @@
                     Padding="0"
                     HorizontalAlignment="Stretch">
                     <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconSimpleIcons
+                        <ui:SymbolIcon
                             Width="16"
                             Height="16"
-                            Kind="Discord" />
+                            Symbol="AppTitle20" />
                         <TextBlock
                             Name="DiscordTxt"
                             Height="16"
@@ -173,10 +173,7 @@
                     Padding="0"
                     HorizontalAlignment="Stretch">
                     <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial
-                            Width="16"
-                            Height="16"
-                            Kind="Web" />
+                        <ui:SymbolIcon Symbol="WebAsset20" />
                         <TextBlock
                             Name="WebsiteTxt"
                             Height="16"
@@ -197,10 +194,7 @@
                     HorizontalAlignment="Stretch"
                     IsEnabled="False">
                     <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconSimpleIcons
-                            Width="16"
-                            Height="16"
-                            Kind="Patreon" />
+                        <ui:SymbolIcon Symbol="Money16" />
                         <TextBlock
                             Name="PatreonTxt"
                             Height="16"

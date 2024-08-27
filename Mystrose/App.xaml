@@ -4,21 +4,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Mystrose"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    StartupUri="pack://application:,,,/Windows/MainWindow.xaml">
+    StartupUri="pack://application:,,,/Views/Logger/VWLogger.xaml">
 
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Resources/Styles/General.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Resources/Styles/Icons.xaml" />
-                <!--<ResourceDictionary Source="pack://application:,,,/Resources/Themes/DefiantDefault.xaml" />-->
-                <!--<ui:ThemesDictionary Theme="Dark" />-->
-                <ui:ThemesDictionary Theme="DefiantDefault" />
+                <ResourceDictionary Source="pack://application:,,,/Resources/ResourceDictionaries/CustomIcons.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Resources/ResourceDictionaries/Fonts.xaml" />
+                <ui:ThemesDictionary Theme="Dark" />
                 <ui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
-            <FontFamily x:Key="BDMerced">pack://application:,,,/Resources/Fonts/#BD Merced</FontFamily>
-            <FontFamily x:Key="Poppins">pack://application:,,,/Resources/Fonts/#Poppins</FontFamily>
-            <FontFamily x:Key="SFI">pack://application:,,,/Resources/Fonts/#Segoe Fluent Icons</FontFamily>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

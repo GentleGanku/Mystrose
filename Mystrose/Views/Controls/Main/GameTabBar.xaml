@@ -50,22 +50,14 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <ui:TabItem
+                <ui:Button
                     Name="HomeBtn"
                     Grid.Column="0"
                     Width="32"
                     Height="32"
                     Padding="0"
-                    ContentMode="MinimalIcon"
                     ToolTipService.InitialShowDelay="100"
-                    ToolTipService.Placement="MousePoint">
-                    <ui:TabItem.ToolTip>
-                        <ToolTip Content="Home" />
-                    </ui:TabItem.ToolTip>
-                    <ui:TabItem.IconControlContent>
-                        <iconPacks:PackIconTypicons Kind="Home" />
-                    </ui:TabItem.IconControlContent>
-                </ui:TabItem>
+                    ToolTipService.Placement="MousePoint" />
                 <Border
                     Grid.Column="1"
                     Width="0.5"
@@ -98,7 +90,7 @@
                         <ToolTip Content="New Tab" />
                     </ui:Button.ToolTip>
                     <ui:Button.Content>
-                        <iconPacks:PackIconUnicons Kind="Plus" />
+                        <ui:SymbolIcon Symbol="Add20" />
                     </ui:Button.Content>
                     <!--<ui:MenuButton.Menu>
                         <ContextMenu
@@ -119,47 +111,14 @@
                         </ContextMenu>
                     </ui:MenuButton.Menu>-->
                 </ui:Button>
-                <ui:MenuButton
+                <ui:Button
                     x:Name="MenuBtn"
                     Grid.Column="5"
                     Width="32"
                     Height="32"
                     Padding="0"
                     ToolTipService.InitialShowDelay="100"
-                    ToolTipService.Placement="MousePoint">
-                    <ui:MenuButton.ToolTip>
-                        <ToolTip Content="App Menu" />
-                    </ui:MenuButton.ToolTip>
-                    <iconPacks:PackIconEvaIcons Kind="MenuOutline" />
-                    <ui:MenuButton.Menu>
-                        <ContextMenu Width="225">
-                            <!--<ui:MenuItem
-                                Name="ModeMenu"
-                                Click="OnMenuItemClick"
-                                FontSize="11"
-                                Header="Multi-Game Mode" />
-                            <Separator />-->
-                            <ui:MenuItem
-                                Name="MinimizeMenu"
-                                Click="OnMenuItemClick"
-                                FontSize="11"
-                                Header="Minimize"
-                                InputGestureText="Ctrl + Shift + Z" />
-                            <ui:MenuItem
-                                Name="MaximizeRestoreMenu"
-                                Click="OnMenuItemClick"
-                                FontSize="11"
-                                Header="Maximize/Restore"
-                                InputGestureText="Ctrl + Shift + X" />
-                            <ui:MenuItem
-                                Name="CloseMenu"
-                                Click="OnMenuItemClick"
-                                FontSize="11"
-                                Header="Close"
-                                InputGestureText="Ctrl + Shift + C" />
-                        </ContextMenu>
-                    </ui:MenuButton.Menu>
-                </ui:MenuButton>
+                    ToolTipService.Placement="MousePoint" />
             </Grid>
         </ui:TitleBar.Header>
     </ui:TitleBar>

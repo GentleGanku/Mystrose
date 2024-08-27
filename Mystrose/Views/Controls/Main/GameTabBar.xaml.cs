@@ -1,5 +1,4 @@
 ﻿using HorizontalAlignment = System.Windows.HorizontalAlignment;
-using TabItem = Wpf.Ui.Controls.TabItem;
 using MenuItem = Wpf.Ui.Controls.MenuItem;
 using TextBlock = System.Windows.Controls.TextBlock;
 using UserControl = System.Windows.Controls.UserControl;
@@ -25,17 +24,11 @@ public partial class GameTabBar : UserControl
         set;
     }
 
-    protected internal TabItem SelectedItem
-    {
-        get;
-        set;
-    }
-
-    protected internal TabGroup SelectedGroup
-    {
-        get;
-        set;
-    }
+    //protected internal TabItem SelectedItem
+    //{
+    //    get;
+    //    set;
+    //}
     #endregion
 
     #region Methods: Controller
@@ -44,40 +37,40 @@ public partial class GameTabBar : UserControl
         SkipHomeSetting();
     }
 
-    public void AddNewTab()
-    {
-        if (TabMethods.IsTabGroupsFull() && TabMethods.IsGameTabsFull())
-        {
-            return;
-        }
+    //public void AddNewTab()
+    //{
+    //    if (TabMethods.IsTabGroupsFull() && TabMethods.IsGameTabsFull())
+    //    {
+    //        return;
+    //    }
 
-        if (TabMethods.IsTabGroupNew())
-        {
-            TabGroup tabGroup = CreateGameTabGroup(TabGroups.Children.Count);
-            Window.NavigationBar.NotifsFlyoutContent.AddGroup(TabGroups.Children.Count);
+    //    if (TabMethods.IsTabGroupNew())
+    //    {
+    //        TabGroup tabGroup = CreateGameTabGroup(TabGroups.Children.Count);
+    //        Window.NavigationBar.NotifsFlyoutContent.AddGroup(TabGroups.Children.Count);
 
-            TabGroups.Children.Add(tabGroup);
+    //        TabGroups.Children.Add(tabGroup);
 
-            OnTabGroupClick(tabGroup, null);
-        }
+    //        OnTabGroupClick(tabGroup, null);
+    //    }
 
-        TabItem item = CreateTabItem(GameTabs.Children.Count);
+    //    TabItem item = CreateTabItem(GameTabs.Children.Count);
 
-        Client client = new();
-        ClientMaster.Clients.Add(item, client);
-        ClientMaster.Profiles.Add(client.Profile);
+    //    Client client = new();
+    //    ClientMaster.Clients.Add(item, client);
+    //    ClientMaster.Profiles.Add(client.Profile);
 
-        client.Profile.InstanceTab = item;
+    //    client.Profile.InstanceTab = item;
 
-        GameTabs.Children.Add(client.Profile.InstanceTab);
-        SelectedGroup.Tabs.Add(client.Profile.InstanceTab);
+    //    GameTabs.Children.Add(client.Profile.InstanceTab);
+    //    SelectedGroup.Tabs.Add(client.Profile.InstanceTab);
 
-        client.GameHost.GroupIndex = TabGroups.Children.IndexOf(SelectedGroup);
+    //    client.GameHost.GroupIndex = TabGroups.Children.IndexOf(SelectedGroup);
 
-        client.Profile.InstanceTab.ContentPanel.Content = client.GameHost;
+    //    client.Profile.InstanceTab.ContentPanel.Content = client.GameHost;
 
-        OnTabItemClick(client.Profile.InstanceTab, null);
-    }
+    //    OnTabItemClick(client.Profile.InstanceTab, null);
+    //}
 
     public async void AddAllNewTabs()
     {
@@ -89,7 +82,7 @@ public partial class GameTabBar : UserControl
         int emptyTabCount = TabMethods.GetGameTabsMax() - GameTabs.Children.Count;
         for (int i = 0; i < emptyTabCount; i++)
         {
-            AddNewTab();
+            //AddNewTab();
             await Task.Delay(10);
         }
     }
@@ -202,20 +195,19 @@ public partial class GameTabBar : UserControl
     #region Methods: Setter
     private void InitializeStartup()
     {
-        SelectedItem = new TabItem();
-        SelectedGroup = new TabGroup();
+        //SelectedItem = new TabItem();
 
-        HomeBtn.ContentPanel.Content = new HomePanel();
-        (HomeBtn.ContentPanel.Content as HomePanel).Parent = this;
+        //HomeBtn.ContentPanel.Content = new HomePanel();
+        //(HomeBtn.ContentPanel.Content as HomePanel).Parent = this;
 
-        HomeBtn.ClickEvent += OnTabItemClick;
+        //HomeBtn.ClickEvent += OnTabItemClick;
 
         AddTabBtn.Click += OnAddTabClick;
 
-        TitleBar.MouseWheel += OnTitleBarMouseWheel;
+        //TitleBar.MouseWheel += OnTitleBarMouseWheel;
         TitleBar.MouseRightButtonDown += OnTitleBarMouseRight;
 
-        OnTabItemClick(HomeBtn, null);
+        //OnTabItemClick(HomeBtn, null);
     }
 
     private void SetColumnDefs()
@@ -245,193 +237,122 @@ public partial class GameTabBar : UserControl
     {
         if (ClientMaster.Settings.IsHomeSkip)
         {
-            AddNewTab();
+            //AddNewTab();
         }
     }
     #endregion
 
     #region Methods: Tab Item
-    private TabItem CreateTabItem(int index, RoleType role = RoleType.Unknown)
-    {
-        TabItem tabItem = new()
-        {
-            Name = "Tab" + index,
-            Height = 26,
-            Margin = new Thickness(1.5, 1, 1.5, 0),
-            Padding = new Thickness(5, 0, 5, 0),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            HorizontalContentAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Top,
-            IconControlContent = GetRoleIcon(role),
-            Content = new TextBlock()
-            {
-                Text = "New Tab",
-                Height = 16,
-                FontSize = 11,
-                TextTrimming = TextTrimming.CharacterEllipsis,
-            },
-            MiscControlContent = new MenuButton()
-            {
-                Width = 16,
-                Height = 16,
-                Padding = new Thickness(0),
-                IconControlContent = new PackIconEvaIcons()
-                {
-                    Width = 8,
-                    Height = 8,
-                    Kind = PackIconEvaIconsKind.ArrowIosDownward
-                }
-            }
-        };
+    //private TabItem CreateTabItem(int index, RoleType role = RoleType.Unknown)
+    //{
+    //    TabItem tabItem = new()
+    //    {
+    //        Name = "Tab" + index,
+    //        Height = 26,
+    //        Margin = new Thickness(1.5, 1, 1.5, 0),
+    //        Padding = new Thickness(5, 0, 5, 0),
+    //        HorizontalAlignment = HorizontalAlignment.Stretch,
+    //        HorizontalContentAlignment = HorizontalAlignment.Stretch,
+    //        VerticalAlignment = VerticalAlignment.Top,
+    //        IconControlContent = GetRoleIcon(role),
+    //        Content = new TextBlock()
+    //        {
+    //            Text = "New Tab",
+    //            Height = 16,
+    //            FontSize = 11,
+    //            TextTrimming = TextTrimming.CharacterEllipsis,
+    //        },
+    //        MiscControlContent = new MenuButton()
+    //        {
+    //            Width = 16,
+    //            Height = 16,
+    //            Padding = new Thickness(0),
+    //            IconControlContent = new PackIconEvaIcons()
+    //            {
+    //                Width = 8,
+    //                Height = 8,
+    //                Kind = PackIconEvaIconsKind.ArrowIosDownward
+    //            }
+    //        }
+    //    };
 
-        tabItem.ClickEvent += OnTabItemClick;
+    //    tabItem.ClickEvent += OnTabItemClick;
 
-        (tabItem.MiscControlContent as MenuButton).Menu = new();
-        (tabItem.MiscControlContent as MenuButton)?.Menu.Items.Add(new MenuItem()
-        {
-            Name = "CloseTabMenu",
-            Header = "Close tab",
-            Tag = index
-        });
-        (tabItem.MiscControlContent as MenuButton)?.Menu.Items.Add(new MenuItem()
-        {
-            Name = "CloseTabsMenu",
-            Header = "Close other tabs",
-            Tag = index
-        });
+    //    (tabItem.MiscControlContent as MenuButton).Menu = new();
+    //    (tabItem.MiscControlContent as MenuButton)?.Menu.Items.Add(new MenuItem()
+    //    {
+    //        Name = "CloseTabMenu",
+    //        Header = "Close tab",
+    //        Tag = index
+    //    });
+    //    (tabItem.MiscControlContent as MenuButton)?.Menu.Items.Add(new MenuItem()
+    //    {
+    //        Name = "CloseTabsMenu",
+    //        Header = "Close other tabs",
+    //        Tag = index
+    //    });
 
-        ((tabItem.MiscControlContent as MenuButton)?.Menu.Items[0] as MenuItem).Click += OnMenuItemClick;
-        ((tabItem.MiscControlContent as MenuButton)?.Menu.Items[1] as MenuItem).Click += OnMenuItemClick;
+    //    ((tabItem.MiscControlContent as MenuButton)?.Menu.Items[0] as MenuItem).Click += OnMenuItemClick;
+    //    ((tabItem.MiscControlContent as MenuButton)?.Menu.Items[1] as MenuItem).Click += OnMenuItemClick;
 
-        tabItem.SetValue(Grid.ColumnProperty, index);
+    //    tabItem.SetValue(Grid.ColumnProperty, index);
 
-        return tabItem;
-    }
+    //    return tabItem;
+    //}
 
-    private object GetRoleIcon(RoleType role)
-    {
-        object icon;
-        switch (role)
-        {
-            case RoleType.Shield:
-                icon = new PackIconMaterial()
-                {
-                    Width = 16,
-                    Height = 16,
-                    Margin = new Thickness(1, 0, 0, 0),
-                    Kind = PackIconMaterialKind.ShieldSword
-                };
-                break;
-            case RoleType.Support:
-                icon = new PackIconBootstrapIcons()
-                {
-                    Width = 16,
-                    Height = 16,
-                    Margin = new Thickness(1, 0, 0, 0),
-                    Kind = PackIconBootstrapIconsKind.Stars
-                };
-                break;
-            case RoleType.Warrior:
-                icon = new PackIconRPGAwesome()
-                {
-                    Width = 16,
-                    Height = 16,
-                    Margin = new Thickness(1, 0, 0, 0),
-                    Kind = PackIconRPGAwesomeKind.SpinningSword
-                };
-                break;
-            case RoleType.Mage:
-                return new PackIconSimpleIcons()
-                {
-                    Width = 16,
-                    Height = 16,
-                    Margin = new Thickness(1, 0, 0, 0),
-                    Kind = PackIconSimpleIconsKind.Codemagic
-                };
-            case RoleType.Rogue:
-                icon = new PackIconRPGAwesome()
-                {
-                    Width = 16,
-                    Height = 16,
-                    Margin = new Thickness(1, 0, 0, 0),
-                    Kind = PackIconRPGAwesomeKind.DrippingKnife
-                };
-                break;
-            case RoleType.Healer:
-                icon = new PackIconFontAwesome()
-                {
-                    Width = 16,
-                    Height = 16,
-                    Margin = new Thickness(1, 0, 0, 0),
-                    Kind = PackIconFontAwesomeKind.HandSparklesSolid
-                };
-                break;
-            default:
-                icon = new PackIconRPGAwesome()
-                {
-                    Width = 16,
-                    Height = 16,
-                    Margin = new Thickness(1, 0, 0, 0),
-                    Kind = PackIconRPGAwesomeKind.Helmet
-                };
-                break;
-        }
-        return icon;
-    }
+    //private void CloseTab(object sender, RoutedEventArgs e)
+    //{
+    //    int index = int.Parse((sender as MenuItem).Tag.ToString());
 
-    private void CloseTab(object sender, RoutedEventArgs e)
-    {
-        int index = int.Parse((sender as MenuItem).Tag.ToString());
+    //    TabItem? tabItem = GameTabs.Children[index] as TabItem;
+    //    Profile profile = ProfileMethods.GetProfile(tabItem);
 
-        TabItem? tabItem = GameTabs.Children[index] as TabItem;
-        Profile profile = ProfileMethods.GetProfile(tabItem);
+    //    GameTabs.Children.Remove(tabItem);
+    //    SelectedGroup.Tabs.Remove(tabItem);
+    //    tabItem = null;
 
-        GameTabs.Children.Remove(tabItem);
-        SelectedGroup.Tabs.Remove(tabItem);
-        tabItem = null;
+    //    ClientMaster.Profiles.Remove(profile);
+    //    profile = null;
 
-        ClientMaster.Profiles.Remove(profile);
-        profile = null;
+    //    for (int tabIndex = 0; tabIndex < GameTabs.Children.Count; tabIndex++)
+    //    {
+    //        TabItem? gameTab = GameTabs.Children[tabIndex] as TabItem;
+    //        gameTab.Name = "Tab" + tabIndex;
+    //        gameTab.SetValue(Grid.ColumnProperty, tabIndex);
 
-        for (int tabIndex = 0; tabIndex < GameTabs.Children.Count; tabIndex++)
-        {
-            TabItem? gameTab = GameTabs.Children[tabIndex] as TabItem;
-            gameTab.Name = "Tab" + tabIndex;
-            gameTab.SetValue(Grid.ColumnProperty, tabIndex);
+    //        for (int menuIndex = 0; menuIndex < (gameTab.MiscControlContent as MenuButton)?.Menu.Items.Count; menuIndex++)
+    //        {
+    //            MenuItem? menuItem = (gameTab.MiscControlContent as MenuButton)?.Menu.Items[menuIndex] as MenuItem;
+    //            menuItem.Tag = tabIndex;
+    //        }
+    //    }
 
-            for (int menuIndex = 0; menuIndex < (gameTab.MiscControlContent as MenuButton)?.Menu.Items.Count; menuIndex++)
-            {
-                MenuItem? menuItem = (gameTab.MiscControlContent as MenuButton)?.Menu.Items[menuIndex] as MenuItem;
-                menuItem.Tag = tabIndex;
-            }
-        }
+    //    if (SelectedGroup.Tabs.Count > 0)
+    //    {
+    //        OnTabItemClick(GameTabs.Children[0], null);
+    //    }
+    //    else
+    //    {
+    //        TabGroups.Children.RemoveAt(int.Parse(SelectedGroup.Tag.ToString()));
 
-        if (SelectedGroup.Tabs.Count > 0)
-        {
-            OnTabItemClick(GameTabs.Children[0], null);
-        }
-        else
-        {
-            TabGroups.Children.RemoveAt(int.Parse(SelectedGroup.Tag.ToString()));
+    //        for (int i = 0; i < TabGroups.Children.Count; i++)
+    //        {
+    //            TabGroup tabGroup = TabGroups.Children[i] as TabGroup;
+    //            tabGroup.Name = "TabGroup" + i;
+    //            tabGroup.Tag = i;
+    //            tabGroup.SetValue(Grid.ColumnProperty, i);
+    //        }
 
-            for (int i = 0; i < TabGroups.Children.Count; i++)
-            {
-                TabGroup tabGroup = TabGroups.Children[i] as TabGroup;
-                tabGroup.Name = "TabGroup" + i;
-                tabGroup.Tag = i;
-                tabGroup.SetValue(Grid.ColumnProperty, i);
-            }
-
-            if (TabGroups.Children.Count > 0)
-            {
-                OnTabGroupClick(TabGroups.Children[0], null);
-            }
-            else
-            {
-                OnTabItemClick(HomeBtn, null);
-            }
-        }
-    }
+    //        if (TabGroups.Children.Count > 0)
+    //        {
+    //            OnTabGroupClick(TabGroups.Children[0], null);
+    //        }
+    //        else
+    //        {
+    //            OnTabItemClick(HomeBtn, null);
+    //        }
+    //    }
+    //}
 
     private void CloseOtherTabs(object sender, RoutedEventArgs e)
     {
@@ -442,10 +363,10 @@ public partial class GameTabBar : UserControl
         {
             if (GameTabs.Children[i] != targetedTabItem)
             {
-                CloseTab(new MenuItem()
-                {
-                    Tag = i
-                }, null);
+                //CloseTab(new MenuItem()
+                //{
+                //    Tag = i
+                //}, null);
             }
             else
             {
@@ -456,25 +377,25 @@ public partial class GameTabBar : UserControl
     #endregion
 
     #region Methods: Tab Group
-    private TabGroup CreateGameTabGroup(int index)
-    {
-        TabGroup tabGroup = new()
-        {
-            Name = "TabGroup" + index,
-            Height = 5,
-            Margin = new Thickness(1, 0, 1, 0),
-            Padding = new Thickness(0),
-            CornerRadius = new CornerRadius(2.5),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            Tag = index
-        };
+    //private TabGroup CreateGameTabGroup(int index)
+    //{
+    //    TabGroup tabGroup = new()
+    //    {
+    //        Name = "TabGroup" + index,
+    //        Height = 5,
+    //        Margin = new Thickness(1, 0, 1, 0),
+    //        Padding = new Thickness(0),
+    //        CornerRadius = new CornerRadius(2.5),
+    //        HorizontalAlignment = HorizontalAlignment.Stretch,
+    //        Tag = index
+    //    };
 
-        tabGroup.ClickEvent += OnTabGroupClick;
+    //    tabGroup.ClickEvent += OnTabGroupClick;
 
-        tabGroup.SetValue(Grid.ColumnProperty, index);
+    //    tabGroup.SetValue(Grid.ColumnProperty, index);
 
-        return tabGroup;
-    }
+    //    return tabGroup;
+    //}
     #endregion
 
     #region Events: Controller
@@ -485,26 +406,26 @@ public partial class GameTabBar : UserControl
         ApplySettings();
     }
 
-    private void OnTitleBarMouseWheel(object sender, MouseWheelEventArgs e)
-    {
-        if (TabGroups.Children.Count <= 1)
-        {
-            return;
-        }
+    //private void OnTitleBarMouseWheel(object sender, MouseWheelEventArgs e)
+    //{
+    //    if (TabGroups.Children.Count <= 1)
+    //    {
+    //        return;
+    //    }
 
-        int currentIndex = TabGroups.Children.IndexOf(SelectedGroup);
-        int newIndex = e.Delta > 0 ? (currentIndex + 1) : (currentIndex - 1);
-        if (newIndex >= TabGroups.Children.Count)
-        {
-            newIndex = 0;
-        }
-        else if (newIndex < 0)
-        {
-            newIndex = TabGroups.Children.Count - 1;
-        }
+    //    int currentIndex = TabGroups.Children.IndexOf(SelectedGroup);
+    //    int newIndex = e.Delta > 0 ? (currentIndex + 1) : (currentIndex - 1);
+    //    if (newIndex >= TabGroups.Children.Count)
+    //    {
+    //        newIndex = 0;
+    //    }
+    //    else if (newIndex < 0)
+    //    {
+    //        newIndex = TabGroups.Children.Count - 1;
+    //    }
 
-        OnTabGroupClick(TabGroups.Children[newIndex], null);
-    }
+    //    OnTabGroupClick(TabGroups.Children[newIndex], null);
+    //}
 
     private void OnTitleBarMouseRight(object sender, RoutedEventArgs e)
     {
@@ -513,62 +434,62 @@ public partial class GameTabBar : UserControl
 
     private void OnAddTabClick(object sender, RoutedEventArgs e)
     {
-        AddNewTab();
+        //AddNewTab();
     }
     #endregion
 
     #region Events: Tab Item
-    private void OnTabItemClick(object sender, RoutedEventArgs e)
-    {
-        var tabItem = sender as TabItem;
+    //private void OnTabItemClick(object sender, RoutedEventArgs e)
+    //{
+    //    var tabItem = sender as TabItem;
 
-        SelectedItem.IsSelected = false;
-        SelectedItem = tabItem;
-        SelectedItem.IsSelected = true;
+    //    SelectedItem.IsSelected = false;
+    //    SelectedItem = tabItem;
+    //    SelectedItem.IsSelected = true;
 
-        if (tabItem.ContentPanel.Content != null)
-        {
-            if (Window.ContentPanel.Children.Count > 0)
-            {
-                Window.ContentPanel.Children.RemoveRange(0, Window.ContentPanel.Children.Count);
-            }
+    //    if (tabItem.ContentPanel.Content != null)
+    //    {
+    //        if (Window.ContentPanel.Children.Count > 0)
+    //        {
+    //            Window.ContentPanel.Children.RemoveRange(0, Window.ContentPanel.Children.Count);
+    //        }
 
-            Window.NavigationBar.Visibility = Visibility.Visible;
-            if (tabItem.ContentPanel.Content is not GameHost)
-            {
-                Window.NavigationBar.Visibility = Visibility.Collapsed;
-            }
-            else if (((GameHost)tabItem.ContentPanel.Content).Buffer != null)
-            {
-                Window.ContentPanel.Children.Add(((GameHost)tabItem.ContentPanel.Content).Buffer);
-            }
+    //        Window.NavigationBar.Visibility = Visibility.Visible;
+    //        if (tabItem.ContentPanel.Content is not GameHost)
+    //        {
+    //            Window.NavigationBar.Visibility = Visibility.Collapsed;
+    //        }
+    //        else if (((GameHost)tabItem.ContentPanel.Content).Buffer != null)
+    //        {
+    //            Window.ContentPanel.Children.Add(((GameHost)tabItem.ContentPanel.Content).Buffer);
+    //        }
 
-            Window.ContentPanel.Children.Insert(0, (UIElement)tabItem.ContentPanel.Content);
-        }
-    }
+    //        Window.ContentPanel.Children.Insert(0, (UIElement)tabItem.ContentPanel.Content);
+    //    }
+    //}
     #endregion
 
     #region Events: Tab Group
-    private void OnTabGroupClick(object sender, RoutedEventArgs e)
-    {
-        var tabGroup = sender as TabGroup;
+    //private void OnTabGroupClick(object sender, RoutedEventArgs e)
+    //{
+    //    var tabGroup = sender as TabGroup;
 
-        SelectedGroup.IsSelected = false;
-        SelectedGroup = tabGroup;
-        SelectedGroup.IsSelected = true;
+    //    SelectedGroup.IsSelected = false;
+    //    SelectedGroup = tabGroup;
+    //    SelectedGroup.IsSelected = true;
 
-        Window.NavigationBar.NotifsFlyoutContent.SetGroup(TabGroups.Children.IndexOf(SelectedGroup));
+    //    Window.NavigationBar.NotifsFlyoutContent.SetGroup(TabGroups.Children.IndexOf(SelectedGroup));
 
-        GameTabs.Children.Clear();
-        foreach (TabItem item in tabGroup.Tabs)
-        {
-            GameTabs.Children.Add(item);
-            if (item.IsSelected)
-            {
-                OnTabItemClick(item, null);
-            }
-        }
-    }
+    //    GameTabs.Children.Clear();
+    //    foreach (TabItem item in tabGroup.Tabs)
+    //    {
+    //        GameTabs.Children.Add(item);
+    //        if (item.IsSelected)
+    //        {
+    //            OnTabItemClick(item, null);
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Events: Menu Item
@@ -577,7 +498,7 @@ public partial class GameTabBar : UserControl
         switch (((MenuItem)sender).Name)
         {
             case "NewTabMenu":
-                AddNewTab();
+                //AddNewTab();
                 break;
             case "AllTabsMenu":
                 AddAllNewTabs();
@@ -597,7 +518,7 @@ public partial class GameTabBar : UserControl
                 break;
 
             case "CloseTabMenu":
-                CloseTab(sender, e);
+                //CloseTab(sender, e);
                 break;
             case "CloseTabsMenu":
                 CloseOtherTabs(sender, e);

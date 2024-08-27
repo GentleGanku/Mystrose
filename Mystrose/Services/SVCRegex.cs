@@ -1,6 +1,6 @@
-﻿namespace Mystrose.Services.Temporary;
+﻿namespace Mystrose.Services;
 
-public partial class Regexes
+public partial class SVCRegex
 {
 
     #region Regexes

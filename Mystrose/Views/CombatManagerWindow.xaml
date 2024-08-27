@@ -12,7 +12,6 @@
     MinWidth="160"
     MinHeight="40"
     ResizeMode="CanResize"
-    WindowMode="Default"
     WindowStartupLocation="CenterScreen"
     WindowState="Normal"
     mc:Ignorable="d">
@@ -196,7 +195,7 @@
                         Opacity="0.1"
                         RenderOptions.BitmapScalingMode="HighQuality"
                         SnapsToDevicePixels="True"
-                        Source="pack://application:,,,/Resources/Images/Mystrose.png"
+                        Source="pack://application:,,,/Resources/Graphics/Mystrose.png"
                         UseLayoutRounding="True"
                         Visibility="Collapsed" />
                     <Grid x:Name="LoadoutPnl" Visibility="Visible">

@@ -66,7 +66,7 @@
                 Opacity="0.1"
                 RenderOptions.BitmapScalingMode="HighQuality"
                 SnapsToDevicePixels="True"
-                Source="pack://application:,,,/Resources/Images/Mystrose.png"
+                Source="pack://application:,,,/Resources/Graphics/Mystrose.png"
                 UseLayoutRounding="True" />
         </StackPanel>
     </Grid>

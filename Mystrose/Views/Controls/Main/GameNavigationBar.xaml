@@ -4,9 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:main="clr-namespace:Mystrose.Views.Controls.Main"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    xmlns:main="clr-namespace:Mystrose.Views.Controls.Main"
     MinWidth="160"
     MinHeight="40"
     d:DesignHeight="40"
@@ -36,7 +36,7 @@
                     <Image
                         Width="16"
                         Height="16"
-                        Source="{StaticResource RoseIcon}" />
+                        Source="{StaticResource ICN-Mystrose}" />
                     <TextBlock
                         Name="AboutTxt"
                         Width="0"
@@ -114,7 +114,7 @@
                     PressedBackground="{DynamicResource ControlFillColorTertiaryBrush}"
                 -->
                 <VirtualizingStackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconSimpleIcons Kind="PureScript" />
+                    <ui:SymbolIcon Symbol="Script20" />
                     <TextBlock
                         Name="ScriptMngrTxt"
                         Width="0"
@@ -261,7 +261,7 @@
                 HorizontalContentAlignment="Left"
                 Background="Transparent">
                 <VirtualizingStackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconFeatherIcons Kind="Codesandbox" />
+                    <ui:SymbolIcon Symbol="BoxMultiple20" />
                     <TextBlock
                         Name="MultiboxTxt"
                         Width="0"
@@ -334,7 +334,7 @@
                 HorizontalContentAlignment="Left"
                 Background="Transparent">
                 <VirtualizingStackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconForkAwesome Kind="Tasks" />
+                    <ui:SymbolIcon Symbol="WindowDevTools20" />
                     <TextBlock
                         Name="ToolsTxt"
                         Width="0"
@@ -407,7 +407,7 @@
                 HorizontalContentAlignment="Left"
                 Background="Transparent">
                 <VirtualizingStackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconCodicons Kind="Extensions" />
+                    <ui:SymbolIcon Symbol="AppsAddIn20" />
                     <TextBlock
                         Name="ExtensionsTxt"
                         Width="0"
@@ -480,7 +480,7 @@
                 HorizontalContentAlignment="Left"
                 Background="Transparent">
                 <VirtualizingStackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconIonicons Kind="CogiOS" />
+                    <ui:SymbolIcon Symbol="Settings20" />
                     <TextBlock
                         Name="SettingsTxt"
                         Width="0"
@@ -558,7 +558,7 @@
                 Padding="0"
                 Background="Transparent">
                 <VirtualizingStackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconMaterial Kind="LayersSearch" />
+                    <ui:SymbolIcon Symbol="ScreenSearch20" />
                 </VirtualizingStackPanel>
             </ui:Button>
             <StackPanel
@@ -575,7 +575,7 @@
                     Background="Transparent"
                     Click="OnButtonClick">
                     <VirtualizingStackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconFontAwesome Kind="BellRegular" />
+                        <ui:SymbolIcon Symbol="Alert20" />
                     </VirtualizingStackPanel>
                 </ui:Button>
                 <ui:Flyout
@@ -584,8 +584,7 @@
                     Padding="0"
                     Background="{DynamicResource ControlBarFillColorSecondaryBrush}"
                     IsOpen="False"
-                    Placement="Center"
-                    VerticalOffset="240">
+                    Placement="Center">
                     <main:NotificationFlyout x:Name="NotifsFlyoutContent" />
                 </ui:Flyout>
                 <ui:SymbolIcon
@@ -606,7 +605,7 @@
                 Padding="0"
                 Background="Transparent">
                 <VirtualizingStackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconFontAwesome Kind="UserCircleRegular" />
+                    <ui:SymbolIcon Symbol="FolderPerson20" />
                 </VirtualizingStackPanel>
             </ui:Button>
         </VirtualizingStackPanel>

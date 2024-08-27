@@ -107,7 +107,7 @@ public partial class HomePanel : UserControl
         switch (((Button)sender).Name)
         {
             case "PlayBtn":
-                Parent.AddNewTab();
+                //Parent.AddNewTab();
                 break;
             case "DiscordBtn":
                 OpenHyperlink("https://discord.gg/pearlharbor");

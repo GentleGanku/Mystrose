@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <FontFamily x:Key="FF_Albertus_Regular">pack://application:,,,/Resources/Fonts/Albertus/#Albertus MT Std</FontFamily>
+    <FontFamily x:Key="FF_Albertus_Light">pack://application:,,,/Resources/Fonts/Albertus/#Albertus MT Std Light</FontFamily>
+    <FontFamily x:Key="FF_HypatiaSans_Black">pack://application:,,,/Resources/Fonts/HypatiaSans/#Hypatia Sans Pro Black</FontFamily>
+    <FontFamily x:Key="FF_HypatiaSans_Regular">pack://application:,,,/Resources/Fonts/HypatiaSans/#Hypatia Sans Pro</FontFamily>
+    <FontFamily x:Key="FF_HypatiaSans_ExtraLight">pack://application:,,,/Resources/Fonts/HypatiaSans/#Hypatia Sans Pro ExtraLight</FontFamily>
+    <FontFamily x:Key="FF_HypatiaSans_Light">pack://application:,,,/Resources/Fonts/HypatiaSans/#Hypatia Sans Pro Light</FontFamily>
+    <FontFamily x:Key="FF_HypatiaSans_Semibold">pack://application:,,,/Resources/Fonts/HypatiaSans/#Hypatia Sans Pro Semibold</FontFamily>
+
+    <FontFamily x:Key="BDMerced">pack://application:,,,/Resources/Fonts/#BD Merced</FontFamily>
+    <FontFamily x:Key="Poppins">pack://application:,,,/Resources/Fonts/#Poppins</FontFamily>
+
+</ResourceDictionary>

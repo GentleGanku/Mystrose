@@ -5,9 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:Mystrose"
+    xmlns:main="clr-namespace:Mystrose.Views.Controls.Main"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    xmlns:main="clr-namespace:Mystrose.Views.Controls.Main"
     x:Name="Main"
     Title="Mystrose"
     Width="959"
@@ -15,7 +15,6 @@
     MinWidth="160"
     MinHeight="40"
     ResizeMode="CanResize"
-    WindowMode="Default"
     WindowStartupLocation="CenterScreen"
     WindowState="Normal"
     mc:Ignorable="d">

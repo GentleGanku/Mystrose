@@ -75,7 +75,7 @@ public class Settings
         {
             Save();
         }
-
+        
         string jsonString = File.ReadAllText(Path);
         return JsonSerializer.Deserialize<Settings>(jsonString);
     }

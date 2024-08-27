@@ -12,11 +12,11 @@ public static class ClientMaster
     #endregion
 
     #region Properties: Controls
-    public static Dictionary<WpfControls.TabItem, Client> Clients
-    {
-        get;
-        set;
-    }
+    //public static Dictionary<WpfControls.TabItem, Client> Clients
+    //{
+    //    get;
+    //    set;
+    //}
 
     public static List<Profile> Profiles
     {
@@ -45,7 +45,7 @@ public static class ClientMaster
             return;
         }
 
-        Clients = [];
+        //Clients = [];
         Profiles = new List<Profile>(24);
         Settings = new Settings().Load();
         DataManager = new DataManager().Load();

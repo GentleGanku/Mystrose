@@ -34,10 +34,10 @@ public partial class GameNavigationBar : UserControl
         switch (((Wpf.Ui.Controls.Button)sender).Name)
         {
             case "ScriptMngrBtn":
-                ClientMaster.Clients[Window.TitleBar.SelectedItem].ScriptManager.Show();
+                //ClientMaster.Clients[Window.TitleBar.SelectedItem].ScriptManager.Show();
                 break;
             case "CombatMngrBtn":
-                ClientMaster.Clients[Window.TitleBar.SelectedItem].CombatManager.Show();
+                //ClientMaster.Clients[Window.TitleBar.SelectedItem].CombatManager.Show();
                 break;
 
             case "NotifsBtn":

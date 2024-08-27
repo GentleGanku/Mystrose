@@ -31,9 +31,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Fonts\BD-Merced-Regular.ttf" />
-    <None Remove="Resources\Fonts\Poppins-Bold.ttf" />
-    <None Remove="Resources\Fonts\Poppins-Regular.ttf" />
+    <None Remove="Resources\Fonts\Albertus\AlbertusMTStd-Italic.ttf" />
+    <None Remove="Resources\Fonts\Albertus\AlbertusMTStd-Light.ttf" />
+    <None Remove="Resources\Fonts\Albertus\AlbertusMTStd.ttf" />
+    <None Remove="Resources\Fonts\HypatiaSans\HypatiaSansPro-Black.ttf" />
+    <None Remove="Resources\Fonts\HypatiaSans\HypatiaSansPro-Bold.ttf" />
+    <None Remove="Resources\Fonts\HypatiaSans\HypatiaSansPro-ExtraLight.ttf" />
+    <None Remove="Resources\Fonts\HypatiaSans\HypatiaSansPro-Light.ttf" />
+    <None Remove="Resources\Fonts\HypatiaSans\HypatiaSansPro-Regular.ttf" />
+    <None Remove="Resources\Fonts\HypatiaSans\HypatiaSansPro-Semibold.ttf" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,9 +60,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
-    <PackageReference Include="MahApps.Metro.IconPacks" Version="4.11.0" />
     <PackageReference Include="System.Text.Json" Version="8.0.4" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+    <PackageReference Include="WPF-UI" Version="3.0.5" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,21 +76,18 @@
     <Reference Include="Interop.ShockwaveFlashObjects">
       <HintPath>..\..\Warthorn\C# - Main\Warthorn\bin\Release\net7.0-windows10.0.17763.0\Interop.ShockwaveFlashObjects.dll</HintPath>
     </Reference>
-    <Reference Include="Wpf.Ui">
-      <HintPath>..\..\Demos\wpfui-main\src\Wpf.Ui\bin\Release\net7.0-windows\Wpf.Ui.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\Fonts\BD-Merced-Regular.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Fonts\Poppins-Bold.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Fonts\Poppins-Regular.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Resources\Fonts\Albertus\AlbertusMTStd-Italic.ttf" />
+    <Resource Include="Resources\Fonts\Albertus\AlbertusMTStd-Light.ttf" />
+    <Resource Include="Resources\Fonts\Albertus\AlbertusMTStd.ttf" />
+    <Resource Include="Resources\Fonts\HypatiaSans\HypatiaSansPro-Black.ttf" />
+    <Resource Include="Resources\Fonts\HypatiaSans\HypatiaSansPro-Bold.ttf" />
+    <Resource Include="Resources\Fonts\HypatiaSans\HypatiaSansPro-ExtraLight.ttf" />
+    <Resource Include="Resources\Fonts\HypatiaSans\HypatiaSansPro-Light.ttf" />
+    <Resource Include="Resources\Fonts\HypatiaSans\HypatiaSansPro-Regular.ttf" />
+    <Resource Include="Resources\Fonts\HypatiaSans\HypatiaSansPro-Semibold.ttf" />
     <Resource Include="Resources\Graphics\Mystrose.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -112,8 +115,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Core\Logger\" />
-    <Folder Include="Views\Base\" />
+    <Folder Include="DataFormats\Modules\Enumerations\" />
   </ItemGroup>
 
 </Project>

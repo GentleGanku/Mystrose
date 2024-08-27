@@ -1,6 +1,4 @@
-﻿using TabItem = Wpf.Ui.Controls.TabItem;
-
-namespace Mystrose.Master.Temporary;
+﻿namespace Mystrose.Master.Temporary;
 
 public class Profile
 {
@@ -28,11 +26,11 @@ public class Profile
     #endregion
 
     #region Properties
-    protected internal TabItem InstanceTab
-    {
-        get;
-        set;
-    }
+    //protected internal TabItem InstanceTab
+    //{
+    //    get;
+    //    set;
+    //}
     #endregion
 
     #region Methods
