@@ -1,4 +1,4 @@
-﻿namespace Mystrose.Core.Settings.Base;
+﻿namespace Mystrose.DataFormats.Modules;
 
 public class Option
 {

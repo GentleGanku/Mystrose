@@ -158,7 +158,19 @@ public class World : GameObject
             return;
         }
 
-        ActiveSkill? skill = Skills[aura.Value] as ActiveSkill;
+        ActiveSkill? prelockedSkill = Skills.Find(
+            (s) =>
+            {
+                return s.IsLocked;
+            });
+
+        if (prelockedSkill is not null)
+        {
+            return;
+        }
+
+        ActiveSkill? skill = Skills[aura.Value];
+
         if (skill is not null && !skill.IsLocked)
         {
             skill.IsLocked = true;
@@ -174,7 +186,8 @@ public class World : GameObject
             return;
         }
 
-        ActiveSkill? skill = Skills[aura.Value] as ActiveSkill;
+        ActiveSkill? skill = Skills[aura.Value];
+
         if (skill is not null && skill.IsLocked)
         {
             skill.IsLocked = false;

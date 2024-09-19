@@ -1,4 +1,4 @@
-﻿namespace Mystrose.Core.Logger.Base;
+﻿namespace Mystrose.DataFormats.Modules;
 
 public struct LogMessage
 {

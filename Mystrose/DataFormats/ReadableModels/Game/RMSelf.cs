@@ -152,31 +152,6 @@ public class RMSelf : ReadableModel
     {
         get => MainAvatar.Coins;
     }
-
-    //public bool Has_Reputation_Boost
-    //{
-    //    get => MainAvatar.RepBoost;
-    //}
-
-    //public bool Has_Gold_Boost
-    //{
-    //    get => MainAvatar.GoldBoost;
-    //}
-
-    //public bool Has_Experience_Boost
-    //{
-    //    get => MainAvatar.XPBoost;
-    //}
-
-    //public bool Has_Class_Point_Boost
-    //{
-    //    get => MainAvatar.CPBoost;
-    //}
-
-    public int Activation_Flag
-    {
-        get => MainAvatar.ActivationFlag;
-    }
     #endregion
 
 }

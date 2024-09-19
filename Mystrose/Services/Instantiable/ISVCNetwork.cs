@@ -2,11 +2,11 @@
 
 namespace Mystrose.Services.Instantiable;
 
-public class ISVCNetwork2
+public class ISVCNetwork
 {
 
     #region Constructor
-    public ISVCNetwork2(ClientUseIdentifier identifier)
+    public ISVCNetwork(ClientUseIdentifier identifier)
     {
         _identifier = identifier;
         Initialize();
