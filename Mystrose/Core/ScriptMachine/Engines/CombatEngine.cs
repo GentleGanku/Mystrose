@@ -4,7 +4,7 @@ public class CombatEngine : ScriptEngine
 {
 
     #region Constructor
-    public CombatEngine(GameHost host) : base(host, ScriptEngineType.Combat)
+    public CombatEngine(ClientUseIdentifier identifier) : base(new(), ScriptEngineType.Combat)
     {
         // TODO: Implement all
     }

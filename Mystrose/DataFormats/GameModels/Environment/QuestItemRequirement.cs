@@ -3,9 +3,10 @@
 /// <summary>
 /// A class that represents a quest item requirement in the game.
 /// </summary>
-public class QuestItemRequirement
+public class QuestItemRequirement : GameObject
 {
 
+    #region Properties
     [JsonPropertyName("ItemID")]
     public int ID
     {
@@ -19,5 +20,6 @@ public class QuestItemRequirement
         get;
         set;
     } = 1;
+    #endregion
 
 }

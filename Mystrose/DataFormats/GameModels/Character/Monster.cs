@@ -3,25 +3,13 @@
 /// <summary>
 /// A class that represents a monster in the game.
 /// </summary>
-public class Monster : IPropertyManager
+public class Monster : GameObject
 {
 
     #region Constructor
-    [JsonConstructor]
     public Monster()
     {
-        Targets = [];
-
-        RefreshProperties();
-    }
-    #endregion
-
-    #region Manager
-    [JsonIgnore]
-    public Dictionary<string, PropertyInfo> Properties
-    {
-        get;
-        set;
+        RefreshProperties(this);
     }
     #endregion
 
@@ -32,6 +20,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// An integer representing the avatar's health percentage.
     /// </returns>
+    [JsonPropertyOrder(12)]
     public int HPPercentage
     {
         get => (int)Math.Round((double)HP / MaxHP * 100);
@@ -43,6 +32,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// An integer representing the avatar's mana percentage.
     /// </returns>
+    [JsonPropertyOrder(13)]
     public int MPPercentage
     {
         get => (int)Math.Round((double)MP / MaxMP * 100);
@@ -54,6 +44,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// A boolean representing the avatar's life status.
     /// </returns>
+    [JsonPropertyOrder(14)]
     public bool IsAlive
     {
         get => HP > 0 && State > 0;
@@ -67,6 +58,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// An integer representing the monster's ID.
     /// </returns>
+    [JsonPropertyOrder(0)]
     [JsonPropertyName("MonID")]
     [JsonConverter(typeof(StringIntConverter))]
     public int ID
@@ -81,6 +73,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// An integer representing the monster's level.
     /// </returns>
+    [JsonPropertyOrder(1)]
     [JsonPropertyName("iLvl")]
     [JsonConverter(typeof(StringIntConverter))]
     public int Level
@@ -95,6 +88,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// An integer representing the monster's map ID.
     /// </returns>
+    [JsonPropertyOrder(2)]
     [JsonPropertyName("MonMapID")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MonMapID
@@ -109,6 +103,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// An object representing the monster's cell.
     /// </returns>
+    [JsonPropertyOrder(3)]
     [JsonPropertyName("strFrame")]
     public string Cell
     {
@@ -122,6 +117,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// An enumeration type representing the monster's state.
     /// </returns>
+    [JsonPropertyOrder(4)]
     [JsonPropertyName("intState")]
     public StateType State
     {
@@ -135,6 +131,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// A list representing the Avatar Names.
     /// </returns>
+    [JsonPropertyOrder(5)]
     public List<string> Targets
     {
         get;
@@ -147,6 +144,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// An integer representing the monster's maximum HP.
     /// </returns>
+    [JsonPropertyOrder(6)]
     [JsonPropertyName("intHPMax")]
     [JsonConverter(typeof(StringDoubleConverter))]
     public double MaxHP
@@ -161,6 +159,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// An integer representing the monster's current HP.
     /// </returns>
+    [JsonPropertyOrder(7)]
     [JsonPropertyName("intHP")]
     [JsonConverter(typeof(StringDoubleConverter))]
     public double HP
@@ -175,6 +174,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// An integer representing the monster's maximum MP.
     /// </returns>
+    [JsonPropertyOrder(8)]
     [JsonPropertyName("intMPMax")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MaxMP
@@ -189,6 +189,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// An integer representing the monster's current MP.
     /// </returns>
+    [JsonPropertyOrder(9)]
     [JsonPropertyName("intMP")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MP
@@ -203,6 +204,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// An integer representing the monster's DPS range.
     /// </returns>
+    [JsonPropertyOrder(10)]
     [JsonPropertyName("wDPS")]
     [JsonConverter(typeof(StringDoubleConverter))]
     public double DPS
@@ -217,6 +219,7 @@ public class Monster : IPropertyManager
     /// <returns>
     /// A boolean representing the monster's tag for Aggressiveness state.
     /// </returns>
+    [JsonPropertyOrder(11)]
     [JsonPropertyName("bRed")]
     [JsonConverter(typeof(StringBoolConverter))]
     public bool IsAggressive
@@ -224,77 +227,6 @@ public class Monster : IPropertyManager
         get;
         set;
     } = false;
-    #endregion
-
-    #region Methods: Properties
-    /// <summary>
-    /// A method that gets a property's value based on their property name in-game.
-    /// </summary>
-    public PropertyInfo? GetProperty(string key)
-    {
-        if (!Properties.TryGetValue(key, out PropertyInfo? value))
-        {
-            return null;
-        }
-
-        return value;
-    }
-
-    /// <summary>
-    /// A method that sets a property's value based on their property name in-game.
-    /// </summary>
-    public void SetProperty(string key, JsonNode node)
-    {
-        PropertyInfo? propInfo = GetProperty(key);
-        if (propInfo is null)
-        {
-            return;
-        }
-
-        JsonSerializerOptions options = new()
-        {
-            Converters =
-            {
-                new StringIntConverter(),
-                new StringDoubleConverter(),
-                new StringBoolConverter()
-            }
-        };
-
-        Properties[key].SetValue(this, node.Deserialize(propInfo.PropertyType, options));
-    }
-
-    /// <summary>
-    /// A method that sets all predefined properties in the instance of this class.
-    /// </summary>
-    public void SetProperties(JsonObject jsonObj)
-    {
-        foreach (KeyValuePair<string, JsonNode> jsonProp in jsonObj)
-        {
-            SetProperty(jsonProp.Key, jsonProp.Value);
-        }
-    }
-
-    /// <summary>
-    /// A method that refreshes all properties in the instance of this class.
-    /// </summary>
-    public void RefreshProperties()
-    {
-        Properties = new()
-        {
-            ["MonID"] = GetType().GetProperty(nameof(ID)),
-            ["iLvl"] = GetType().GetProperty(nameof(Level)),
-            ["MonMapID"] = GetType().GetProperty(nameof(MonMapID)),
-            ["strFrame"] = GetType().GetProperty(nameof(Cell)),
-            ["intState"] = GetType().GetProperty(nameof(State)),
-            ["intHPMax"] = GetType().GetProperty(nameof(MaxHP)),
-            ["intHP"] = GetType().GetProperty(nameof(HP)),
-            ["intMPMax"] = GetType().GetProperty(nameof(MaxMP)),
-            ["intMP"] = GetType().GetProperty(nameof(MP)),
-            ["wDPS"] = GetType().GetProperty(nameof(DPS)),
-            ["bRed"] = GetType().GetProperty(nameof(IsAggressive))
-        };
-    }
     #endregion
 
     #region Methods: Override
@@ -306,7 +238,7 @@ public class Monster : IPropertyManager
     /// </returns>
     public override string ToString()
     {
-        return $"{MonMapID} - {ID}";
+        return $"{MonMapID}/{ID}";
     }
     #endregion
 

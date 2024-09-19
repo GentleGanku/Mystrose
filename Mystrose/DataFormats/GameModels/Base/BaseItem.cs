@@ -3,8 +3,15 @@
 /// <summary>
 /// A base class that represents a character item in the game.
 /// </summary>
-public class BaseItem
+public class BaseItem : GameObject
 {
+
+    #region Constructor
+    public BaseItem()
+    {
+        RefreshProperties(this);
+    }
+    #endregion
 
     #region Fields
     /// <summary>
@@ -13,6 +20,7 @@ public class BaseItem
     /// <returns>
     /// A string representing the item's complete file path.
     /// </returns>
+    [JsonPropertyOrder(14)]
     public string File
     {
         get => Type switch
@@ -30,6 +38,7 @@ public class BaseItem
     /// <returns>
     /// An integer representing the item's ID.
     /// </returns>
+    [JsonPropertyOrder(0)]
     [JsonPropertyName("ItemID")]
     public int ID
     {
@@ -43,6 +52,7 @@ public class BaseItem
     /// <returns>
     /// A string representing the item's name, in trimmed form.
     /// </returns>
+    [JsonPropertyOrder(1)]
     [JsonPropertyName("sName")]
     [JsonConverter(typeof(TrimConverter))]
     public string Name
@@ -57,6 +67,7 @@ public class BaseItem
     /// <returns>
     /// An integer representing the item's level.
     /// </returns>
+    [JsonPropertyOrder(2)]
     [JsonPropertyName("iLvl")]
     public int Level
     {
@@ -70,6 +81,7 @@ public class BaseItem
     /// <returns>
     /// A string representing the item's description.
     /// </returns>
+    [JsonPropertyOrder(3)]
     [JsonPropertyName("sDesc")]
     public string Description
     {
@@ -83,6 +95,7 @@ public class BaseItem
     /// <returns>
     /// An integer representing the item's quantity.
     /// </returns>
+    [JsonPropertyOrder(4)]
     [JsonPropertyName("iQty")]
     public int Quantity
     {
@@ -96,6 +109,7 @@ public class BaseItem
     /// <returns>
     /// An integer representing the item's maximum quantity.
     /// </returns>
+    [JsonPropertyOrder(5)]
     [JsonPropertyName("iStk")]
     public int MaxStack
     {
@@ -109,6 +123,7 @@ public class BaseItem
     /// <returns>
     /// A boolean representing the item's tag for Upgrade state.
     /// </returns>
+    [JsonPropertyOrder(6)]
     [JsonPropertyName("bUpg")]
     [JsonConverter(typeof(StringBoolConverter))]
     public bool IsMemberTagged
@@ -123,6 +138,7 @@ public class BaseItem
     /// <returns>
     /// A boolean representing the item's tag for Coin state.
     /// </returns>
+    [JsonPropertyOrder(7)]
     [JsonPropertyName("bCoins")]
     [JsonConverter(typeof(StringBoolConverter))]
     public bool IsCoinTagged
@@ -137,9 +153,25 @@ public class BaseItem
     /// <returns>
     /// A boolean representing the item's tag for Temporary state.
     /// </returns>
+    [JsonPropertyOrder(8)]
     [JsonPropertyName("bTemp")]
     [JsonConverter(typeof(StringBoolConverter))]
     public bool IsTemporary
+    {
+        get;
+        set;
+    } = false;
+
+    /// <summary>
+    /// The item's tag of whether it is a house item.
+    /// </summary>
+    /// <returns>
+    /// A boolean representing the item's tag for House Item state.
+    /// </returns>
+    [JsonPropertyOrder(15)]
+    [JsonPropertyName("bHouse")]
+    [JsonConverter(typeof(StringBoolConverter))]
+    public bool IsHouseItem
     {
         get;
         set;
@@ -151,6 +183,7 @@ public class BaseItem
     /// <returns>
     /// An enumeration type representing the item's equipment type.
     /// </returns>
+    [JsonPropertyOrder(9)]
     [JsonPropertyName("sES")]
     public EquipmentType EquipmentType
     {
@@ -164,6 +197,7 @@ public class BaseItem
     /// <returns>
     /// An enumeration type representing the item's type.
     /// </returns>
+    [JsonPropertyOrder(10)]
     [JsonPropertyName("sType")]
     public ItemType Type
     {
@@ -177,6 +211,7 @@ public class BaseItem
     /// <returns>
     /// A string representing the item's metadata, consisting of bonuses along with their own values.
     /// </returns>
+    [JsonPropertyOrder(11)]
     [JsonPropertyName("sMeta")]
     [JsonConverter(typeof(IntStringConverter))]
     public string Metadata
@@ -191,6 +226,7 @@ public class BaseItem
     /// <returns>
     /// A string representing the item's unique file path.
     /// </returns>
+    [JsonPropertyOrder(12)]
     [JsonPropertyName("sFile")]
     public string FilePath
     {
@@ -204,6 +240,7 @@ public class BaseItem
     /// <returns>
     /// A string representing the item's file linkage.
     /// </returns>
+    [JsonPropertyOrder(13)]
     [JsonPropertyName("sLink")]
     [JsonConverter(typeof(IntStringConverter))]
     public string Linkage

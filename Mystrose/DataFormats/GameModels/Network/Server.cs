@@ -3,7 +3,7 @@
 /// <summary>
 /// A class that represents a server in the game.
 /// </summary>
-public class Server
+public class Server : GameObject
 {
 
     #region Properties

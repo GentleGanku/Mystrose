@@ -39,7 +39,7 @@ public partial class MainWindow : FluentWindow
     {
         ClientMaster.Initialize();
 
-        WindowState = ClientMaster.Settings.IsMainWindowMaximized ? WindowState.Maximized : WindowState.Normal;
+        WindowState = ClientMaster.Settings.maximizedMainWindow ? WindowState.Maximized : WindowState.Normal;
         GameWindowMode = GameWindowType.Single;
         TitleBar.Window = this;
         NavigationBar.Window = this;

@@ -24,8 +24,8 @@ public class AuraDictionary : Dictionary<EntityType, Dictionary<string, List<Aur
         {
             if (!this[type].TryGetValue(id, out List<Aura>? value))
             {
-                value = [];
-                this[type][id] = value;
+                this[type].Add(id, new());
+                return this[type][id];
             }
 
             return value;
@@ -38,7 +38,7 @@ public class AuraDictionary : Dictionary<EntityType, Dictionary<string, List<Aur
         {
             List<Aura>? list = this[type, id];
 
-            return list.Find(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            return list!.Find(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
     }
     #endregion

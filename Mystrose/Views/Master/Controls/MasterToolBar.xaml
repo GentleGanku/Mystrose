@@ -1,0 +1,69 @@
+﻿<UserControl
+    x:Class="Mystrose.Views.Master.Controls.MasterToolBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:baseControls="clr-namespace:Mystrose.Views.Base.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Mystrose.Views.Master.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    MinWidth="160"
+    MinHeight="40"
+    d:DesignHeight="40"
+    d:DesignWidth="959"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded"
+    mc:Ignorable="d">
+
+    <Grid
+        Height="40"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <VirtualizingStackPanel
+            Grid.Column="0"
+            Margin="3,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Orientation="Horizontal">
+            <baseControls:MenuButton
+                x:Name="MBTN_ScriptManager"
+                Margin="0,0,3,0"
+                CaptionText="Script Manager">
+                <baseControls:MenuButton.IconContent>
+                    <ui:SymbolIcon Symbol="Code16" />
+                </baseControls:MenuButton.IconContent>
+            </baseControls:MenuButton>
+
+            <baseControls:MenuButton x:Name="MBTN_Logger" CaptionText="Log Tracker">
+                <baseControls:MenuButton.IconContent>
+                    <ui:SymbolIcon Symbol="Notepad20" />
+                </baseControls:MenuButton.IconContent>
+            </baseControls:MenuButton>
+        </VirtualizingStackPanel>
+
+        <VirtualizingStackPanel
+            Grid.Column="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Orientation="Horizontal" />
+
+        <VirtualizingStackPanel
+            Grid.Column="2"
+            Margin="3,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center"
+            Orientation="Horizontal">
+            <baseControls:MenuButton x:Name="MBTN_Notifications" CaptionText="Notifications">
+                <baseControls:MenuButton.IconContent>
+                    <ui:SymbolIcon Symbol="Alert20" />
+                </baseControls:MenuButton.IconContent>
+            </baseControls:MenuButton>
+        </VirtualizingStackPanel>
+    </Grid>
+</UserControl>

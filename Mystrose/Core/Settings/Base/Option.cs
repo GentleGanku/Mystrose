@@ -1,11 +1,12 @@
 ﻿namespace Mystrose.Core.Settings.Base;
 
-public struct Option
+public class Option
 {
 
     #region Constructor
-    public Option(string context, bool isInteractable, object value)
+    public Option(string title, string context, bool isInteractable, object value)
     {
+        Title = title;
         Context = context;
         IsInteractable = isInteractable;
         Value = value;
@@ -13,6 +14,13 @@ public struct Option
     #endregion
 
     #region Properties
+    [JsonIgnore]
+    public string Title
+    {
+        get;
+        private set;
+    }
+
     [JsonIgnore]
     public string Context
     {
@@ -27,7 +35,7 @@ public struct Option
         private set;
     }
 
-    public object? Value
+    public object Value
     {
         get;
         private set;
@@ -42,14 +50,37 @@ public struct Option
 
     public void Set(object value)
     {
-        Value = value switch
+        switch (value)
         {
-            string stringValue => stringValue,
-            int intValue => intValue,
-            double doubleValue => doubleValue,
-            bool boolValue => boolValue,
-            _ => null
-        };
+            case int intValue:
+                Value = intValue;
+                break;
+            case double doubleValue:
+                Value = doubleValue;
+                break;
+            case bool boolValue:
+                Value = boolValue;
+                break;
+
+            case string stringValue:
+                if (int.TryParse(value.ToString(), out int parsedInt))
+                {
+                    Value = parsedInt;
+                }
+                else if (double.TryParse(value.ToString(), out double parsedDouble))
+                {
+                    Value = parsedDouble;
+                }
+                else if (bool.TryParse(value.ToString(), out bool parsedBool))
+                {
+                    Value = parsedBool;
+                }
+                else
+                {
+                    Value = stringValue;
+                }
+                break;
+        }
     }
     #endregion
 

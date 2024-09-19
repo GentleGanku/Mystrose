@@ -3,7 +3,7 @@
 /// <summary>
 /// A class that represents a party in the game.
 /// </summary>
-public class Party
+public class Party : GameObject
 {
 
     #region Properties
@@ -36,6 +36,15 @@ public class Party
         get;
         set;
     } = [];
+
+    /// <summary>
+    /// The state of the party.
+    /// </summary>
+    public PartyProcessType Status
+    {
+        get;
+        set;
+    } = PartyProcessType.Inviting;
     #endregion
 
 }

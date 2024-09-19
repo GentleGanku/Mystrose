@@ -4,30 +4,15 @@ public class XTMessage : Message
 {
 
     #region Constructor
-    public XTMessage(string raw)
+    public XTMessage(ClientUseIdentifier identifier, string raw) : base(identifier)
     {
-        try
-        {
-            RawContent = raw;
-            Arguments = raw.Split('%');
-            if (Arguments.Length >= 4)
-            {
-                Command = Arguments[2] != "zm" ? Arguments[2] : (Arguments[3] == "cmd" ? Arguments[5] : Arguments[3]);
-            }
-        }
-        catch (Exception e)
-        {
-            // WIP
-        }
-    }
-    #endregion
+        RawContent = raw;
+        Arguments = raw.Split('%');
 
-    #region Destructor
-    ~XTMessage()
-    {
-        RawContent = null;
-        Arguments = null;
-        Command = null;
+        if (Arguments.Length >= 4)
+        {
+            Command = Arguments[2] != "zm" ? Arguments[2] : (Arguments[3] == "cmd" ? Arguments[5] : Arguments[3]);
+        }
     }
     #endregion
 
@@ -39,7 +24,7 @@ public class XTMessage : Message
     }
     #endregion
 
-    #region Override Methods
+    #region Overrides
     public override string ToString()
     {
         return string.Join("%", Arguments);

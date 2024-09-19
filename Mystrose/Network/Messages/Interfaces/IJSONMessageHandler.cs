@@ -2,10 +2,12 @@
 
 public interface IJSONMessageHandler
 {
+
     string[] HandledCommands
     {
         get;
     }
 
-    void Handle(GameHost host, JSONMessage message);
+    void Handle(JSONMessage message);
+
 }

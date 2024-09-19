@@ -1,0 +1,28 @@
+﻿<UserControl
+    x:Class="Mystrose.Views.Master.Controls.InstancePresenterGrid"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:baseControls="clr-namespace:Mystrose.Views.Base.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Mystrose.Views.Master.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="32"
+    d:DesignWidth="959"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded"
+    mc:Ignorable="d">
+
+    <Grid x:Name="GRD_Instances" Height="32">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.125*" />
+            <ColumnDefinition Width="0.125*" />
+            <ColumnDefinition Width="0.125*" />
+            <ColumnDefinition Width="0.125*" />
+            <ColumnDefinition Width="0.125*" />
+            <ColumnDefinition Width="0.125*" />
+            <ColumnDefinition Width="0.125*" />
+            <ColumnDefinition Width="0.125*" />
+        </Grid.ColumnDefinitions>
+
+    </Grid>
+</UserControl>

@@ -3,10 +3,26 @@
 /// <summary>
 /// A class that represents a quest in the game.
 /// </summary>
-public class Quest
+public class Quest : GameObject
 {
 
+    #region Constructor
+    public Quest()
+    {
+        // Empty
+    }
+    #endregion
+
     #region Properties
+    /// <summary>
+    /// The process type of the quest.
+    /// </summary>
+    public QuestProcessType ProcessType
+    {
+        get;
+        set;
+    } = QuestProcessType.Loaded;
+
     /// <summary>
     /// The ID of the quest.
     /// </summary>

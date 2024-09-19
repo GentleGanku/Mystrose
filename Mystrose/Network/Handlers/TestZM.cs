@@ -11,9 +11,9 @@ public class TestZM : IZMMessageHandler
     {
     };
 
-    public void Handle(GameHost host, ZMMessage message)
+    public void Handle(ZMMessage message)
     {
-        string path = AppDomain.CurrentDomain.BaseDirectory + "Packets\\ZM\\" + message.Command + ".txt";
+        string path = AppDomain.CurrentDomain.BaseDirectory + "packets\\zm\\" + message.Command + ".txt";
 
         if (File.Exists(path))
         {

@@ -4,7 +4,6 @@ public interface IDestructible
 {
 
     #region Methods
-    void Destruct();
     void Dispose();
     #endregion
 

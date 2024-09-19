@@ -2,10 +2,12 @@
 
 public interface IXTMessageHandler
 {
+
     string[] HandledCommands
     {
         get;
     }
 
-    void Handle(GameHost host, XTMessage message);
+    void Handle(XTMessage message);
+
 }

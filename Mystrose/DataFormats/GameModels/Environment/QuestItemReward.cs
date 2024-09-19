@@ -6,6 +6,7 @@
 public class QuestItemReward : BaseItem
 {
 
+    #region Properties
     /// <summary>
     /// The rate at which this reward drops.
     /// </summary>
@@ -25,5 +26,6 @@ public class QuestItemReward : BaseItem
         get;
         set;
     } = 0;
+    #endregion
 
 }

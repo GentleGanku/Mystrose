@@ -1,0 +1,251 @@
+﻿<UserControl
+    x:Class="Mystrose.Views.Master.Controls.MasterTabBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:baseControls="clr-namespace:Mystrose.Views.Base.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Mystrose.Views.Master.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    MinWidth="160"
+    MinHeight="40"
+    d:DesignHeight="40"
+    d:DesignWidth="959"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded"
+    mc:Ignorable="d">
+
+    <ui:TitleBar x:Name="TTLB_Item" Height="40">
+        <ui:TitleBar.Header>
+            <Grid
+                Grid.Column="0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <baseControls:TabButton
+                    x:Name="TBTN_Home"
+                    Grid.Column="0"
+                    CaptionText="">
+                    <baseControls:TabButton.IconContent>
+                        <ui:SymbolIcon Symbol="Home20" />
+                    </baseControls:TabButton.IconContent>
+                </baseControls:TabButton>
+
+                <Separator
+                    Grid.Column="1"
+                    Height="34"
+                    Margin="1.5,0" />
+
+                <local:InstancePresenterGrid x:Name="IPSTG_List" Grid.Column="2" />
+
+                <Separator
+                    Grid.Column="3"
+                    Height="34"
+                    Margin="0,0,1.5,0" />
+
+                <baseControls:DropDownButton
+                    x:Name="DDBTN_More"
+                    Grid.Column="4"
+                    Margin="0,0,3,0"
+                    CaptionText="">
+                    <baseControls:DropDownButton.IconContent>
+                        <ui:SymbolIcon Symbol="ChevronDown20" />
+                    </baseControls:DropDownButton.IconContent>
+
+                    <baseControls:DropDownButton.Flyout>
+                        <ContextMenu>
+                            <MenuItem
+                                Click="MenuItem_Click"
+                                Header="Open a new tab"
+                                Tag="MI_OpenNewTab" />
+                            <MenuItem
+                                Click="MenuItem_Click"
+                                Header="Close all tabs"
+                                Tag="MI_CloseAll" />
+                            <MenuItem
+                                Click="MenuItem_Click"
+                                Header="Close other tabs"
+                                Tag="MI_CloseOthers" />
+                            <Separator Visibility="Collapsed" />
+                            <MenuItem
+                                Click="MenuItem_Click"
+                                Header="Reload current tab"
+                                Tag="MI_Reload"
+                                Visibility="Collapsed" />
+                            <Separator Visibility="Collapsed" />
+                            <MenuItem
+                                Click="MenuItem_Click"
+                                Header="Multi-Screen Mode"
+                                IsCheckable="True"
+                                IsChecked="False"
+                                Tag="MI_MultiScreen"
+                                Visibility="Collapsed" />
+                        </ContextMenu>
+                    </baseControls:DropDownButton.Flyout>
+                </baseControls:DropDownButton>
+
+            </Grid>
+        </ui:TitleBar.Header>
+    </ui:TitleBar>
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Style TargetType="{x:Type ui:TitleBar}">
+                <Setter Property="Background" Value="{DynamicResource WindowBackground}" />
+                <Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
+                <Setter Property="ButtonsForeground" Value="{DynamicResource ButtonForeground}" />
+                <Setter Property="ButtonsBackground">
+                    <Setter.Value>
+                        <SolidColorBrush Color="#1A000000" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="VerticalAlignment" Value="Top" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="Padding" Value="6,4,6,4" />
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="Height" Value="48" />
+                <Setter Property="FontWeight" Value="Normal" />
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="OverridesDefaultStyle" Value="True" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ui:TitleBar}">
+                            <Grid
+                                x:Name="PART_MainGrid"
+                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Background="{TemplateBinding Background}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid
+                                    x:Name="TitleGrid"
+                                    Grid.Column="0"
+                                    Margin="{TemplateBinding Padding}"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--  Custom application icon  -->
+                                    <ContentPresenter
+                                        x:Name="PART_Icon"
+                                        Grid.Column="0"
+                                        Margin="3,0"
+                                        VerticalAlignment="Center"
+                                        Content="{TemplateBinding Icon}"
+                                        Focusable="False"
+                                        RenderOptions.BitmapScalingMode="HighQuality" />
+
+                                </Grid>
+                                <Grid Grid.Column="1" Margin="3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--  Additional header content  -->
+                                    <ContentPresenter
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        Content="{TemplateBinding Header}" />
+
+                                    <!--  Navigation buttons - Close, Restore, Maximize, Minimize  -->
+                                    <Grid
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <ui:TitleBarButton
+                                            x:Name="PART_HelpButton"
+                                            Grid.Column="0"
+                                            ButtonType="Help" />
+
+                                        <ui:TitleBarButton
+                                            x:Name="PART_MinimizeButton"
+                                            Grid.Column="1"
+                                            ButtonType="Minimize" />
+
+                                        <ui:TitleBarButton
+                                            x:Name="PART_MaximizeButton"
+                                            Grid.Column="2"
+                                            ButtonType="Maximize"
+                                            IsHitTestVisible="False" />
+
+                                        <ui:TitleBarButton
+                                            x:Name="PART_CloseButton"
+                                            Grid.Column="4"
+                                            ButtonType="Close"
+                                            MouseOverBackground="{DynamicResource PaletteRedBrush}"
+                                            MouseOverButtonsForeground="White" />
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="Icon" Value="{x:Null}" />
+                                        <Condition Property="Title" Value="{x:Null}" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter TargetName="TitleGrid" Property="Visibility" Value="Collapsed" />
+                                </MultiTrigger>
+                                <Trigger Property="ApplicationTheme" Value="Dark">
+                                    <Setter Property="ButtonsBackground">
+                                        <Setter.Value>
+                                            <SolidColorBrush Color="#17FFFFFF" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="Icon" Value="{x:Null}">
+                                    <Setter TargetName="PART_Icon" Property="Visibility" Value="Collapsed" />
+                                    <Setter TargetName="PART_Icon" Property="Margin" Value="0" />
+                                </Trigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="ShowMaximize" Value="True" />
+                                        <Condition Property="IsMaximized" Value="True" />
+                                    </MultiTrigger.Conditions>
+
+                                    <Setter TargetName="PART_MaximizeButton" Property="ButtonType" Value="Restore" />
+                                </MultiTrigger>
+                                <Trigger Property="ShowHelp" Value="False">
+                                    <Setter TargetName="PART_HelpButton" Property="Visibility" Value="Collapsed" />
+                                </Trigger>
+                                <Trigger Property="ShowMinimize" Value="False">
+                                    <Setter TargetName="PART_MinimizeButton" Property="Visibility" Value="Collapsed" />
+                                </Trigger>
+                                <Trigger Property="ShowMaximize" Value="False">
+                                    <Setter TargetName="PART_MaximizeButton" Property="Visibility" Value="Collapsed" />
+                                </Trigger>
+                                <Trigger Property="ShowClose" Value="False">
+                                    <Setter TargetName="PART_CloseButton" Property="Visibility" Value="Collapsed" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+</UserControl>

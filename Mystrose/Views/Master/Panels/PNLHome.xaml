@@ -1,0 +1,136 @@
+﻿<base:MystPanel
+    x:Class="Mystrose.Views.Master.Panels.PNLHome"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:base="clr-namespace:Mystrose.Views.Base"
+    xmlns:baseControls="clr-namespace:Mystrose.Views.Base.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Mystrose.Views.Master.Panels"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    d:DesignHeight="550"
+    d:DesignWidth="959"
+    Loaded="OnLoaded"
+    TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    Unloaded="OnUnloaded"
+    mc:Ignorable="d">
+
+    <Grid Margin="100">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Grid
+            Grid.Column="0"
+            Margin="0,0,25,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel
+                Grid.Row="0"
+                IsHitTestVisible="False"
+                Orientation="Horizontal">
+                <TextBlock
+                    Margin="0,0,25,0"
+                    FontFamily="{StaticResource FF_Albertus_Regular}"
+                    FontSize="28"
+                    FontWeight="Bold"
+                    Text="Mystrose" />
+                <ui:Button Appearance="Danger">
+                    <TextBlock
+                        x:Name="TB_CurrentAppVersion"
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource FF_Albertus_Regular}"
+                        FontSize="20"
+                        Text="{Binding AppVersion}" />
+                </ui:Button>
+            </StackPanel>
+
+            <Separator Grid.Row="1" Margin="0,5" />
+
+            <TextBlock
+                Grid.Row="2"
+                Margin="0,5"
+                FontFamily="{StaticResource FF_HypatiaSans_Regular}"
+                FontSize="14"
+                LineHeight="20"
+                Opacity="0.75"
+                TextWrapping="Wrap">
+                Welcome to Mystrose! This is a game client for the game "AdventureQuest Worlds".
+                This client is still in early development, so there may be bugs and issues.
+                If you encounter any of them, please report them to the developers.
+                Thank you!
+            </TextBlock>
+
+            <StackPanel
+                Grid.Row="3"
+                Margin="0,5"
+                Orientation="Vertical">
+                <CheckBox
+                    x:Name="CHBBTN_IsHomeSkippable"
+                    TextElement.FontFamily="{StaticResource FF_HypatiaSans_Regular}"
+                    TextElement.FontSize="14">
+                    Skip this home screen on startup
+                </CheckBox>
+            </StackPanel>
+
+            <Border
+                Grid.Row="4"
+                Margin="0,5"
+                HorizontalAlignment="Left"
+                Background="{DynamicResource ButtonBackground}"
+                BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="4">
+                <StackPanel Orientation="Horizontal">
+                    <baseControls:MenuButton
+                        x:Name="MBTN_NewTab"
+                        Margin="0,0,3,0"
+                        CaptionText="Open a new game tab">
+                        <baseControls:MenuButton.IconContent>
+                            <ui:SymbolIcon Symbol="Games20" />
+                        </baseControls:MenuButton.IconContent>
+                    </baseControls:MenuButton>
+
+                    <baseControls:MenuButton
+                        x:Name="MBTN_JoinDiscord"
+                        Margin="0,0,3,0"
+                        CaptionText="Join the discord server">
+                        <baseControls:MenuButton.IconContent>
+                            <ui:SymbolIcon Symbol="ArrowJoin20" />
+                        </baseControls:MenuButton.IconContent>
+                    </baseControls:MenuButton>
+
+                    <baseControls:MenuButton x:Name="MBTN_Donate" CaptionText="Donate and help the project development">
+                        <baseControls:MenuButton.IconContent>
+                            <ui:SymbolIcon Symbol="Money20" />
+                        </baseControls:MenuButton.IconContent>
+                    </baseControls:MenuButton>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <StackPanel
+            Grid.Column="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+            <Image
+                Width="250"
+                Height="250"
+                RenderOptions.BitmapScalingMode="HighQuality"
+                SnapsToDevicePixels="True"
+                Source="pack://application:,,,/Resources/Graphics/Mystrose.png"
+                UseLayoutRounding="True" />
+        </StackPanel>
+
+    </Grid>
+
+</base:MystPanel>

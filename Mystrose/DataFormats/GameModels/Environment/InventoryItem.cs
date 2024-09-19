@@ -6,13 +6,35 @@
 public class InventoryItem : BaseItem
 {
 
+    #region Constructor
+    public InventoryItem()
+    {
+        RefreshProperties(this);
+    }
+    #endregion
+
     #region Properties
+    /// <summary>
+    /// The ID of the item instance.
+    /// </summary>
+    /// <returns>
+    /// An integer representing the item's character ID.
+    /// </returns>
+    [JsonPropertyOrder(105)]
+    [JsonPropertyName("CharItemID")]
+    public float CharacterItemID
+    {
+        get;
+        set;
+    } = -1.0;
+
     /// <summary>
     /// The item's inventory type; a purposed placement for the item to be put in.
     /// </summary>
     /// <returns>
     /// An enumeration type representing the item's inventory type.
     /// </returns>
+    [JsonPropertyOrder(100)]
     public InventoryType InventoryType
     {
         get;
@@ -20,24 +42,12 @@ public class InventoryItem : BaseItem
     } = InventoryType.Unknown;
 
     /// <summary>
-    /// The ID of the item instance.
-    /// </summary>
-    /// <returns>
-    /// An integer representing the item's character ID.
-    /// </returns>
-    [JsonPropertyName("CharItemID")]
-    public int CharacterItemID
-    {
-        get;
-        set;
-    } = -1;
-
-    /// <summary>
     /// The item's tag of whether it is currently equipped. 
     /// </summary>
     /// <returns>
     /// A boolean representing the item's tag for Equipped state.
     /// </returns>
+    [JsonPropertyOrder(101)]
     [JsonPropertyName("bEquip")]
     [JsonConverter(typeof(StringBoolConverter))]
     public bool IsEquipped
@@ -52,6 +62,7 @@ public class InventoryItem : BaseItem
     /// <returns>
     /// An integer representing the item's enhancement level.
     /// </returns>
+    [JsonPropertyOrder(102)]
     [JsonPropertyName("EnhLvl")]
     public int EnhancementLevel
     {
@@ -65,6 +76,7 @@ public class InventoryItem : BaseItem
     /// <returns>
     /// An integer representing the item's enhancement pattern ID.
     /// </returns>
+    [JsonPropertyOrder(103)]
     [JsonPropertyName("InvEnhPatternID")]
     public int EnhancementPatternID
     {
@@ -78,6 +90,7 @@ public class InventoryItem : BaseItem
     /// <returns>
     /// An enumeration type representing the item's enhancement type.
     /// </returns>
+    [JsonPropertyOrder(104)]
     public EnhancementType EnhancementType
     {
         get;

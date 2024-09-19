@@ -1,6 +1,6 @@
 ﻿namespace Mystrose.DataFormats.GameModels.Preference;
 
-public class LoadoutColorSet
+public class LoadoutColorSet : GameObject
 {
 
     #region Properties

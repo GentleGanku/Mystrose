@@ -1,4 +1,7 @@
-﻿namespace Mystrose.Views.Base;
+﻿using MessageBox = Wpf.Ui.Controls.MessageBox;
+using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult;
+
+namespace Mystrose.Views.Base;
 
 public class MystWindow : FluentWindow, IDestructible
 {
@@ -7,6 +10,10 @@ public class MystWindow : FluentWindow, IDestructible
     public MystWindow() : base()
     {
         Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
+        Closed += OnClosed;
+
+        SVCViewManager.Render(this);
     }
     #endregion
 
@@ -30,15 +37,29 @@ public class MystWindow : FluentWindow, IDestructible
     }
     #endregion
 
-    #region Methods: Pre-setup
-    protected void InitializeComponent()
+    #region Methods: Utility
+    public void OpenHyperlink(string url)
     {
-        SVCLogger.LogOnConsole("MystWindow pre-initialized.", $"MystWindow-{Name}", "InitializeComponent");
+        try
+        {
+            ProcessStartInfo processStartInfo = new ProcessStartInfo(url)
+            {
+                UseShellExecute = true
+            };
+
+            Process.Start(processStartInfo);
+
+            SVCLogger.LogOnTrace($"Hyperlink opened: {url}");
+        }
+        catch (Exception ex)
+        {
+            SVCLogger.LogOnException("(OpenHyperlink)" + ex.ToString());
+        }
     }
     #endregion
 
     #region Methods: Invoker
-    protected Response<Action> Invoke(Action action)
+    public Response<Action> Invoke(Action action)
     {
         bool isInvoked = false;
 
@@ -57,21 +78,23 @@ public class MystWindow : FluentWindow, IDestructible
         }
         catch (Exception ex)
         {
-            SVCLogger.LogOnException($"({action.Method.Name}) " + ex.ToString());
+            //SVCLogger.LogOnException($"({action.Method.Name}) " + ex.ToString());
+            SVCLogger.LogOnConsole($"({action.Method.Name}) " + ex.ToString(), $"MystWindow-{Name}", "Invoke");
         }
 
         Response<Action> response = new(isInvoked,
             $"({action.Method.Name}) " + (isInvoked is true ? "Action invoked to the interface successfully." : "Action failed to invoke."),
             action);
 
-        SVCLogger.LogOnTrace(response.Message);
+        //SVCLogger.LogOnTrace(response.Message);
+        SVCLogger.LogOnConsole(response.Message, $"MystWindow-{Name}", "Invoke");
 
         return response;
     }
     #endregion
 
     #region Methods: Notifier
-    protected void NotifyInfo(string title, string content)
+    public void NotifyInfo(string title, string content)
     {
         Snackbar snackbar = new(SBPST_Base)
         {
@@ -86,7 +109,7 @@ public class MystWindow : FluentWindow, IDestructible
         SBPST_Base.AddToQue(snackbar);
     }
 
-    protected void NotifySuccess(string title, string content)
+    public void NotifySuccess(string title, string content)
     {
         Snackbar snackbar = new(SBPST_Base)
         {
@@ -101,7 +124,7 @@ public class MystWindow : FluentWindow, IDestructible
         SBPST_Base.AddToQue(snackbar);
     }
 
-    protected void NotifyFailure(string title, string content)
+    public void NotifyFailure(string title, string content)
     {
         Snackbar snackbar = new(SBPST_Base)
         {
@@ -116,7 +139,7 @@ public class MystWindow : FluentWindow, IDestructible
         SBPST_Base.AddToQue(snackbar);
     }
 
-    protected void NotifyException(string title, string content)
+    public void NotifyException(string title, string content)
     {
         Snackbar snackbar = new(SBPST_Base)
         {
@@ -133,20 +156,20 @@ public class MystWindow : FluentWindow, IDestructible
     #endregion
 
     #region Methods: Messenger
-    protected void ShowDialog(string title, string content)
+    public void ShowDialog(string title, string content)
     {
         ContentDialog contentDialog = new(CPST_ContentDialog)
         {
             Title = title,
             Content = content,
 
-            CloseButtonText = "Cancel"
+            CloseButtonText = "Close"
         };
 
         contentDialog.ShowAsync();
     }
 
-    protected async void ShowActionDialog(string title, string content, string primaryButtonText, string secondaryButtonText, Action primaryAction, Action secondaryAction, string closeButtonText = "Cancel")
+    public async void ShowActionDialog(string title, string content, string primaryButtonText, string secondaryButtonText, Action primaryAction, Action secondaryAction, string closeButtonText = "Close")
     {
         ContentDialog contentDialog = new(CPST_ContentDialog)
         {
@@ -171,35 +194,72 @@ public class MystWindow : FluentWindow, IDestructible
     }
     #endregion
 
-    #region Methods: Interface Handlers
-    protected virtual void OnLoaded(object sender, RoutedEventArgs e)
+    #region Methods: Classic Messenger
+    public void ShowMessageBox(string title, string content)
     {
-        InitializeComponent();
+        MessageBox messageBox = new()
+        {
+            Title = title,
+            Content = content,
 
-        SVCLogger.LogOnConsole("MystWindow is ready to go.", $"MystWindow-{Name}", "OnLoaded");
+            CloseButtonText = "Close"
+        };
+
+        messageBox.ShowDialogAsync();
+    }
+
+    public async void ShowActionMessageBox(string title, string content, string primaryButtonText, string secondaryButtonText, Action primaryAction, Action secondaryAction, string closeButtonText = "Close", Action? closeAction = null)
+    {
+        MessageBox messageBox = new()
+        {
+            Title = title,
+            Content = content,
+
+            PrimaryButtonText = primaryButtonText,
+            SecondaryButtonText = secondaryButtonText,
+            CloseButtonText = closeButtonText
+        };
+
+        MessageBoxResult result = await messageBox.ShowDialogAsync();
+
+        if (result is MessageBoxResult.Primary)
+        {
+            primaryAction();
+        }
+        else if (result is MessageBoxResult.Secondary)
+        {
+            secondaryAction();
+        }
+        else if (result is MessageBoxResult.None)
+        {
+            closeAction?.Invoke();
+        }
     }
     #endregion
 
-    #region Overrides: Interface
-    public virtual void Destruct()
+    #region Methods: Interface
+    public void Dispose()
     {
-        return;
-    }
-
-    public virtual void Dispose()
-    {
-        SVCLogger.LogOnConsole("MystWindow is disposed.", $"MystWindow-{Name}", "Dispose");
+        SVCLogger.LogOnConsole("Disposing the MystWindow...", $"MystWindow-{Name}", "Dispose");
 
         GC.SuppressFinalize(this);
     }
     #endregion
 
-    #region Overrides: Events
-    protected override void OnClosed(EventArgs e)
+    #region Events: Read/Write
+    private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        Destruct();
+        SVCLogger.LogOnConsole("Loaded the MystWindow into interface.", $"MystWindow-{Name}", "OnLoaded");
+    }
 
-        base.OnClosed(e);
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        SVCLogger.LogOnConsole("Unloaded the MystWindow from interface.", $"MystWindow-{Name}", "OnUnloaded");
+    }
+
+    private void OnClosed(object? sender, EventArgs e)
+    {
+        SVCViewManager.Unrender(this);
         Dispose();
     }
     #endregion

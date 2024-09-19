@@ -29,14 +29,14 @@ public class Settings
 
     #region Properties
     [JsonInclude]
-    public bool IsFirstTime
+    public bool firstTime
     {
         get;
         set;
     } = false;
 
     [JsonInclude]
-    public bool IsMainWindowMaximized
+    public bool maximizedMainWindow
     {
         get;
         set;

@@ -10,10 +10,7 @@
     d:DesignWidth="500"
     mc:Ignorable="d">
 
-    <ui:TitleBar
-        x:Name="TTLB_Item"
-        Height="40"
-        Background="{DynamicResource WindowBackground}">
+    <ui:TitleBar x:Name="TTLB_Item" Height="40">
         <ui:TitleBar.Icon>
             <ui:SymbolIcon
                 x:Name="SI_Title"
@@ -26,7 +23,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <Style TargetType="{x:Type ui:TitleBar}">
-                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Background" Value="{DynamicResource WindowBackground}" />
                 <Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
                 <Setter Property="ButtonsForeground" Value="{DynamicResource ButtonForeground}" />
                 <Setter Property="ButtonsBackground">

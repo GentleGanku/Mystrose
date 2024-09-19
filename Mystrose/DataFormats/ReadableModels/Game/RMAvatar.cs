@@ -85,7 +85,7 @@ public class RMAvatar : ReadableModel
 
     public string Equipments
     {
-        get => string.Join("|", Avatar.Equipments.Values.Select(i => i.Name));
+        get => string.Join("|", Avatar.Equipments.Values.Select(i => i.ID));
     }
 
     public bool Is_AFK

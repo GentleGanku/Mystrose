@@ -9,7 +9,11 @@ public partial class VWLogger : MystWindow
     #region Constructor
     public VWLogger() : base()
     {
-        // Nothing to do here.
+        InitializeComponent();
+     
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
+        ContentRendered += OnContentRendered;
     }
     #endregion
 
@@ -22,8 +26,8 @@ public partial class VWLogger : MystWindow
     };
     #endregion
 
-    #region Methods: Pre-setup
-    private void Refresh()
+    #region Methods: Setup
+    private void RefreshView()
     {
         foreach (var logType in _logs.Keys)
         {
@@ -35,13 +39,6 @@ public partial class VWLogger : MystWindow
         _logs["Exception"].AddRange(ConvertStringToList(SVCLogger.GetLogsOnException().Output));
 
         CB_LogTypes.SelectedIndex = 0;
-
-        MBTN_Scroll.Button.Click += MenuButton_Click;
-        MBTN_CopySelected.Button.Click += MenuButton_Click;
-        MBTN_CopyAll.Button.Click += MenuButton_Click;
-        MBTN_ClearCurrent.Button.Click += MenuButton_Click;
-
-        SVCLogger.LogEvent += AddIncomingLog;
     }
 
     private void RefreshLogs(int type)
@@ -79,7 +76,7 @@ public partial class VWLogger : MystWindow
     }
     #endregion
 
-    #region Methods: Operations
+    #region Methods: Actions
     private void ScrollToSelectedLog()
     {
         if (LV_LogMessages.SelectedIndex < 0)
@@ -176,7 +173,7 @@ public partial class VWLogger : MystWindow
     }
     #endregion
 
-    #region Methods: Event Handlers
+    #region Methods: Service Handlers
     private void AddIncomingLog(Response<LogMessage> response)
     {
         if (!response.IsSuccess)
@@ -196,20 +193,18 @@ public partial class VWLogger : MystWindow
     }
     #endregion
 
-    #region Methods: Interface Handlers
-    private void CB_LogTypes_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    #region Events: Read/Write
+    private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        RefreshLogs(CB_LogTypes.SelectedIndex);
+        MBTN_Scroll.Button.Click += MenuButton_Click;
+        MBTN_CopySelected.Button.Click += MenuButton_Click;
+        MBTN_CopyAll.Button.Click += MenuButton_Click;
+        MBTN_ClearCurrent.Button.Click += MenuButton_Click;
+
+        SVCLogger.LogEvent += AddIncomingLog;
     }
 
-    private void LV_LogMessages_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        RefreshStats();
-    }
-    #endregion
-
-    #region Overrides: Interface
-    public override void Destruct()
+    private void OnUnloaded(object sender, RoutedEventArgs e)
     {
         SVCLogger.LogEvent -= AddIncomingLog;
 
@@ -221,32 +216,29 @@ public partial class VWLogger : MystWindow
         _logs.Clear();
         LV_LogMessages.Items.Clear();
     }
-    #endregion
 
-    #region Overrides: Events
-    protected override void OnLoaded(object sender, RoutedEventArgs e)
+    private void OnContentRendered(object? sender, EventArgs e)
     {
-        base.InitializeComponent();
-        Refresh();
-
-        SVCLogger.LogOnConsole("VWLogger is ready to go.", "VWLogger", "OnLoaded");
-    }
-
-    protected override void OnClosed(EventArgs e)
-    {
-        Destruct();
-
-        base.OnClosed(e);
-        base.Dispose();
+        RefreshView();
     }
     #endregion
 
-    #region Handlers: Events
+    #region Events: Interface
+    private void CB_LogTypes_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        RefreshLogs(CB_LogTypes.SelectedIndex);
+    }
+
+    private void LV_LogMessages_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        RefreshStats();
+    }
+
     private void MenuButton_Click(object sender, RoutedEventArgs e)
     {
-        string btnName = ((sender as Button)!.Parent as MenuButton)!.Name;
+        MenuButton button = ((sender as Button)!.Parent as MenuButton)!;
 
-        switch (btnName)
+        switch (button.Name)
         {
             case "MBTN_Scroll":
                 ScrollToSelectedLog();

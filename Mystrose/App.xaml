@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Mystrose"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    StartupUri="pack://application:,,,/Views/Logger/VWLogger.xaml">
+    StartupUri="pack://application:,,,/Views/Master/VWMaster.xaml">
 
     <Application.Resources>
         <ResourceDictionary>

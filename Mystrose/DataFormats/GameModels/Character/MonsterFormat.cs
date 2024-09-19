@@ -3,8 +3,15 @@
 /// <summary>
 /// A class that represents a monster in the game.
 /// </summary>
-public class MonsterFormat
+public class MonsterFormat : GameObject
 {
+
+    #region Constructor
+    public MonsterFormat()
+    {
+        // Empty
+    }
+    #endregion
 
     #region Fields
     /// <summary>

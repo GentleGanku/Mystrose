@@ -8,8 +8,8 @@ public class ScriptManager
     {
         World = host.World;
 
-        RegularEngine = new(host);
-        CombatEngine = new(host);
+        //RegularEngine = new(host);
+        //CombatEngine = new(host);
     }
     #endregion
 

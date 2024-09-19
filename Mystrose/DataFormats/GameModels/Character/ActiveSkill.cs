@@ -3,14 +3,13 @@
 /// <summary>
 /// A class that represents an active skill in the game.
 /// </summary>
-public class ActiveSkill : BaseSkill, IPropertyManager
+public class ActiveSkill : BaseSkill
 {
 
     #region Constructor
-    [JsonConstructor]
-    public ActiveSkill() : base()
+    public ActiveSkill()
     {
-        RefreshProperties();
+        RefreshProperties(this);
     }
     #endregion
 
@@ -20,19 +19,11 @@ public class ActiveSkill : BaseSkill, IPropertyManager
     private bool _isLocked = false;
     #endregion
 
-    #region Manager
-    [JsonIgnore]
-    public Dictionary<string, PropertyInfo> Properties
-    {
-        get;
-        set;
-    }
-    #endregion
-
     #region Fields
     /// <summary>
     /// The condition of whether the skill can be safely used or not.
     /// </summary>
+    [JsonPropertyOrder(110)]
     public bool IsSafeToUse
     {
         get => IsUsable && !IsDisabled && !IsLocked;
@@ -43,6 +34,7 @@ public class ActiveSkill : BaseSkill, IPropertyManager
     /// <summary>
     /// The index of the skill.
     /// </summary>
+    [JsonPropertyOrder(100)]
     public int Index
     {
         get;
@@ -52,6 +44,7 @@ public class ActiveSkill : BaseSkill, IPropertyManager
     /// <summary>
     /// The action ID of the skill.
     /// </summary>
+    [JsonPropertyOrder(101)]
     [JsonPropertyName("actID")]
     [JsonConverter(typeof(StringIntConverter))]
     public int ActID
@@ -63,6 +56,7 @@ public class ActiveSkill : BaseSkill, IPropertyManager
     /// <summary>
     /// The amount of mana that the skill costs.
     /// </summary>
+    [JsonPropertyOrder(102)]
     [JsonPropertyName("mp")]
     [JsonConverter(typeof(StringIntConverter))]
     public int ManaCost
@@ -74,6 +68,7 @@ public class ActiveSkill : BaseSkill, IPropertyManager
     /// <summary>
     /// The cooldown of the skill (in milliseconds).
     /// </summary>
+    [JsonPropertyOrder(103)]
     [JsonPropertyName("cd")]
     [JsonConverter(typeof(StringIntConverter))]
     public int Cooldown
@@ -85,6 +80,7 @@ public class ActiveSkill : BaseSkill, IPropertyManager
     /// <summary>
     /// The base damage constant of the skill (multiplied with the other damage variables).
     /// </summary>
+    [JsonPropertyOrder(104)]
     [JsonPropertyName("damage")]
     [JsonConverter(typeof(StringDoubleConverter))]
     public double Damage
@@ -96,6 +92,7 @@ public class ActiveSkill : BaseSkill, IPropertyManager
     /// <summary>
     /// The minimum number of targets the skill can be used on.
     /// </summary>
+    [JsonPropertyOrder(105)]
     [JsonPropertyName("tgtMin")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MinTarget
@@ -110,6 +107,7 @@ public class ActiveSkill : BaseSkill, IPropertyManager
     /// <summary>
     /// The maximum number of targets the skill can be used on.
     /// </summary>
+    [JsonPropertyOrder(106)]
     [JsonPropertyName("tgtMax")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MaxTarget
@@ -124,6 +122,7 @@ public class ActiveSkill : BaseSkill, IPropertyManager
     /// <summary>
     /// The condition of whether the skill is locked or not.
     /// </summary>
+    [JsonPropertyOrder(107)]
     public bool IsLocked
     {
         get => _isLocked;
@@ -136,6 +135,7 @@ public class ActiveSkill : BaseSkill, IPropertyManager
     /// <summary>
     /// The condition of whether the skill can be used automatically.
     /// </summary>
+    [JsonPropertyOrder(108)]
     [JsonPropertyName("auto")]
     public bool IsAuto
     {
@@ -146,87 +146,13 @@ public class ActiveSkill : BaseSkill, IPropertyManager
     /// <summary>
     /// The condition of whether the skill is disabled or not.
     /// </summary>
+    [JsonPropertyOrder(109)]
     [JsonPropertyName("lock")]
     public bool IsDisabled
     {
         get;
         set;
     } = false;
-    #endregion
-
-    #region Methods: Properties
-    /// <summary>
-    /// A method that gets a property's value based on their property name in-game.
-    /// </summary>
-    public PropertyInfo? GetProperty(string key)
-    {
-        if (!Properties.TryGetValue(key, out PropertyInfo? value))
-        {
-            return null;
-        }
-
-        return value;
-    }
-
-    /// <summary>
-    /// A method that sets a property's value based on their property name in-game.
-    /// </summary>
-    public void SetProperty(string key, JsonNode node)
-    {
-        PropertyInfo? propInfo = GetProperty(key);
-        if (propInfo is null)
-        {
-            return;
-        }
-
-        JsonSerializerOptions options = new()
-        {
-            Converters =
-            {
-                new StringIntConverter(),
-                new StringDoubleConverter(),
-                new StringBoolConverter()
-            }
-        };
-
-        Properties[key].SetValue(this, node.Deserialize(propInfo.PropertyType, options));
-    }
-
-    /// <summary>
-    /// A method that sets all predefined properties in the instance of this class.
-    /// </summary>
-    public void SetProperties(JsonObject jsonObj)
-    {
-        foreach (KeyValuePair<string, JsonNode> jsonProp in jsonObj)
-        {
-            SetProperty(jsonProp.Key, jsonProp.Value);
-        }
-    }
-
-    /// <summary>
-    /// A method that refreshes all properties in the instance of this class.
-    /// </summary>
-    public void RefreshProperties()
-    {
-        Properties = new()
-        {
-            ["id"] = GetType().GetProperty(nameof(ID)),
-            ["ref"] = GetType().GetProperty(nameof(ActionType)),
-            ["tgt"] = GetType().GetProperty(nameof(TargetType)),
-            ["nam"] = GetType().GetProperty(nameof(Name)),
-            ["desc"] = GetType().GetProperty(nameof(Description)),
-            ["range"] = GetType().GetProperty(nameof(Range)),
-            ["isOK"] = GetType().GetProperty(nameof(IsUsable)),
-            ["actID"] = GetType().GetProperty(nameof(ActID)),
-            ["mp"] = GetType().GetProperty(nameof(ManaCost)),
-            ["cd"] = GetType().GetProperty(nameof(Cooldown)),
-            ["damage"] = GetType().GetProperty(nameof(Damage)),
-            ["tgtMin"] = GetType().GetProperty(nameof(MinTarget)),
-            ["tgtMax"] = GetType().GetProperty(nameof(MaxTarget)),
-            ["auto"] = GetType().GetProperty(nameof(IsAuto)),
-            ["lock"] = GetType().GetProperty(nameof(IsDisabled))
-        };
-    }
     #endregion
 
     #region Methods: Override

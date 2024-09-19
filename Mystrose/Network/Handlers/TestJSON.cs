@@ -164,9 +164,9 @@ public class TestJSON : IJSONMessageHandler
         "getapop"
     };
 
-    public void Handle(GameHost host, JSONMessage message)
+    public void Handle(JSONMessage message)
     {
-        string path = AppDomain.CurrentDomain.BaseDirectory + "Packets\\JSON\\" + message.Command + ".json";
+        string path = AppDomain.CurrentDomain.BaseDirectory + "packets\\json\\" + message.Command + ".json";
 
         var options = new JsonSerializerOptions
         {
@@ -177,7 +177,7 @@ public class TestJSON : IJSONMessageHandler
 
         if (File.Exists(path))
         {
-            string tempPath = AppDomain.CurrentDomain.BaseDirectory + "Packets\\JSON\\temp" + message.Command + ".json";
+            string tempPath = AppDomain.CurrentDomain.BaseDirectory + "packets\\json\\temp" + message.Command + ".json";
 
             File.WriteAllText(tempPath, jsonString);
 

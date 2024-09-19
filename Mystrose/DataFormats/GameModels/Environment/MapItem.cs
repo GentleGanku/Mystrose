@@ -3,7 +3,7 @@
 /// <summary>
 /// A class that represents a Map Item in the game.
 /// </summary>
-public class MapItem
+public class MapItem : GameObject
 {
 
     #region Properties

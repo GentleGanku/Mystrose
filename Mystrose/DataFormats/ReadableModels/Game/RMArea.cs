@@ -55,7 +55,7 @@ public class RMArea : ReadableModel
 
     public int Player_Count_in_Current_Cell
     {
-        get => Area.Players.Where(p => p.Cell.Equals(World is not null ? World.Master.Cell : string.Empty)).Count();
+        get => Area.Players.Where(p => p.Cell.Equals(World is not null ? World.Avatar.Cell : string.Empty)).Count();
     }
 
     public int Monster_Count_in_Area
@@ -65,7 +65,7 @@ public class RMArea : ReadableModel
 
     public int Monster_Count_in_Current_Cell
     {
-        get => Area.Monsters.Where(m => m.Cell.Equals(World is not null ? World.Master.Cell : string.Empty)).Count();
+        get => Area.Monsters.Where(m => m.Cell.Equals(World is not null ? World.Avatar.Cell : string.Empty)).Count();
     }
     #endregion
 

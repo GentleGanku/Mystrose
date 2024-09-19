@@ -61,6 +61,7 @@ public class FlashPlayer
             {
                 Name = "GameClient",
                 Dock = DockStyle.Fill,
+                
                 TabIndex = 0,
             };
 
@@ -101,7 +102,7 @@ public class FlashPlayer
         ClientMaster.DataManager.Save("Servers");
 
         // TODO: A proper log for choosing server
-        Host.World = new(Host, ClientMaster.DataManager.Servers[0]);
+        //Host.World = new(Host, ClientMaster.DataManager.Servers[0]);
 
         loginObj["iAge"] = 99;
         loginObj["iEmailStatus"] = 5;
@@ -115,15 +116,15 @@ public class FlashPlayer
     {
         JsonObject? masterObj = JsonSerializer.Deserialize<JsonObject>(masterData);
         
-        Host.World.Master = new()
-        {
-            UserID = masterObj["userid"].GetValue<int>(),
-            AccessType = (AccessType)masterObj["iAccess"].GetValue<int>(),
-            Level = masterObj["iLevel"].GetValue<int>(),
-            MemberDays = masterObj["iUpgDays"].GetValue<int>(),
-            ActivationFlag = masterObj["iEmailStatus"].GetValue<int>(),
-            Username = masterObj["unm"].GetValue<string>(),
-        };
+        //Host.World.Master = new()
+        //{
+        //    UserID = masterObj["userid"].GetValue<int>(),
+        //    AccessType = (AccessType)masterObj["iAccess"].GetValue<int>(),
+        //    Level = masterObj["iLevel"].GetValue<int>(),
+        //    MemberDays = masterObj["iUpgDays"].GetValue<int>(),
+        //    ActivationFlag = masterObj["iEmailStatus"].GetValue<int>(),
+        //    Username = masterObj["unm"].GetValue<string>(),
+        //};
 
         Host.State = GameStateType.Standby;
     }
@@ -496,10 +497,10 @@ public class FlashPlayer
                 GameClient.SetReturnValue("<string>" + RegisterServers(args) + "</string>");
                 break;
             case "interceptPacket":
-                Host.Network.InvokeEvent(NetworkHandlerType.Game, Host, args);
+                //Host.Network.InvokeEvent(NetworkHandlerType.Game, Host, args);
                 break;
             case "interceptClient":
-                Host.Network.InvokeEvent(NetworkHandlerType.Client, Host, args);
+                //Host.Network.InvokeEvent(NetworkHandlerType.Client, Host, args);
                 break;
 
             case "progress":

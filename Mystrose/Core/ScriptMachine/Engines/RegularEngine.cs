@@ -4,7 +4,7 @@ public class RegularEngine : ScriptEngine
 {
 
     #region Constructor
-    public RegularEngine(GameHost host) : base(host, ScriptEngineType.Regular)
+    public RegularEngine(ClientUseIdentifier identifier) : base(new(), ScriptEngineType.Regular)
     {
         // TODO: Implement all
     }

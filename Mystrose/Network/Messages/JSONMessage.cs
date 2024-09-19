@@ -4,29 +4,12 @@ public class JSONMessage : Message
 {
 
     #region Constructor
-    public JSONMessage(string raw)
+    public JSONMessage(ClientUseIdentifier identifier, string raw) : base(identifier)
     {
-        try
-        {
-            RawContent = raw;
-            Object = (JsonObject)JsonObject.Parse(raw);
-            DataObject = (JsonObject)Object?["b"]?["o"];
-            Command = DataObject?["cmd"]?.GetValue<string>();
-        }
-        catch (JsonException e)
-        {
-            // WIP
-        }
-    }
-    #endregion
-
-    #region Destructor
-    ~JSONMessage()
-    {
-        RawContent = null;
-        Command = null;
-        Object = null;
-        DataObject = null;
+        RawContent = raw;
+        Object = (JsonObject)JsonNode.Parse(raw)!;
+        DataObject = (JsonObject)Object?["b"]?["o"]!;
+        Command = DataObject?["cmd"]?.GetValue<string>()!;
     }
     #endregion
 
@@ -44,7 +27,7 @@ public class JSONMessage : Message
     }
     #endregion
 
-    #region Override Methods
+    #region Overrides
     public override string ToString()
     {
         return Object?.ToJsonString();

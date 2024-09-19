@@ -3,8 +3,15 @@
 /// <summary>
 /// A class that represents a map in the game.
 /// </summary>
-public class Area
+public class Area : GameObject
 {
+
+    #region Constructor
+    public Area()
+    {
+        // Empty
+    }
+    #endregion
 
     #region Private Fields
     private MapFormat _format = new();

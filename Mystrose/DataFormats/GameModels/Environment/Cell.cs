@@ -3,8 +3,15 @@
 /// <summary>
 /// A class that represents a Map Cell in the game.
 /// </summary>
-public class Cell
+public class Cell : GameObject
 {
+
+    #region Constructor
+    public Cell()
+    {
+        // Empty
+    }
+    #endregion
 
     #region Properties
     /// <summary>

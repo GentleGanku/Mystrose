@@ -106,8 +106,8 @@ public class SVCLogger
         Response<LogMessage> response = new(isWritten,
             isWritten ? "Log written successfully to trace log." : "Failed to write log to trace log.",
             msg);
-
-        LogEvent.Invoke(response);
+        
+        LogEvent?.Invoke(response);
 
         return response;
     }
@@ -133,7 +133,7 @@ public class SVCLogger
             isWritten ? "Log written successfully to script log." : "Failed to write log to script log.",
             msg);
 
-        LogEvent.Invoke(response);
+        LogEvent?.Invoke(response);
 
         return response;
     }
@@ -159,7 +159,7 @@ public class SVCLogger
             isWritten ? "Log written successfully to exception log." : "Failed to write log to exception log.",
             msg);
 
-        LogEvent.Invoke(response);
+        LogEvent?.Invoke(response);
 
         return response;
     }

@@ -3,7 +3,7 @@
 /// <summary>
 /// A class that represents an event message (fielding a yellow text) in the game.
 /// </summary>
-public class EventMessage
+public class EventMessage : GameObject
 {
 
     #region Constructor

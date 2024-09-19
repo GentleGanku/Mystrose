@@ -3,31 +3,15 @@
 /// <summary>
 /// A class that represents an Effect Aura in the game.
 /// </summary>
-public class Aura : IPropertyManager
+public class Aura : GameObject
 {
 
     #region Constructor
-    [JsonConstructor]
     public Aura()
     {
-        StackValue = 0;
-
         Refresh();
-        RefreshProperties();
+        RefreshProperties(this);
     }
-    #endregion
-
-    #region Manager
-    [JsonIgnore]
-    public Dictionary<string, PropertyInfo> Properties
-    {
-        get;
-        set;
-    }
-    #endregion
-
-    #region Actions
-    public event Action CountdownEvent;
     #endregion
 
     #region Private Fields
@@ -41,6 +25,7 @@ public class Aura : IPropertyManager
     /// <returns>
     /// An integer representing the aura's runtime.
     /// </returns>
+    [JsonPropertyOrder(10)]
     public int Runtime
     {
         get => Duration - (DateTime.Now - _startingSpan).Seconds;
@@ -49,24 +34,12 @@ public class Aura : IPropertyManager
 
     #region Properties
     /// <summary>
-    /// The dictionary that the aura is based from.
-    /// </summary>
-    /// <returns>
-    /// A dictionary representing the aura's source.
-    /// </returns>
-    [JsonIgnore]
-    public AuraDictionary? SourceDict
-    {
-        get;
-        set;
-    } = null;
-
-    /// <summary>
     /// The condition of whether the aura is added to or removed from the dictionary.
     /// </summary>
     /// <returns>
     /// A boolean representing the aura's condition.
     /// </returns>
+    [JsonPropertyOrder(0)]
     public bool IsAdded
     {
         get;
@@ -79,6 +52,7 @@ public class Aura : IPropertyManager
     /// <returns>
     /// A string representing the aura's name, in trimmed form.
     /// </returns>
+    [JsonPropertyOrder(1)]
     [JsonPropertyName("nam")]
     [JsonConverter(typeof(TrimConverter))]
     public string Name
@@ -93,6 +67,7 @@ public class Aura : IPropertyManager
     /// <returns>
     /// A string representing the aura's value.
     /// </returns>
+    [JsonPropertyOrder(2)]
     [JsonPropertyName("val")]
     [JsonConverter(typeof(IntStringConverter))]
     public string Value
@@ -107,6 +82,7 @@ public class Aura : IPropertyManager
     /// <returns>
     /// An integer representing the aura's unique stack value.
     /// </returns>
+    [JsonPropertyOrder(3)]
     public int StackValue
     {
         get;
@@ -119,6 +95,7 @@ public class Aura : IPropertyManager
     /// <returns>
     /// An integer representing the aura's duration.
     /// </returns>
+    [JsonPropertyOrder(4)]
     [JsonPropertyName("dur")]
     [JsonConverter(typeof(StringIntConverter))]
     public int Duration
@@ -133,6 +110,7 @@ public class Aura : IPropertyManager
     /// <returns>
     /// An enumeration type representing the aura's disable type.
     /// </returns>
+    [JsonPropertyOrder(5)]
     [JsonPropertyName("cat")]
     public DisableType DisableType
     {
@@ -146,6 +124,7 @@ public class Aura : IPropertyManager
     /// <returns>
     /// An enumeration type representing the aura source's type
     /// </returns>
+    [JsonPropertyOrder(6)]
     public EntityType SourceType
     {
         get;
@@ -158,6 +137,7 @@ public class Aura : IPropertyManager
     /// <returns>
     /// A string representing the aura source's ID.
     /// </returns>
+    [JsonPropertyOrder(7)]
     public string SourceID
     {
         get;
@@ -170,6 +150,7 @@ public class Aura : IPropertyManager
     /// <returns>
     /// An enumeration type representing the aura target's type.
     /// </returns>
+    [JsonPropertyOrder(8)]
     public EntityType TargetType
     {
         get;
@@ -182,6 +163,7 @@ public class Aura : IPropertyManager
     /// <returns>
     /// A string representing the aura target's ID.
     /// </returns>
+    [JsonPropertyOrder(9)]
     public string TargetID
     {
         get;
@@ -189,75 +171,9 @@ public class Aura : IPropertyManager
     } = string.Empty;
     #endregion
 
-    #region Methods: Properties
-    /// <summary>
-    /// A method that gets a property's value based on their property name in-game.
-    /// </summary>
-    public PropertyInfo? GetProperty(string key)
-    {
-        if (!Properties.TryGetValue(key, out PropertyInfo? value))
-        {
-            return null;
-        }
-
-        return value;
-    }
-
-    /// <summary>
-    /// A method that sets a property's value based on their property name in-game.
-    /// </summary>
-    public void SetProperty(string key, JsonNode node)
-    {
-        PropertyInfo? propInfo = GetProperty(key);
-        if (propInfo is null)
-        {
-            return;
-        }
-
-        JsonSerializerOptions options = new()
-        {
-            Converters =
-            {
-                new StringIntConverter(),
-                new StringDoubleConverter(),
-                new StringBoolConverter()
-            }
-        };
-
-        Properties[key].SetValue(this, node.Deserialize(propInfo.PropertyType, options));
-    }
-
-    /// <summary>
-    /// A method that sets all predefined properties in the instance of this class.
-    /// </summary>
-    public void SetProperties(JsonObject jsonObj)
-    {
-        foreach (KeyValuePair<string, JsonNode> jsonProp in jsonObj)
-        {
-            SetProperty(jsonProp.Key, jsonProp.Value);
-        }
-    }
-
-    /// <summary>
-    /// A method that refreshes all properties in the instance of this class.
-    /// </summary>
-    public void RefreshProperties()
-    {
-        Properties = new()
-        {
-            ["nam"] = GetType().GetProperty(nameof(Name)),
-            ["val"] = GetType().GetProperty(nameof(Value)),
-            ["dur"] = GetType().GetProperty(nameof(Duration)),
-            ["cat"] = GetType().GetProperty(nameof(DisableType))
-        };
-    }
-    #endregion
-
     #region Methods: Data
-    public Aura SetHeader(AuraDictionary dict, string sourceData, string targetData)
+    public Aura SetHeader(string sourceData, string targetData)
     {
-        SourceDict = dict;
-
         if (!string.IsNullOrEmpty(sourceData))
         {
             string[] sourceInfo = sourceData.Split(":");
@@ -294,24 +210,6 @@ public class Aura : IPropertyManager
     {
         _startingSpan = DateTime.Now;
         StackValue++;
-
-        CountdownEvent -= Countdown;
-        CountdownEvent += Countdown;
-    }
-    #endregion
-
-    #region Methods: Countdown
-    public async void Countdown()
-    {
-        await Task.Delay(Duration + 000);
-
-        Expire();
-        CountdownEvent -= Countdown;
-    }
-
-    public void Expire()
-    {
-        SourceDict.Remove(this);
     }
     #endregion
 

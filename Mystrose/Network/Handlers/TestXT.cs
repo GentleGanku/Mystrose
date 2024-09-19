@@ -54,9 +54,9 @@ public class TestXT : IXTMessageHandler
         "elmSwitch"
     };
 
-    public void Handle(GameHost host, XTMessage message)
+    public void Handle(XTMessage message)
     {
-        string path = AppDomain.CurrentDomain.BaseDirectory + "Packets\\XT\\" + message.Command + ".txt";
+        string path = AppDomain.CurrentDomain.BaseDirectory + "packets\\xt\\" + message.Command + ".txt";
 
         if (File.Exists(path))
         {

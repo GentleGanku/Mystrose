@@ -113,8 +113,8 @@ public class SCMDStatement : ScriptCommand, IStatementCommand, IStackable
             ScriptStatementType.Map => new RMArea(engine.Area),
             ScriptStatementType.Faction => new RMFaction(engine.Master.Factions.Find(f => f.Name.Equals(secondaryPrms["Name"].GetVar(engine).String, StringComparison.OrdinalIgnoreCase))),
             ScriptStatementType.Quest => new RMQuest(engine.Quests.Find(q => q.ID == secondaryPrms["ID"].GetVar(engine).Integer)),
-            ScriptStatementType.Item => new RMInventoryItem(engine.World.MasterInventory[JsonSerializer.Deserialize<InventoryType>(secondaryPrms["Inventory Type"].GetVar(engine).String)][secondaryPrms["Name"].GetVar(engine).String]),
-            ScriptStatementType.Drop => new RMItemDrop(engine.World.Drops.Find(d => d.Name.Equals(secondaryPrms["Name"].GetVar(engine).String, StringComparison.OrdinalIgnoreCase)))
+            ScriptStatementType.Item => new RMInventoryItem(engine.World.Inventories[JsonSerializer.Deserialize<InventoryType>(secondaryPrms["Inventory Type"].GetVar(engine).String)][secondaryPrms["Name"].GetVar(engine).String]),
+            ScriptStatementType.Drop => new RMItemDrop(engine.World.Environment.Drops.Find(d => d.Name.Equals(secondaryPrms["Name"].GetVar(engine).String, StringComparison.OrdinalIgnoreCase)))
         };
 
         if (target is null)

@@ -3,7 +3,7 @@
 /// <summary>
 /// A class that represents a combat message (fielding a yellow text) in the game.
 /// </summary>
-public class CombatMessage
+public class CombatMessage : GameObject
 {
 
     #region Fields

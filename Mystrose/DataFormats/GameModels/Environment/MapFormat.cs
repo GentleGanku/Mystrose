@@ -3,7 +3,7 @@
 /// <summary>
 /// A class that represents a map format in the game.
 /// </summary>
-public class MapFormat
+public class MapFormat : GameObject
 {
 
     #region Private Fields

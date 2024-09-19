@@ -4,30 +4,15 @@ public class ZMMessage : Message
 {
 
     #region Constructor
-    public ZMMessage(string raw)
+    public ZMMessage(ClientUseIdentifier identifier, string raw) : base(identifier)
     {
-        try
-        {
-            RawContent = raw;
-            Arguments = raw.Split('%');
-            if (Arguments.Length >= 4)
-            {
-                Command = Arguments[3] == "cmd" ? Arguments[5] : Arguments[3];
-            }
-        }
-        catch (Exception e)
-        {
-            // WIP
-        }
-    }
-    #endregion
+        RawContent = raw;
+        Arguments = raw.Split('%');
 
-    #region Destructor
-    ~ZMMessage()
-    {
-        RawContent = null;
-        Arguments = null;
-        Command = null;
+        if (Arguments.Length >= 4)
+        {
+            Command = Arguments[3] == "cmd" ? Arguments[5] : Arguments[3];
+        }
     }
     #endregion
 
@@ -39,7 +24,7 @@ public class ZMMessage : Message
     }
     #endregion
 
-    #region Override Methods
+    #region Overrides
     public override string ToString()
     {
         return string.Join("%", Arguments);

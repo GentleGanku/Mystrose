@@ -8,95 +8,19 @@ public class NetworkMonitor
     #region Constructor
     public NetworkMonitor()
     {
-        JSONHandlers =
-        [
-            // new TestJSON()
-        ];
-        XMLHandlers =
-        [
-
-        ];
-        XTHandlers =
-        [
-            // new TestXT()
-        ];
-        ZMHandlers =
-        [
-            // new TestZM()
-        ];
-
-        JSONHandlers.AddRange(JSONBaseHandlers);
-        XMLHandlers.AddRange(XMLBaseHandlers);
-        XTHandlers.AddRange(XTBaseHandlers);
-        ZMHandlers.AddRange(ZMBaseHandlers);
-
-        GameEvent += InterceptPacket;
-        GameEvent += HandlePacket;
-        ClientEvent += InterceptClient;
-        ClientEvent += HandleClient;
+        Initialize();
     }
     #endregion
 
-    #region Destructor
-    ~NetworkMonitor()
-    {
-        JSONHandlers = null;
-        XMLHandlers = null;
-        XTHandlers = null;
-        ZMHandlers = null;
-
-        GameEvent -= InterceptPacket;
-        GameEvent -= HandlePacket;
-        GameEvent = null;
-
-        ClientEvent -= InterceptClient;
-        ClientEvent -= HandleClient;
-        ClientEvent = null;
-    }
+    #region Delegates & Handlers
+    public delegate void PacketHandler(GameHost host, string args);
+    public event PacketHandler ServerPacketEvent;
+    public event PacketHandler ClientPacketEvent;
     #endregion
 
-    #region Delegates
-    public delegate void TrafficHandler(GameHost host, string args);
-    #endregion
-
-    #region Event Handlers
-    public event TrafficHandler GameEvent;
-    public event TrafficHandler ClientEvent;
-    #endregion
-
-    #region Properties: Handlers
-    protected internal List<IJSONMessageHandler>? JSONHandlers
+    #region Fields: Handlers
+    private readonly List<IJSONMessageHandler> JSONHandlers = new()
     {
-        get;
-        private set;
-    }
-
-    protected internal List<IXMLMessageHandler>? XMLHandlers
-    {
-        get;
-        private set;
-    }
-
-    protected internal List<IXTMessageHandler>? XTHandlers
-    {
-        get;
-        private set;
-    }
-
-    protected internal List<IZMMessageHandler>? ZMHandlers
-    {
-        get;
-        private set;
-    }
-    #endregion
-
-    #region Properties: Base Handlers
-    protected internal List<IJSONMessageHandler> JSONBaseHandlers
-    {
-        get;
-        set;
-    } =
-    [
         new JHAction(),
         new JHBoost(),
         new JHClass(),
@@ -109,213 +33,119 @@ public class NetworkMonitor
         new JHParty(),
         new JHQuest(),
         new JHSkill()
-    ];
+    };
 
-    protected internal List<IXMLMessageHandler> XMLBaseHandlers
+    private readonly List<IXMLMessageHandler> XMLHandlers = new()
     {
-        get;
-        set;
-    } =
-    [
-    ];
+        // Empty 
+    };
 
-    protected internal List<IXTMessageHandler> XTBaseHandlers
+    private readonly List<IXTMessageHandler> XTHandlers = new()
     {
-        get;
-        set;
-    } =
-    [
         new XHAction(),
         new XHDungeon(),
         new XHMap(),
         new XHRespawn(),
         new XHResponse()
-    ];
+    };
 
-    protected internal List<IZMMessageHandler> ZMBaseHandlers
+    private readonly List<IZMMessageHandler> ZMHandlers = new()
     {
-        get;
-        set;
-    } =
-    [
         new ZHMovement(),
         new ZHSkill()
-    ];
+    };
     #endregion
 
-    #region Methods: Invoke
-    protected internal void InvokeEvent(NetworkHandlerType handlerType, GameHost host, string args)
+    #region Methods: Setup
+    public void Initialize()
     {
-        (handlerType switch
-        {
-            NetworkHandlerType.Game => GameEvent,
-            NetworkHandlerType.Client => ClientEvent,
-            _ => null
-        })?.Invoke(host, args);
+        ServerPacketEvent += InterceptServerPacket;
+        ClientPacketEvent += InterceptClientPacket;
     }
-    #endregion
 
-    #region Methods: Register
-    public void RegisterHandler(object[] handlers)
+    public void Dispose()
     {
-        foreach (var handler in handlers)
-        {
-            switch (handler)
-            {
-                case IJSONMessageHandler JSONHandler:
-                    if (!JSONHandlers.Contains(JSONHandler))
-                    {
-                        JSONHandlers.Add(JSONHandler);
-                    }
-                    break;
-                case IXMLMessageHandler XMLHandler:
-                    if (!XMLHandlers.Contains(XMLHandler))
-                    {
-                        XMLHandlers.Add(XMLHandler);
-                    }
-                    break;
-                case IXTMessageHandler XTHandler:
-                    if (!XTHandlers.Contains(XTHandler))
-                    {
-                        XTHandlers.Add(XTHandler);
-                    }
-                    break;
-                case IZMMessageHandler ZMHandler:
-                    if (!ZMHandlers.Contains(ZMHandler))
-                    {
-                        ZMHandlers.Add(ZMHandler);
-                    }
-                    break;
-                default:
-                    // WIP
-                    break;
-            }
-        }
+        ServerPacketEvent -= InterceptServerPacket;
+        ClientPacketEvent -= InterceptClientPacket;
+
+        JSONHandlers.Clear();
+        XMLHandlers.Clear();
+        XTHandlers.Clear();
+        ZMHandlers.Clear();
     }
     #endregion
 
-    #region Methods: Unregister
-    public void UnregisterHandler(object[] handlers)
+    #region Methods: Interceptors
+    private async void InterceptServerPacket(GameHost host, string args)
     {
-        foreach (var handler in handlers)
-        {
-            switch (handler)
-            {
-                case IJSONMessageHandler JSONHandler:
-                    if (JSONHandlers.Contains(JSONHandler))
-                    {
-                        JSONHandlers.Remove(JSONHandler);
-                    }
-                    break;
-                case IXMLMessageHandler XMLHandler:
-                    if (XMLHandlers.Contains(XMLHandler))
-                    {
-                        XMLHandlers.Remove(XMLHandler);
-                    }
-                    break;
-                case IXTMessageHandler XTHandler:
-                    if (XTHandlers.Contains(XTHandler))
-                    {
-                        XTHandlers.Remove(XTHandler);
-                    }
-                    break;
-                case IZMMessageHandler ZMHandler:
-                    if (ZMHandlers.Contains(ZMHandler))
-                    {
-                        ZMHandlers.Remove(ZMHandler);
-                    }
-                    break;
-                default:
-                    // WIP
-                    break;
-            }
-        }
-    }
-    #endregion
+    //    await Task.Delay(10);
 
-    #region Methods: Packet Interceptor
-    protected internal void InterceptPacket(GameHost host, string args)
-    {
-        // WIP
-    }
+    //    Message message = args switch
+    //    {
+    //        _ when args[0].Equals('{') => new JSONMessage(args),
+    //        _ when args[0].Equals('<') => new XMLMessage(args),
+    //        _ when args.Substring(4, 2).Equals("zm") => new ZMMessage(args),
+    //        _ => new XTMessage(args)
+    //    };
 
-    protected internal async void HandlePacket(GameHost host, string args)
-    {
-        await Task.Delay(10);
-
-        Message message = args switch
-        {
-            _ when args[0] == '{' => new JSONMessage(args),
-            _ when args[0] == '<' => new XMLMessage(args),
-            _ when args.Substring(4, 2) == "zm" => new ZMMessage(args),
-            _ => new XTMessage(args)
-        };
-
-        switch (message)
-        {
-            case JSONMessage jsonMessage:
-                foreach (var handler in JSONHandlers.Where(h => h.HandledCommands.Contains(jsonMessage.Command)))
-                {
-                    try
-                    {
-                        handler.Handle(host, jsonMessage);
-                    }
-                    catch (Exception e)
-                    {
-                        System.Diagnostics.Debug.WriteLine(e);
-                    }
-                }
-                break;
-            case XMLMessage xmlMessage:
-                foreach (var handler in XMLHandlers.Where(h => h.HandledCommands.Contains(xmlMessage.Command)))
-                {
-                    try
-                    {
-                        handler.Handle(host, xmlMessage);
-                    }
-                    catch (Exception e)
-                    {
-                        System.Diagnostics.Debug.WriteLine(e);
-                    }
-                }
-                break;
-            case XTMessage xtMessage:
-                foreach (var handler in XTHandlers.Where(h => h.HandledCommands.Contains(xtMessage.Command)))
-                {
-                    try
-                    {
-                        handler.Handle(host, xtMessage);
-                    }
-                    catch (Exception e)
-                    {
-                        System.Diagnostics.Debug.WriteLine(e);
-                    }
-                }
-                break;
-            case ZMMessage zmMessage:
-                foreach (var handler in ZMHandlers.Where(h => h.HandledCommands.Contains(zmMessage.Command)))
-                {
-                    try
-                    {
-                        handler.Handle(host, zmMessage);
-                    }
-                    catch (Exception e)
-                    {
-                        System.Diagnostics.Debug.WriteLine(e);
-                    }
-                }
-                break;
-        }
-    }
-    #endregion
-
-    #region Methods: Client Interceptor
-    protected internal void InterceptClient(GameHost host, string args)
-    {
-        // WIP
+    //    switch (message)
+    //    {
+    //        case JSONMessage jsonMessage:
+    //            foreach (var handler in JSONHandlers.Where(h => h.HandledCommands.Contains(jsonMessage.Command)))
+    //            {
+    //                try
+    //                {
+    //                    handler.Handle(host, jsonMessage);
+    //                }
+    //                catch (Exception e)
+    //                {
+    //                    SVCLogger.LogOnException($"(JSONMessage - {jsonMessage.Command}) " + e.ToString());
+    //                }
+    //            }
+    //            break;
+    //        case XMLMessage xmlMessage:
+    //            foreach (var handler in XMLHandlers.Where(h => h.HandledCommands.Contains(xmlMessage.Command)))
+    //            {
+    //                try
+    //                {
+    //                    handler.Handle(host, xmlMessage);
+    //                }
+    //                catch (Exception e)
+    //                {
+    //                    SVCLogger.LogOnException($"(XMLMessage - {xmlMessage.Command}) " + e.ToString());
+    //                }
+    //            }
+    //            break;
+    //        case XTMessage xtMessage:
+    //            foreach (var handler in XTHandlers.Where(h => h.HandledCommands.Contains(xtMessage.Command)))
+    //            {
+    //                try
+    //                {
+    //                    handler.Handle(host, xtMessage);
+    //                }
+    //                catch (Exception e)
+    //                {
+    //                    SVCLogger.LogOnException($"(XTMessage - {xtMessage.Command}) " + e.ToString());
+    //                }
+    //            }
+    //            break;
+    //        case ZMMessage zmMessage:
+    //            foreach (var handler in ZMHandlers.Where(h => h.HandledCommands.Contains(zmMessage.Command)))
+    //            {
+    //                try
+    //                {
+    //                    handler.Handle(host, zmMessage);
+    //                }
+    //                catch (Exception e)
+    //                {
+    //                    SVCLogger.LogOnException($"(ZMMessage - {zmMessage.Command}) " + e.ToString());
+    //                }
+    //            }
+    //            break;
+    //    }
     }
 
-    protected internal void HandleClient(GameHost host, string args)
+    protected internal void InterceptClientPacket(GameHost host, string args)
     {
         // WIP
     }

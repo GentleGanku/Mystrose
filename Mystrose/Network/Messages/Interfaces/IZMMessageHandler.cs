@@ -2,10 +2,12 @@
 
 public interface IZMMessageHandler
 {
+
     string[] HandledCommands
     {
         get;
     }
 
-    void Handle(GameHost host, ZMMessage message);
+    void Handle(ZMMessage message);
+
 }

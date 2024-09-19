@@ -8,6 +8,7 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     d:DesignHeight="32"
     d:DesignWidth="32"
+    Focusable="False"
     mc:Ignorable="d">
 
     <ui:Button
@@ -28,7 +29,7 @@
             <TextBlock
                 x:Name="TB_Caption"
                 Height="14"
-                Padding="5,0"
+                Padding="5,0,2.5,0"
                 VerticalAlignment="Center"
                 FontFamily="{StaticResource FF_Albertus_Light}"
                 FontSize="12"
@@ -36,45 +37,6 @@
                 About
             </TextBlock>
         </StackPanel>
-
-        <ui:Button.Triggers>
-            <EventTrigger RoutedEvent="Button.MouseEnter" SourceName="BTN_Item">
-                <BeginStoryboard>
-                    <Storyboard>
-                        <DoubleAnimation
-                            Storyboard.TargetName="BTN_Item"
-                            Storyboard.TargetProperty="Width"
-                            From="32"
-                            To="{Binding FullButtonWidth}"
-                            Duration="00:00:00.15" />
-                        <DoubleAnimation
-                            Storyboard.TargetName="TB_Caption"
-                            Storyboard.TargetProperty="Opacity"
-                            From="0"
-                            To="1"
-                            Duration="00:00:00.15" />
-                    </Storyboard>
-                </BeginStoryboard>
-            </EventTrigger>
-            <EventTrigger RoutedEvent="Button.MouseLeave" SourceName="BTN_Item">
-                <BeginStoryboard>
-                    <Storyboard>
-                        <DoubleAnimation
-                            Storyboard.TargetName="BTN_Item"
-                            Storyboard.TargetProperty="Width"
-                            From="{Binding FullButtonWidth}"
-                            To="32"
-                            Duration="00:00:00.15" />
-                        <DoubleAnimation
-                            Storyboard.TargetName="TB_Caption"
-                            Storyboard.TargetProperty="Opacity"
-                            From="1"
-                            To="0"
-                            Duration="00:00:00.15" />
-                    </Storyboard>
-                </BeginStoryboard>
-            </EventTrigger>
-        </ui:Button.Triggers>
     </ui:Button>
 
 </UserControl>

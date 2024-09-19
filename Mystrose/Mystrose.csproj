@@ -114,8 +114,4 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DataFormats\Modules\Enumerations\" />
-  </ItemGroup>
-
 </Project>

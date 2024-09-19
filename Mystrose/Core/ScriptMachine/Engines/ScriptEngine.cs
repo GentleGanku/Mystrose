@@ -51,27 +51,27 @@ public class ScriptEngine
 
     public MainAvatar Master
     {
-        get => Host.World.Master;
+        get => Host.World.Avatar;
     }
 
     public Area Area
     {
-        get => Host.World.Area;
+        get => Host.World.Environment.Area;
     }
 
-    public SkillManager Skills
+    public ActiveSkills Skills
     {
         get => Host.World.Skills;
     }
 
     public List<Quest> Quests
     {
-        get => Host.World.Quests;
+        get => Host.World.Environment.Quests;
     }
 
     public InventoryManager Inventory
     {
-        get => Host.World.Inventory;
+        get => Host.World.Inventories[InventoryType.Base];
     }
     #endregion
 
@@ -315,5 +315,11 @@ public class ScriptEngine
         }
     }
     #endregion
+    
+    // Placeholder
+    public void Destruct()
+    {
+        // Placeholder
+    }
 
 }

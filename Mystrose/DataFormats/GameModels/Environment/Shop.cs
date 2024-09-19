@@ -3,7 +3,7 @@
 /// <summary>
 /// A base class that represents a shop in the game.
 /// </summary>
-public class Shop
+public class Shop : GameObject
 {
 
     #region Fields
@@ -13,7 +13,6 @@ public class Shop
     /// <returns>
     /// A list representing the locations, in string form.
     /// </returns>
-    [JsonIgnore]
     public List<string> Locations
     {
         get => [.. LocationString.Split(',') ?? []];
@@ -47,6 +46,18 @@ public class Shop
         get;
         set;
     } = string.Empty;
+
+    /// <summary>
+    /// The state of whether the shop is currently focused.
+    /// </summary>
+    /// <returns>
+    /// A boolean representing the shop's focus state.
+    /// </returns>
+    public bool IsFocused
+    {
+        get;
+        set;
+    } = false;
 
     /// <summary>
     /// The location string of the shop, split by commas.

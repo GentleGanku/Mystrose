@@ -1,48 +1,36 @@
 ﻿namespace Mystrose.Network.Handlers.XT;
 
-public class XHRespawn : IXTMessageHandler
+public static class XHRespawn
 {
 
-    #region Commands
-    public string[] HandledCommands
+    #region Fields
+    private static readonly Dictionary<string, Action<XTMessage>> _handlers = new()
     {
-        get =>
-        [
-            "respawnMon",
-            "resTimed",
-        ];
-    }
+        ["resTimed"] = HandleRespawn
+    };
     #endregion
 
-    #region Methods: Handler
-    public void Handle(GameHost host, XTMessage message)
+    #region Methods: Invoker
+    public static void Invoke(XTMessage message)
     {
-        switch (message.Command)
+        if (!_handlers.TryGetValue(message.Command, out var handler))
         {
-            case "respawnMon":
-                HandleMonster(host, message.Arguments);
-                break;
-            case "resTimed":
-                HandleMaster(host, message.Arguments);
-                break;
+            return;
+        }
+
+        try
+        {
+            handler.Invoke(message);
+        }
+        catch (Exception ex)
+        {
+            SVCLogger.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
         }
     }
     #endregion
 
-    #region Methods: Monster
-    private void HandleMonster(GameHost host, string[] args) 
-    {
-        string[] ids = args[4].Split(',');
-
-        foreach (string id in ids)
-        {
-            // WIP
-        }
-    }
-    #endregion
-
-    #region Methods: Master
-    private void HandleMaster(GameHost host, string[] args)
+    #region Handlers
+    public static void HandleRespawn(XTMessage message)
     {
         // WIP
     }

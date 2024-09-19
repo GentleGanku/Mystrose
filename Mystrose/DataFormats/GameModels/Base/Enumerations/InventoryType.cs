@@ -7,14 +7,14 @@
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum InventoryType
 {
-    [EnumMember(Value = "Inventory")]
-    Inventory,
+    [EnumMember(Value = "Base Inventory")]
+    Base,
     [EnumMember(Value = "Temporary Inventory")]
-    TemporaryInventory,
+    Temp,
     [EnumMember(Value = "House Inventory")]
-    HouseInventory,
+    House,
     [EnumMember(Value = "Bank Inventory")]
-    BankInventory,
+    Bank,
 
     Unknown
 }

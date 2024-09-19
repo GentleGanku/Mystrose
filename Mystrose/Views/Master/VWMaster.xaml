@@ -1,0 +1,54 @@
+﻿<base:MystWindow
+    x:Class="Mystrose.Views.Master.VWMaster"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:base="clr-namespace:Mystrose.Views.Base"
+    xmlns:baseControls="clr-namespace:Mystrose.Views.Base.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Mystrose.Views.Master"
+    xmlns:localControls="clr-namespace:Mystrose.Views.Master.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    x:Name="Mystrose"
+    Title="Mystrose"
+    Width="959"
+    Height="641"
+    ResizeMode="CanResize"
+    WindowStartupLocation="CenterScreen"
+    WindowState="Normal"
+    mc:Ignorable="d">
+
+    <d:DesignerProperties.DesignStyle>
+        <Style TargetType="ui:FluentWindow">
+            <Setter Property="Background" Value="{DynamicResource LayerFillColorAltBrush}" />
+            <Setter Property="Height" Value="641" />
+            <Setter Property="Width" Value="959" />
+        </Style>
+    </d:DesignerProperties.DesignStyle>
+
+    <Grid Background="{DynamicResource LayerFillColorAltBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <localControls:MasterTabBar Grid.Row="0" />
+        <localControls:MasterToolBar Grid.Row="1" />
+
+        <Rectangle
+            Grid.Row="2"
+            Height="0.5"
+            Fill="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
+
+        <ContentPresenter
+            x:Name="CPST_Panel"
+            Grid.Row="3"
+            Content="{Binding CurrentPanel}" />
+
+        <baseControls:MovementBar x:Name="MVB_Bottom" Grid.Row="4" />
+    </Grid>
+
+</base:MystWindow>

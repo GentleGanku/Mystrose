@@ -75,7 +75,7 @@ public class RMSelf : ReadableModel
 
     public string Equipments
     {
-        get => string.Join("|", MainAvatar.Equipments.Values.Select(i => i.Name));
+        get => string.Join("|", MainAvatar.Equipments.Values.Select(i => i.ID));
     }
 
     public bool Is_AFK
@@ -130,17 +130,17 @@ public class RMSelf : ReadableModel
 
     public int Available_Inventory_Slots
     {
-        get => World is not null ? World.Inventory.FreeSlots : 0;
+        get => World is not null ? World.Inventories[InventoryType.Base].FreeSlots : 0;
     }
 
     public int Available_House_Inventory_Slots
     {
-        get => World is not null ? World.HouseInventory.FreeSlots : 0;
+        get => World is not null ? World.Inventories[InventoryType.House].FreeSlots : 0;
     }
 
     public int Available_Bank_Slots
     {
-        get => World is not null ? World.BankInventory.FreeSlots : 0;
+        get => World is not null ? World.Inventories[InventoryType.Bank].FreeSlots : 0;
     }
 
     public int Gold
@@ -150,7 +150,7 @@ public class RMSelf : ReadableModel
 
     public int Adventure_Coins
     {
-        get => MainAvatar.AdventureCoins;
+        get => MainAvatar.Coins;
     }
 
     //public bool Has_Reputation_Boost
