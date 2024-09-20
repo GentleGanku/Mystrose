@@ -91,10 +91,9 @@ public class HSTGame : WindowsFormsHost
         switch (function)
         {
             case "interceptPacket":
-                NetworkMonitor.MonitorServerPacket(args);
+                NetworkMonitor.MonitorPacket(args);
                 break;
             case "interceptClient":
-                NetworkMonitor.MonitorClientPacket(args);
                 break;
         }
     }

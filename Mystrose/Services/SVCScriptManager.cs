@@ -95,6 +95,13 @@ public class SVCScriptManager
     #region Methods: Invoker
     public static Response<ReadableModel?> InvokeTrigger(string codename, object gameModel)
     {
+        if (_regularEngines.TryGetValue(codename, out RegularEngine? engine) && engine is null)
+        {
+            return new(false,
+                $"Script engine with the codename {codename} is not activated yet.",
+                null);
+        }
+
         ReadableModel? readableModel = null;
         ScriptTriggerType triggerType = ScriptTriggerType.Variable;
         World world = SVCWorldVisualizer.GetWorldDict().Output[codename]!;

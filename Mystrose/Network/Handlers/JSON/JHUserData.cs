@@ -1,6 +1,4 @@
-﻿using Mystrose.DataFormats.GameModels.Master;
-
-namespace Mystrose.Network.Handlers.JSON;
+﻿namespace Mystrose.Network.Handlers.JSON;
 
 public static class JHUserData
 {
@@ -56,7 +54,7 @@ public static class JHUserData
 
         SVCScriptManager.InvokeTrigger(message.Identifier.Codename, avatar!);
 
-        if (avatar.EntityID == message.World.Avatar.UserID)
+        if (avatar.EntityID == message.World.Avatar.EntityID)
         {
             MainAvatar mainAvatar = message.DataObject["data"].Deserialize<MainAvatar>()!;
             message.World.RefreshAvatar(mainAvatar);
@@ -90,7 +88,7 @@ public static class JHUserData
 
             SVCScriptManager.InvokeTrigger(message.Identifier.Codename, avatar!);
 
-            if (avatar.EntityID == message.World.Avatar.UserID)
+            if (avatar.EntityID == message.World.Avatar.EntityID)
             {
                 MainAvatar mainAvatar = user["data"].Deserialize<MainAvatar>()!;
                 message.World.RefreshAvatar(mainAvatar);

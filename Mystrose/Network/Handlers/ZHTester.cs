@@ -22,7 +22,7 @@ public static class ZHTester
     {
         string zmPath = "packetFormats\\zm\\" + message.Command + ".txt";
         string[] zmContentArray = message.RawContent.Split("%");
-        string zmContent = string.Join("%\r\n", zmContentArray);
+        string zmContent = string.Join("\r\n%\r\n", zmContentArray);
 
         if (File.Exists(zmPath))
         {

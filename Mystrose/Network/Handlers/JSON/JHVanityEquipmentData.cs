@@ -38,7 +38,7 @@ public static class JHVanityEquipmentData
 
         BaseItem vanityItem = message.DataObject.Deserialize<BaseItem>()!;
 
-        if (message.World.Avatar.UserID == userId)
+        if (message.World.Avatar.EntityID == userId)
         {
             message.World.Avatar.VanityEquipments[eqpType] = vanityItem;
         }
@@ -62,7 +62,7 @@ public static class JHVanityEquipmentData
         int userId = message.DataObject["uid"]!.GetValue<int>();
         string eqpType = message.DataObject["sES"]!.GetValue<string>();
 
-        if (message.World.Avatar.UserID == userId)
+        if (message.World.Avatar.EntityID == userId)
         {
             message.World.Avatar.VanityEquipments[eqpType] = null;
         }

@@ -37,9 +37,9 @@ public static class JHItemEquipment
         string eqpType = message.DataObject["strES"]!.GetValue<string>();
 
         BaseItem baseItem = message.DataObject.Deserialize<BaseItem>()!;
-        baseItem.EquipmentType = JsonSerializer.Deserialize<EquipmentType>(eqpType);
+        baseItem.EquipmentType = JsonSerializer.Deserialize<EquipmentType>($"\"{eqpType}\"");
         
-        if (message.World.Avatar.UserID == userId)
+        if (message.World.Avatar.EntityID == userId)
         {
             message.World.Avatar.Equipments[eqpType] = baseItem;
 
@@ -67,7 +67,7 @@ public static class JHItemEquipment
         int userId = message.DataObject["uid"]!.GetValue<int>();
         string eqpType = message.DataObject["strES"]!.GetValue<string>();
 
-        if (message.World.Avatar.UserID == userId)
+        if (message.World.Avatar.EntityID == userId)
         {
             message.World.Avatar.Equipments[eqpType] = null;
 

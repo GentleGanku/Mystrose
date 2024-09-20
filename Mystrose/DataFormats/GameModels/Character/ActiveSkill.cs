@@ -23,7 +23,6 @@ public class ActiveSkill : BaseSkill
     /// <summary>
     /// The condition of whether the skill can be safely used or not.
     /// </summary>
-    [JsonPropertyOrder(110)]
     public bool IsSafeToUse
     {
         get => IsUsable && !IsDisabled && !IsLocked;
@@ -34,7 +33,6 @@ public class ActiveSkill : BaseSkill
     /// <summary>
     /// The index of the skill.
     /// </summary>
-    [JsonPropertyOrder(100)]
     public int Index
     {
         get;
@@ -44,7 +42,6 @@ public class ActiveSkill : BaseSkill
     /// <summary>
     /// The action ID of the skill.
     /// </summary>
-    [JsonPropertyOrder(101)]
     [JsonPropertyName("actID")]
     [JsonConverter(typeof(StringIntConverter))]
     public int ActID
@@ -56,7 +53,6 @@ public class ActiveSkill : BaseSkill
     /// <summary>
     /// The amount of mana that the skill costs.
     /// </summary>
-    [JsonPropertyOrder(102)]
     [JsonPropertyName("mp")]
     [JsonConverter(typeof(StringIntConverter))]
     public int ManaCost
@@ -68,7 +64,6 @@ public class ActiveSkill : BaseSkill
     /// <summary>
     /// The cooldown of the skill (in milliseconds).
     /// </summary>
-    [JsonPropertyOrder(103)]
     [JsonPropertyName("cd")]
     [JsonConverter(typeof(StringIntConverter))]
     public int Cooldown
@@ -80,7 +75,6 @@ public class ActiveSkill : BaseSkill
     /// <summary>
     /// The base damage constant of the skill (multiplied with the other damage variables).
     /// </summary>
-    [JsonPropertyOrder(104)]
     [JsonPropertyName("damage")]
     [JsonConverter(typeof(StringDoubleConverter))]
     public double Damage
@@ -92,7 +86,6 @@ public class ActiveSkill : BaseSkill
     /// <summary>
     /// The minimum number of targets the skill can be used on.
     /// </summary>
-    [JsonPropertyOrder(105)]
     [JsonPropertyName("tgtMin")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MinTarget
@@ -107,7 +100,6 @@ public class ActiveSkill : BaseSkill
     /// <summary>
     /// The maximum number of targets the skill can be used on.
     /// </summary>
-    [JsonPropertyOrder(106)]
     [JsonPropertyName("tgtMax")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MaxTarget
@@ -122,7 +114,6 @@ public class ActiveSkill : BaseSkill
     /// <summary>
     /// The condition of whether the skill is locked or not.
     /// </summary>
-    [JsonPropertyOrder(107)]
     public bool IsLocked
     {
         get => _isLocked;
@@ -135,7 +126,6 @@ public class ActiveSkill : BaseSkill
     /// <summary>
     /// The condition of whether the skill can be used automatically.
     /// </summary>
-    [JsonPropertyOrder(108)]
     [JsonPropertyName("auto")]
     public bool IsAuto
     {
@@ -146,7 +136,6 @@ public class ActiveSkill : BaseSkill
     /// <summary>
     /// The condition of whether the skill is disabled or not.
     /// </summary>
-    [JsonPropertyOrder(109)]
     [JsonPropertyName("lock")]
     public bool IsDisabled
     {

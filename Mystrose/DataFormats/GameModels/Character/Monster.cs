@@ -20,7 +20,6 @@ public class Monster : GameObject
     /// <returns>
     /// An integer representing the avatar's health percentage.
     /// </returns>
-    [JsonPropertyOrder(12)]
     public int HPPercentage
     {
         get => (int)Math.Round((double)HP / MaxHP * 100);
@@ -32,7 +31,6 @@ public class Monster : GameObject
     /// <returns>
     /// An integer representing the avatar's mana percentage.
     /// </returns>
-    [JsonPropertyOrder(13)]
     public int MPPercentage
     {
         get => (int)Math.Round((double)MP / MaxMP * 100);
@@ -44,7 +42,6 @@ public class Monster : GameObject
     /// <returns>
     /// A boolean representing the avatar's life status.
     /// </returns>
-    [JsonPropertyOrder(14)]
     public bool IsAlive
     {
         get => HP > 0 && State > 0;
@@ -58,7 +55,6 @@ public class Monster : GameObject
     /// <returns>
     /// An integer representing the monster's ID.
     /// </returns>
-    [JsonPropertyOrder(0)]
     [JsonPropertyName("MonID")]
     [JsonConverter(typeof(StringIntConverter))]
     public int ID
@@ -73,7 +69,6 @@ public class Monster : GameObject
     /// <returns>
     /// An integer representing the monster's level.
     /// </returns>
-    [JsonPropertyOrder(1)]
     [JsonPropertyName("iLvl")]
     [JsonConverter(typeof(StringIntConverter))]
     public int Level
@@ -88,7 +83,6 @@ public class Monster : GameObject
     /// <returns>
     /// An integer representing the monster's map ID.
     /// </returns>
-    [JsonPropertyOrder(2)]
     [JsonPropertyName("MonMapID")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MonMapID
@@ -103,7 +97,6 @@ public class Monster : GameObject
     /// <returns>
     /// An object representing the monster's cell.
     /// </returns>
-    [JsonPropertyOrder(3)]
     [JsonPropertyName("strFrame")]
     public string Cell
     {
@@ -117,7 +110,6 @@ public class Monster : GameObject
     /// <returns>
     /// An enumeration type representing the monster's state.
     /// </returns>
-    [JsonPropertyOrder(4)]
     [JsonPropertyName("intState")]
     public StateType State
     {
@@ -131,7 +123,6 @@ public class Monster : GameObject
     /// <returns>
     /// A list representing the Avatar Names.
     /// </returns>
-    [JsonPropertyOrder(5)]
     public List<string> Targets
     {
         get;
@@ -144,7 +135,6 @@ public class Monster : GameObject
     /// <returns>
     /// An integer representing the monster's maximum HP.
     /// </returns>
-    [JsonPropertyOrder(6)]
     [JsonPropertyName("intHPMax")]
     [JsonConverter(typeof(StringDoubleConverter))]
     public double MaxHP
@@ -159,7 +149,6 @@ public class Monster : GameObject
     /// <returns>
     /// An integer representing the monster's current HP.
     /// </returns>
-    [JsonPropertyOrder(7)]
     [JsonPropertyName("intHP")]
     [JsonConverter(typeof(StringDoubleConverter))]
     public double HP
@@ -174,7 +163,6 @@ public class Monster : GameObject
     /// <returns>
     /// An integer representing the monster's maximum MP.
     /// </returns>
-    [JsonPropertyOrder(8)]
     [JsonPropertyName("intMPMax")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MaxMP
@@ -189,7 +177,6 @@ public class Monster : GameObject
     /// <returns>
     /// An integer representing the monster's current MP.
     /// </returns>
-    [JsonPropertyOrder(9)]
     [JsonPropertyName("intMP")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MP
@@ -204,7 +191,6 @@ public class Monster : GameObject
     /// <returns>
     /// An integer representing the monster's DPS range.
     /// </returns>
-    [JsonPropertyOrder(10)]
     [JsonPropertyName("wDPS")]
     [JsonConverter(typeof(StringDoubleConverter))]
     public double DPS
@@ -219,7 +205,6 @@ public class Monster : GameObject
     /// <returns>
     /// A boolean representing the monster's tag for Aggressiveness state.
     /// </returns>
-    [JsonPropertyOrder(11)]
     [JsonPropertyName("bRed")]
     [JsonConverter(typeof(StringBoolConverter))]
     public bool IsAggressive

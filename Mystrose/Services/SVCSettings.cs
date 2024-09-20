@@ -123,7 +123,7 @@ public class SVCSettings
 
         SettingsEvent?.Invoke(key, option);
 
-        SaveAll();
+        Save(key);
 
         return new(true,
             $"Option written with {value} on the key {key}.",
@@ -147,6 +147,28 @@ public class SVCSettings
         return new(true, 
             "All options read.", 
             _options.Count);
+    }
+
+    public static Response<Dictionary<string, Option>> Save(string key)
+    {
+        if (!_options.TryGetValue(key, out Option? option))
+        {
+            return new(false,
+                $"Option not found on the key {key}.",
+                _options);
+        }
+
+        string jsonDictionary = File.ReadAllText(_pathToSettings);
+        var settings = JsonSerializer.Deserialize<Dictionary<string, Option>>(jsonDictionary, _serializerOptions)!;
+
+        settings[key] = option;
+
+        jsonDictionary = JsonSerializer.Serialize(settings, _serializerOptions);
+        File.WriteAllText(_pathToSettings, jsonDictionary);
+
+        return new(true,
+            "All options saved.",
+            _options);
     }
 
     public static Response<Dictionary<string, Option>> SaveAll()

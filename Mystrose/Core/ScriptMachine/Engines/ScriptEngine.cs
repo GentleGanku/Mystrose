@@ -56,7 +56,7 @@ public class ScriptEngine
 
     public Area Area
     {
-        get => Host.World.Environment.Area;
+        get => Host.World.Area;
     }
 
     public ActiveSkills Skills
@@ -66,7 +66,7 @@ public class ScriptEngine
 
     public List<Quest> Quests
     {
-        get => Host.World.Environment.Quests;
+        get => Host.World.Quests;
     }
 
     public InventoryManager Inventory

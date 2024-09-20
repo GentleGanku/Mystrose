@@ -79,7 +79,7 @@ public class ACMDMapMovement : SCMDAction
                 string x = SecondaryParameters["Walk"]["X-Coordinate"].GetVar(engine).ToString()!;
                 string y = SecondaryParameters["Walk"]["Y-Coordinate"].GetVar(engine).ToString()!;
 
-                engine.Flash.SendPacket($"%xt%zm%mv%{engine.World.Environment.Area!.ID}%{x}%{y}%8%");
+                engine.Flash.SendPacket($"%xt%zm%mv%{engine.World.Area!.ID}%{x}%{y}%8%");
                 break;
         }
 

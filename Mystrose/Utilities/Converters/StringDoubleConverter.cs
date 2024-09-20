@@ -7,15 +7,22 @@ public class StringDoubleConverter : JsonConverter<double>
     {
         if (reader.TokenType == JsonTokenType.String)
         {
-            string stringValue = reader.GetString();
-            if (double.TryParse(stringValue, out double value))
+            string stringValue = reader.GetString()!;
+            if (double.TryParse(stringValue, out double doubleValue))
             {
-                return value;
+                return doubleValue;
             }
         }
         else if (reader.TokenType == JsonTokenType.Number)
         {
-            return reader.GetDouble();
+            if (reader.TryGetInt32(out int intValue))
+            {
+                return intValue;
+            }
+            else if (reader.TryGetDouble(out double doubleValue))
+            {
+                return doubleValue;
+            }
         }
 
         throw new JsonException("Unable to convert value to double.");

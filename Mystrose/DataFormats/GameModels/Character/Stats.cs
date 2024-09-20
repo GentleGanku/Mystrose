@@ -17,7 +17,6 @@ public class Stats : GameObject
     /// <summary>
     /// The avatar's haste stat.
     /// </summary>
-    [JsonPropertyOrder(0)]
     [JsonPropertyName("$tha")]
     [JsonConverter(typeof(StringDoubleConverter))]
     public double Haste

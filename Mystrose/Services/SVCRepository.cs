@@ -34,14 +34,15 @@ public class SVCRepository
 
             foreach (var model in Models)
             {
-                if (!File.Exists(model.Key))
+                if (!File.Exists(_pathToFolder + $"\\{model.Key}.json"))
                 {
-                    File.Create(model.Key).Close();
-                    SaveModel(Type.GetType(model.Key)!);
+                    SaveModel(model.Key);
                 }
 
-                LoadModel(Type.GetType(model.Key)!);
+                LoadModel(model.Key);
             }
+
+            SVCLogger.LogOnConsole("Repository checkup has been completed.", "SVCRepository", "Checkup");
         }
         catch (Exception ex)
         {
@@ -55,8 +56,10 @@ public class SVCRepository
         {
             foreach (var model in Models)
             {
-                SaveModel(Type.GetType(model.Key)!);
+                SaveModel(model.Key);
             }
+
+            SVCLogger.LogOnConsole("Repository has been flushed.", "SVCRepository", "Flush");
         }
         catch (Exception ex)
         {
@@ -66,9 +69,8 @@ public class SVCRepository
     #endregion
 
     #region Methods: Read/Write
-    public static Response<RepositoryModel<GameObject>?> LoadModel(Type type)
+    public static Response<RepositoryModel<GameObject>?> LoadModel(string typeName)
     {
-        string typeName = type.GetType().Name;
         string jsonDictionary = File.ReadAllText(_pathToFolder + $"\\{typeName}.json");
 
         switch (typeName)
@@ -118,7 +120,7 @@ public class SVCRepository
                 existingItem = item;
             }
 
-            ServerEvent.Invoke(item);
+            ServerEvent?.Invoke(item);
         }
 
         repositoryModel.LastUpdatedDate = DateTime.Now;
@@ -144,7 +146,7 @@ public class SVCRepository
                 existingItem = item;
             }
 
-            MapEvent.Invoke(item);
+            MapEvent?.Invoke(item);
         }
 
         repositoryModel.LastUpdatedDate = DateTime.Now;
@@ -154,9 +156,8 @@ public class SVCRepository
             repositoryModel);
     }
 
-    public static Response<RepositoryModel<GameObject>?> SaveModel(Type type)
+    public static Response<RepositoryModel<GameObject>?> SaveModel(string typeName)
     {
-        string typeName = type.GetType().Name;
         if (!Models.TryGetValue(typeName, out RepositoryModel<GameObject> repositoryModel))
         {
             return new(false,

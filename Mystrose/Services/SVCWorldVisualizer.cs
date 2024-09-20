@@ -34,12 +34,12 @@ public class SVCWorldVisualizer
         }
 
         ClientUseIdentifier identifier = new(codename);
-        List<Server> servers = SVCRepository.LoadServers().Output.List;
+        List<Server> servers = SVCRepository.Models[nameof(Server)].Get<Server>();
         Server server = servers.Find(s => s.Name.Equals(serverName))!;
 
-        world = new(identifier, server);
+        _worlds[codename] = new(identifier, server);
 
-        ActivatedWorldEvent?.Invoke(codename, world);
+        ActivatedWorldEvent?.Invoke(codename, _worlds[codename]);
 
         return new(true,
             $"World with the codename {codename} has been activated.",
@@ -55,7 +55,7 @@ public class SVCWorldVisualizer
                 world);
         }
 
-        world!.Destruct();
+        _worlds[codename]!.Destruct();
         _worlds[codename] = null;
 
         DeactivatedWorldEvent?.Invoke(codename, null);

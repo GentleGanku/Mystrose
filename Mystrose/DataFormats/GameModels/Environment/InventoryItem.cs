@@ -20,9 +20,8 @@ public class InventoryItem : BaseItem
     /// <returns>
     /// An integer representing the item's character ID.
     /// </returns>
-    [JsonPropertyOrder(105)]
     [JsonPropertyName("CharItemID")]
-    public float CharacterItemID
+    public double CharacterItemID
     {
         get;
         set;
@@ -34,7 +33,6 @@ public class InventoryItem : BaseItem
     /// <returns>
     /// An enumeration type representing the item's inventory type.
     /// </returns>
-    [JsonPropertyOrder(100)]
     public InventoryType InventoryType
     {
         get;
@@ -47,7 +45,6 @@ public class InventoryItem : BaseItem
     /// <returns>
     /// A boolean representing the item's tag for Equipped state.
     /// </returns>
-    [JsonPropertyOrder(101)]
     [JsonPropertyName("bEquip")]
     [JsonConverter(typeof(StringBoolConverter))]
     public bool IsEquipped
@@ -62,7 +59,6 @@ public class InventoryItem : BaseItem
     /// <returns>
     /// An integer representing the item's enhancement level.
     /// </returns>
-    [JsonPropertyOrder(102)]
     [JsonPropertyName("EnhLvl")]
     public int EnhancementLevel
     {
@@ -76,7 +72,6 @@ public class InventoryItem : BaseItem
     /// <returns>
     /// An integer representing the item's enhancement pattern ID.
     /// </returns>
-    [JsonPropertyOrder(103)]
     [JsonPropertyName("InvEnhPatternID")]
     public int EnhancementPatternID
     {
@@ -90,7 +85,6 @@ public class InventoryItem : BaseItem
     /// <returns>
     /// An enumeration type representing the item's enhancement type.
     /// </returns>
-    [JsonPropertyOrder(104)]
     public EnhancementType EnhancementType
     {
         get;

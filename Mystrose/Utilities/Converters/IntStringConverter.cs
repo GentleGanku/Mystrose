@@ -7,11 +7,18 @@ public class IntStringConverter : JsonConverter<string>
     {
         if (reader.TokenType == JsonTokenType.Number)
         {
-            return reader.GetDouble().ToString();
+            if (reader.TryGetInt32(out int intValue))
+            {
+                return intValue.ToString();
+            }
+            else if (reader.TryGetDouble(out double doubleValue))
+            {
+                return doubleValue.ToString();
+            }
         }
         else if (reader.TokenType == JsonTokenType.String)
         {
-            return reader.GetString();
+            return reader.GetString()!;
         }
 
         throw new JsonException("Unable to convert value to string.");

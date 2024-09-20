@@ -20,7 +20,6 @@ public class Avatar : GameObject
     /// <returns>
     /// An integer representing the avatar's health percentage.
     /// </returns>
-    [JsonPropertyOrder(25)]
     public int HPPercentage
     {
         get => (int)Math.Round((double)HP / MaxHP * 100);
@@ -32,7 +31,6 @@ public class Avatar : GameObject
     /// <returns>
     /// An integer representing the avatar's mana percentage.
     /// </returns>
-    [JsonPropertyOrder(26)]
     public int MPPercentage
     {
         get => (int)Math.Round((double)MP / MaxMP * 100);
@@ -44,7 +42,6 @@ public class Avatar : GameObject
     /// <returns>
     /// An integer representing the avatar's class rank.
     /// </returns>
-    [JsonPropertyOrder(27)]
     public int ClassRank
     {
         get => GetClassRank();
@@ -56,7 +53,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A boolean representing the avatar's tag for Upgrade state.
     /// </returns>
-    [JsonPropertyOrder(28)]
     public bool IsMember
     {
         get => MemberDays >= 0;
@@ -68,7 +64,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A boolean representing the avatar's life status.
     /// </returns>
-    [JsonPropertyOrder(29)]
     public bool IsAlive
     {
         get => HP > 0 && State > 0;
@@ -80,7 +75,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A boolean representing the avatar's OOM status.
     /// </returns>
-    [JsonPropertyOrder(30)]
     public bool IsOOM
     {
         get => MP <= 0;
@@ -92,7 +86,6 @@ public class Avatar : GameObject
     /// <returns>
     /// An array of float representing the avatar's position, with X and Y coordinates respectively.
     /// </returns>
-    [JsonPropertyOrder(31)]
     public double[] Position
     {
         get => [X, Y];
@@ -106,7 +99,6 @@ public class Avatar : GameObject
     /// <returns>
     /// An integer representing the avatar's entity ID.
     /// </returns>
-    [JsonPropertyOrder(0)]
     [JsonPropertyName("entID")]
     public int EntityID
     {
@@ -120,7 +112,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A string representing the avatar's name, in lowercase form.
     /// </returns>
-    [JsonPropertyOrder(1)]
     [JsonPropertyName("uoName")]
     public string Name
     {
@@ -134,7 +125,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A string representing the avatar's name.
     /// </returns>
-    [JsonPropertyOrder(2)]
     [JsonPropertyName("strUsername")]
     public string Username
     {
@@ -148,7 +138,6 @@ public class Avatar : GameObject
     /// <returns>
     /// An enumeration type representing the avatar's gender type.
     /// </returns>
-    [JsonPropertyOrder(3)]
     [JsonPropertyName("strGender")]
     public GenderType Gender
     {
@@ -162,7 +151,6 @@ public class Avatar : GameObject
     /// <returns>
     /// An enumeration type representing the avatar's access type.
     /// </returns>
-    [JsonPropertyOrder(4)]
     [JsonPropertyName("intAccessLevel")]
     public AccessType AccessType
     {
@@ -176,7 +164,6 @@ public class Avatar : GameObject
     /// <returns>
     /// An integer representing the avatar's level.
     /// </returns>
-    [JsonPropertyOrder(5)]
     [JsonPropertyName("intLevel")]
     [JsonConverter(typeof(StringIntConverter))]
     public int Level
@@ -191,7 +178,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A string representing the avatar's class name.
     /// </returns>
-    [JsonPropertyOrder(6)]
     [JsonPropertyName("strClassName")]
     public string Class
     {
@@ -202,7 +188,6 @@ public class Avatar : GameObject
     /// <summary>
     /// The rank of the player's class (in Class Points).
     /// </summary>
-    [JsonPropertyOrder(7)]
     [JsonPropertyName("iCP")]
     [JsonConverter(typeof(StringIntConverter))]
     public int ClassPoints
@@ -217,7 +202,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A dictionary of equipment types representing the avatar's current equipment items.
     /// </returns>
-    [JsonPropertyOrder(8)]
     [JsonPropertyName("eqp")]
     public Dictionary<string, BaseItem?> Equipments
     {
@@ -231,7 +215,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A dictionary of equipment types representing the avatar's current cosmetic equipment items.
     /// </returns>
-    [JsonPropertyOrder(9)]
     public Dictionary<string, BaseItem?> VanityEquipments
     {
         get;
@@ -244,7 +227,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A boolean representing the avatar's tag for AFK state.
     /// </returns>
-    [JsonPropertyOrder(10)]
     [JsonPropertyName("afk")]
     public bool IsAFK
     {
@@ -258,7 +240,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A boolean representing the avatar's tag for Resting state.
     /// </returns>
-    [JsonPropertyOrder(11)]
     public bool IsResting
     {
         get;
@@ -271,7 +252,6 @@ public class Avatar : GameObject
     /// <returns>
     /// An integer representing the avatar's member days.
     /// </returns>
-    [JsonPropertyOrder(12)]
     [JsonPropertyName("iUpgDays")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MemberDays
@@ -286,7 +266,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A double representing the avatar's maximum HP.
     /// </returns>
-    [JsonPropertyOrder(13)]
     [JsonPropertyName("intHPMax")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MaxHP
@@ -301,7 +280,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A double representing the avatar's current HP.
     /// </returns>
-    [JsonPropertyOrder(14)]
     [JsonPropertyName("intHP")]
     [JsonConverter(typeof(StringIntConverter))]
     public int HP
@@ -316,7 +294,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A double representing the avatar's maximum MP.
     /// </returns>
-    [JsonPropertyOrder(15)]
     [JsonPropertyName("intMPMax")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MaxMP
@@ -331,7 +308,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A double representing the avatar's current MP.
     /// </returns>
-    [JsonPropertyOrder(16)]
     [JsonPropertyName("intMP")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MP
@@ -346,7 +322,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A double representing the avatar's maximum SP.
     /// </returns>
-    [JsonPropertyOrder(17)]
     [JsonPropertyName("intSPMax")]
     [JsonConverter(typeof(StringIntConverter))]
     public int MaxSP
@@ -361,7 +336,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A double representing the avatar's current SP.
     /// </returns>
-    [JsonPropertyOrder(18)]
     [JsonPropertyName("intSP")]
     [JsonConverter(typeof(StringIntConverter))]
     public int SP
@@ -376,7 +350,6 @@ public class Avatar : GameObject
     /// <returns>
     /// An enumeration type representing the avatar's state.
     /// </returns>
-    [JsonPropertyOrder(19)]
     [JsonPropertyName("intState")]
     public StateType State
     {
@@ -390,7 +363,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A list representing the Monster IDs.
     /// </returns>
-    [JsonPropertyOrder(20)]
     public List<int> Targets
     {
         get;
@@ -403,7 +375,6 @@ public class Avatar : GameObject
     /// <returns>
     /// An object representing the avatar's cell.
     /// </returns>
-    [JsonPropertyOrder(21)]
     [JsonPropertyName("strFrame")]
     public string Cell
     {
@@ -417,7 +388,6 @@ public class Avatar : GameObject
     /// <returns>
     /// A string representing the avatar's pad.
     /// </returns>
-    [JsonPropertyOrder(22)]
     [JsonPropertyName("strPad")]
     public string Pad
     {
@@ -431,7 +401,6 @@ public class Avatar : GameObject
     /// <returns>
     /// An object representing the avatar's X coordinate.
     /// </returns>
-    [JsonPropertyOrder(23)]
     [JsonPropertyName("tx")]
     [JsonConverter(typeof(StringDoubleConverter))]
     public double X
@@ -446,7 +415,6 @@ public class Avatar : GameObject
     /// <returns>
     /// An object representing the avatar's Y coordinate.
     /// </returns>
-    [JsonPropertyOrder(24)]
     [JsonPropertyName("ty")]
     [JsonConverter(typeof(StringDoubleConverter))]
     public double Y

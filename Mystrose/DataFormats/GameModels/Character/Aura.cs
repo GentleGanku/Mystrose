@@ -25,7 +25,6 @@ public class Aura : GameObject
     /// <returns>
     /// An integer representing the aura's runtime.
     /// </returns>
-    [JsonPropertyOrder(10)]
     public int Runtime
     {
         get => Duration - (DateTime.Now - _startingSpan).Seconds;
@@ -39,7 +38,6 @@ public class Aura : GameObject
     /// <returns>
     /// A boolean representing the aura's condition.
     /// </returns>
-    [JsonPropertyOrder(0)]
     public bool IsAdded
     {
         get;
@@ -52,7 +50,6 @@ public class Aura : GameObject
     /// <returns>
     /// A string representing the aura's name, in trimmed form.
     /// </returns>
-    [JsonPropertyOrder(1)]
     [JsonPropertyName("nam")]
     [JsonConverter(typeof(TrimConverter))]
     public string Name
@@ -67,7 +64,6 @@ public class Aura : GameObject
     /// <returns>
     /// A string representing the aura's value.
     /// </returns>
-    [JsonPropertyOrder(2)]
     [JsonPropertyName("val")]
     [JsonConverter(typeof(IntStringConverter))]
     public string Value
@@ -82,7 +78,6 @@ public class Aura : GameObject
     /// <returns>
     /// An integer representing the aura's unique stack value.
     /// </returns>
-    [JsonPropertyOrder(3)]
     public int StackValue
     {
         get;
@@ -95,7 +90,6 @@ public class Aura : GameObject
     /// <returns>
     /// An integer representing the aura's duration.
     /// </returns>
-    [JsonPropertyOrder(4)]
     [JsonPropertyName("dur")]
     [JsonConverter(typeof(StringIntConverter))]
     public int Duration
@@ -110,7 +104,6 @@ public class Aura : GameObject
     /// <returns>
     /// An enumeration type representing the aura's disable type.
     /// </returns>
-    [JsonPropertyOrder(5)]
     [JsonPropertyName("cat")]
     public DisableType DisableType
     {
@@ -124,7 +117,6 @@ public class Aura : GameObject
     /// <returns>
     /// An enumeration type representing the aura source's type
     /// </returns>
-    [JsonPropertyOrder(6)]
     public EntityType SourceType
     {
         get;
@@ -137,7 +129,6 @@ public class Aura : GameObject
     /// <returns>
     /// A string representing the aura source's ID.
     /// </returns>
-    [JsonPropertyOrder(7)]
     public string SourceID
     {
         get;
@@ -150,7 +141,6 @@ public class Aura : GameObject
     /// <returns>
     /// An enumeration type representing the aura target's type.
     /// </returns>
-    [JsonPropertyOrder(8)]
     public EntityType TargetType
     {
         get;
@@ -163,7 +153,6 @@ public class Aura : GameObject
     /// <returns>
     /// A string representing the aura target's ID.
     /// </returns>
-    [JsonPropertyOrder(9)]
     public string TargetID
     {
         get;

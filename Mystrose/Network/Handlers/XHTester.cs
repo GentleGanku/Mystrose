@@ -22,7 +22,7 @@ public static class XHTester
     {
         string xtPath = "packetFormats\\xt\\" + message.Command + ".txt";
         string[] xtContentArray = message.RawContent.Split("%");
-        string xtContent = string.Join("%\r\n", xtContentArray);
+        string xtContent = string.Join("\r\n%\r\n", xtContentArray);
 
         if (File.Exists(xtPath))
         {

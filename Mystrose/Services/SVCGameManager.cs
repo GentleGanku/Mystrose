@@ -244,7 +244,7 @@ public class SVCGameManager
                 null);
         }
 
-        _selectedCodename = codename;
+        SelectedCodename = codename;
 
         SelectedGameEvent?.Invoke(codename, game);
 
@@ -255,7 +255,7 @@ public class SVCGameManager
 
     public static Response<HSTGame?> Deselect()
     {
-        _selectedCodename = string.Empty;
+        SelectedCodename = string.Empty;
 
         SelectedGameEvent?.Invoke(string.Empty, null);
 

@@ -26,7 +26,7 @@ public abstract class GameObject
         Properties.Clear();
 
         JsonObject jsonProperties = JsonSerializer.Deserialize<JsonObject>(JsonSerializer.Serialize(gameObject))!;
-        PropertyInfo[] properties = [.. GetType().GetProperties().OrderBy(p => p.GetCustomAttributes(typeof(JsonPropertyOrderAttribute), true))];
+        PropertyInfo[] properties = [.. GetType().GetProperties()];
 
         int I = 0;
         foreach (KeyValuePair<string, JsonNode> kvp in jsonProperties)

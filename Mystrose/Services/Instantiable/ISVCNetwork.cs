@@ -33,7 +33,7 @@ public class ISVCNetwork
     #endregion
 
     #region Methods: Setup
-    private void Initialize()
+    public void Initialize()
     {
         JSONMessageEvent += JHArea.Invoke;
         JSONMessageEvent += JHBoostStatus.Invoke;
@@ -59,6 +59,7 @@ public class ISVCNetwork
         XTMessageEvent += XHRespawn.Invoke;
         XTMessageEvent += XHMapPlayer.Invoke;
         XTMessageEvent += XHDungeonInterface.Invoke;
+        XTMessageEvent += XHConnectionResponse.Invoke;
 
         ZMMessageEvent += ZHConnection.Invoke;
         ZMMessageEvent += ZHBank.Invoke;
@@ -66,7 +67,7 @@ public class ISVCNetwork
         ZMMessageEvent += ZHSkillCooldown.Invoke;
     }
 
-    private void Checkup()
+    public void Checkup()
     {
         if (!SVCSettings.Get("debugNetwork").Output!.Get<bool>())
         {
@@ -98,6 +99,39 @@ public class ISVCNetwork
         JSONMessageEvent += JHTester.Invoke;
         XTMessageEvent += XHTester.Invoke;
         ZMMessageEvent += ZHTester.Invoke;
+    }
+
+    public void Dispose()
+    {
+        JSONMessageEvent -= JHArea.Invoke;
+        JSONMessageEvent -= JHBoostStatus.Invoke;
+        JSONMessageEvent -= JHClassData.Invoke;
+        JSONMessageEvent -= JHCombat.Invoke;
+        JSONMessageEvent -= JHDrop.Invoke;
+        JSONMessageEvent -= JHEntityStats.Invoke;
+        JSONMessageEvent -= JHEventMessage.Invoke;
+        JSONMessageEvent -= JHInventory.Invoke;
+        JSONMessageEvent -= JHPartyInterface.Invoke;
+        JSONMessageEvent -= JHQuestData.Invoke;
+        JSONMessageEvent -= JHUserData.Invoke;
+        JSONMessageEvent -= JHItemEquipment.Invoke;
+        JSONMessageEvent -= JHFactionData.Invoke;
+        JSONMessageEvent -= JHCurrency.Invoke;
+        JSONMessageEvent -= JHShopInterface.Invoke;
+        JSONMessageEvent -= JHBankInterface.Invoke;
+        JSONMessageEvent -= JHVanityEquipmentData.Invoke;
+        JSONMessageEvent -= JHInventorySlots.Invoke;
+        JSONMessageEvent -= JHEquipmentEnhancement.Invoke;
+
+        XTMessageEvent -= XHEntityStats.Invoke;
+        XTMessageEvent -= XHRespawn.Invoke;
+        XTMessageEvent -= XHMapPlayer.Invoke;
+        XTMessageEvent -= XHDungeonInterface.Invoke;
+
+        ZMMessageEvent -= ZHConnection.Invoke;
+        ZMMessageEvent -= ZHBank.Invoke;
+        ZMMessageEvent -= ZHMapMovement.Invoke;
+        ZMMessageEvent -= ZHSkillCooldown.Invoke;
     }
     #endregion
 

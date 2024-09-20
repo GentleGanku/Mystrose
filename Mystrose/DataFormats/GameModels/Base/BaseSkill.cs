@@ -17,7 +17,6 @@ public class BaseSkill : GameObject
     /// <summary>
     /// The ID of the skill.
     /// </summary>
-    [JsonPropertyOrder(0)]
     [JsonPropertyName("id")]
     [JsonConverter(typeof(StringIntConverter))]
     public int ID
@@ -29,7 +28,6 @@ public class BaseSkill : GameObject
     /// <summary>
     /// The type of action the skill acts as.
     /// </summary>
-    [JsonPropertyOrder(1)]
     [JsonPropertyName("ref")]
     public ActionType ActionType
     {
@@ -40,7 +38,6 @@ public class BaseSkill : GameObject
     /// <summary>
     /// The type of target the skill can be used on.
     /// </summary>
-    [JsonPropertyOrder(2)]
     [JsonPropertyName("tgt")]
     public TargetType TargetType
     {
@@ -51,7 +48,6 @@ public class BaseSkill : GameObject
     /// <summary>
     /// The name of the skill.
     /// </summary>
-    [JsonPropertyOrder(3)]
     [JsonPropertyName("nam")]
     public string Name
     {
@@ -62,7 +58,6 @@ public class BaseSkill : GameObject
     /// <summary>
     /// The name of the skill.
     /// </summary>
-    [JsonPropertyOrder(4)]
     [JsonPropertyName("desc")]
     public string Description
     {
@@ -73,7 +68,6 @@ public class BaseSkill : GameObject
     /// <summary>
     /// The amount of range the skill can be used with.
     /// </summary>
-    [JsonPropertyOrder(5)]
     [JsonPropertyName("range")]
     [JsonConverter(typeof(StringIntConverter))]
     public int Range
@@ -85,7 +79,6 @@ public class BaseSkill : GameObject
     /// <summary>
     /// The condition of whether the skill can be used or not.
     /// </summary>
-    [JsonPropertyOrder(6)]
     [JsonPropertyName("isOK")]
     public bool IsUsable
     {

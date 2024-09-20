@@ -18,6 +18,10 @@ public class StringBoolConverter : JsonConverter<bool>
         {
             return reader.GetInt32() == 1;
         }
+        else
+        {
+            return reader.GetBoolean();
+        }
 
         throw new JsonException("Unable to convert value to boolean.");
     }

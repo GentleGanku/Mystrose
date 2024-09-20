@@ -20,7 +20,6 @@ public class Faction : GameObject
     /// <returns>
     /// An integer representing the faction's current rank.
     /// </returns>
-    [JsonPropertyOrder(3)]
     public int Rank
     {
         get => GetRank();
@@ -32,7 +31,6 @@ public class Faction : GameObject
     /// <returns>
     /// An integer representing the faction's next required Reputation Points.
     /// </returns>
-    [JsonPropertyOrder(4)]
     public int RequiredRankPoints
     {
         get => GetNextTotalPoints() - Points;
@@ -44,7 +42,6 @@ public class Faction : GameObject
     /// <returns>
     /// An integer representing the faction's required Reputation Points at max.
     /// </returns>
-    [JsonPropertyOrder(5)]
     public int RequiredMaxPoints
     {
         get => 302500 - Points;
@@ -58,7 +55,6 @@ public class Faction : GameObject
     /// <returns>
     /// An integer representing the faction's ID.
     /// </returns>
-    [JsonPropertyOrder(0)]
     [JsonPropertyName("FactionID")]
     [JsonConverter(typeof(StringIntConverter))]
     public int ID
@@ -73,7 +69,6 @@ public class Faction : GameObject
     /// <returns>
     /// A string representing the faction's name.
     /// </returns>
-    [JsonPropertyOrder(1)]
     [JsonPropertyName("sName")]
     public string Name
     {
@@ -87,7 +82,6 @@ public class Faction : GameObject
     /// <returns>
     /// An integer representing the faction's total Reputation Points.
     /// </returns>
-    [JsonPropertyOrder(2)]
     [JsonPropertyName("iRep")]
     [JsonConverter(typeof(StringIntConverter))]
     public int Points

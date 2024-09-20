@@ -25,6 +25,8 @@ public class SVCLogger
                 Directory.CreateDirectory(_pathToFolder);
             }
 
+            Purge();
+
             if (!File.Exists(_pathToTraceLog))
             {
                 File.Create(_pathToTraceLog).Close();
