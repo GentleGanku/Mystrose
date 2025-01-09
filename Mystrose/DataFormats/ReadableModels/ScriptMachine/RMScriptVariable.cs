@@ -1,36 +1,28 @@
 ﻿namespace Mystrose.DataFormats.ReadableModels.ScriptMachine;
 
-public class RMScriptVariable : ReadableModel
+public class RMScriptVariable : ReadableModel<ScriptVariable>
 {
 
     #region Constructor
-    public RMScriptVariable(ScriptVariable? model = null, World? world = null) : base(model, world)
+    public RMScriptVariable(ScriptVariable? model = null, World? world = null)
+        : base(model ?? new ScriptVariable(), world ?? new World())
     {
-        Model = model ?? new ScriptVariable();
-        MandatorySearchProperties = new()
+        KeyProperties = new()
         {
             [nameof(Key)] = Key
         };
     }
     #endregion
 
-    #region Private Fields
-    [JsonIgnore]
-    private ScriptVariable ScriptVariable
-    {
-        get => (ScriptVariable)Model;
-    }
+    #region Properties
+    public string Key => Model.Key;
+    public string Value => Model.Value;
     #endregion
 
-    #region Properties
-    public string Key
+    #region Methods: Overrides
+    public override string ToString()
     {
-        get => ScriptVariable.Key;
-    }
-
-    public string Value
-    {
-        get => ScriptVariable.Value;
+        return $"{Key} = {Value}";
     }
     #endregion
 

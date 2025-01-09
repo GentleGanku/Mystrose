@@ -11,6 +11,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Resources/ResourceDictionaries/CustomIcons.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Resources/ResourceDictionaries/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Resources/ResourceDictionaries/ColorCoding.xaml" />
                 <ui:ThemesDictionary Theme="Dark" />
                 <ui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>

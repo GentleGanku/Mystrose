@@ -4,7 +4,7 @@ public class XTMessage : Message
 {
 
     #region Constructor
-    public XTMessage(ClientUseIdentifier identifier, string raw) : base(identifier)
+    public XTMessage(ClientInstanceIdentifier identifier, string raw) : base(identifier)
     {
         RawContent = raw;
         Arguments = raw.Split('%');

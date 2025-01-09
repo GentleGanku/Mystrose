@@ -1,6 +1,6 @@
-﻿namespace Mystrose.Services;
+﻿namespace Mystrose.Utilities.Regexes;
 
-public partial class SVCRegex
+public partial class ScriptRegexes
 {
 
     #region Regexes

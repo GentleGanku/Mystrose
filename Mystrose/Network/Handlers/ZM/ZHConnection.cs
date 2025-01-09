@@ -1,38 +1,15 @@
 ﻿namespace Mystrose.Network.Handlers.ZM;
 
-public static class ZHConnection
+public class ZHConnection() : MessageHandler<ZMMessage>(new()
+{
+    ["sfcConnect"] = HandleConnection,
+    ["sfcLoginInfo"] = HandleLoginInfo,
+    ["sfcDisconnect"] = HandleDisconnection
+})
 {
 
-    #region Fields
-    private static readonly Dictionary<string, Action<ZMMessage>> _handlers = new()
-    {
-        ["sfcConnect"] = HandleConnection,
-        ["sfcLoginInfo"] = HandleLoginInfo,
-        ["sfcDisconnect"] = HandleDisconnection
-    };
-    #endregion
-
-    #region Methods: Invoker
-    public static void Invoke(ZMMessage message)
-    {
-        if (!_handlers.TryGetValue(message.Command, out var handler))
-        {
-            return;
-        }
-
-        try
-        {
-            handler.Invoke(message);
-        }
-        catch (Exception ex)
-        {
-            SVCLogger.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
-        }
-    }
-    #endregion
-
-    #region Handlers
-    public static void HandleConnection(ZMMessage message)
+    #region Methods: Handlers
+    private static void HandleConnection(ZMMessage message)
     {
         bool isSuccess = bool.Parse(message.Arguments[5]);
 
@@ -43,15 +20,15 @@ public static class ZHConnection
 
         string serverName = message.Arguments[4];
         
-        SVCWorldVisualizer.Activate(message.Identifier.Codename, serverName);
+        MSVCWorld.Instance.Activate(message.Identifier.Codename, serverName);
     }
 
-    public static void HandleLoginInfo(ZMMessage message)
+    private static void HandleLoginInfo(ZMMessage message)
     {
         string loginInfoString = message.RawContent.Split("[INFO]")[1];
         JsonObject loginInfo = JsonSerializer.Deserialize<JsonObject>(loginInfoString)!;
 
-        message.World.Avatar = new()
+        message.HostWorld.Avatar = new()
         {
             MemberDays = loginInfo["iUpgDays"]!.GetValue<int>(),
             Level = loginInfo["iLevel"]!.GetValue<int>(),
@@ -61,7 +38,7 @@ public static class ZHConnection
         };
     }
 
-    public static void HandleDisconnection(ZMMessage message)
+    private static void HandleDisconnection(ZMMessage message)
     {
         bool isConnectionLost = bool.Parse(message.Arguments[4]);
 
@@ -70,7 +47,7 @@ public static class ZHConnection
             return;
         }
 
-        SVCWorldVisualizer.Deactivate(message.Identifier.Codename);
+        MSVCWorld.Instance.Deactivate(message.Identifier.Codename);
     }
     #endregion
 

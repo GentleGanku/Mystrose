@@ -1,40 +1,17 @@
 ﻿namespace Mystrose.Network.Handlers.XT;
 
-public static class XHEntityStats
+public class XHEntityStats() : MessageHandler<XTMessage>(new()
+{
+    ["uotls"] = HandleUserStats,
+    ["mtls"] = HandleMonsterStats
+})
 {
 
-    #region Fields
-    private static readonly Dictionary<string, Action<XTMessage>> _handlers = new()
-    {
-        ["uotls"] = HandleUserStats,
-        ["mtls"] = HandleMonsterStats
-    };
-    #endregion
-
-    #region Methods: Invoker
-    public static void Invoke(XTMessage message)
-    {
-        if (!_handlers.TryGetValue(message.Command, out var handler))
-        {
-            return;
-        }
-
-        try
-        {
-            handler.Invoke(message);
-        }
-        catch (Exception ex)
-        {
-            SVCLogger.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
-        }
-    }
-    #endregion
-
-    #region Handlers
-    public static void HandleUserStats(XTMessage message)
+    #region Methods: Handlers
+    private static void HandleUserStats(XTMessage message)
     {
         string avatarName = message.Arguments[4];
-        Avatar? avatar = message.World.Area.Players.Find(
+        Avatar? avatar = message.HostWorld.Area.Players.Find(
             (avt) =>
             {
                 return avt.Name.Equals(avatarName);
@@ -54,13 +31,13 @@ public static class XHEntityStats
             avatar.SetProperty(data[0], data[1]);
         }
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, avatar);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, avatar);
     }
 
-    public static void HandleMonsterStats(XTMessage message)
+    private static void HandleMonsterStats(XTMessage message)
     {
         int monMapId = int.Parse(message.Arguments[4]);
-        Monster? monster = message.World.Area.Monsters.Find(
+        Monster? monster = message.HostWorld.Area.Monsters.Find(
             (mst) =>
             {
                 return mst.MonMapID == monMapId;
@@ -80,7 +57,7 @@ public static class XHEntityStats
             monster.SetProperty(data[0], data[1]);
         }
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, monster);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, monster);
     }
     #endregion
 

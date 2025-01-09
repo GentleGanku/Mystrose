@@ -1,0 +1,382 @@
+﻿<base:MystWindow
+    x:Class="Mystrose.Views.WorldVisualizer.VWWorldVisualizer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:base="clr-namespace:Mystrose.Views.Base"
+    xmlns:baseControls="clr-namespace:Mystrose.Views.Base.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Mystrose.Views.WorldVisualizer"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    x:Name="WorldVisualizer"
+    Title="World Visualizer | Mystrose"
+    Width="750"
+    Height="600"
+    ResizeMode="CanResize"
+    WindowStartupLocation="CenterScreen"
+    WindowState="Normal"
+    mc:Ignorable="d">
+
+    <d:DesignerProperties.DesignStyle>
+        <Style TargetType="ui:FluentWindow">
+            <Setter Property="Background" Value="{DynamicResource LayerFillColorAltBrush}" />
+            <Setter Property="Height" Value="600" />
+            <Setter Property="Width" Value="750" />
+        </Style>
+    </d:DesignerProperties.DesignStyle>
+
+    <Grid Background="{DynamicResource LayerFillColorAltBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <baseControls:TitleBar
+            x:Name="TTLB_Main"
+            Grid.Row="0"
+            TitleIcon="SearchVisual20"
+            TitleText="World Visualizer">
+            <baseControls:TitleBar.AdditionalContent>
+                <baseControls:ClientSwitchButton Tag="CSBTN_Codenames" />
+            </baseControls:TitleBar.AdditionalContent>
+        </baseControls:TitleBar>
+        <Rectangle
+            Grid.Row="1"
+            Height="0.5"
+            Fill="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
+
+        <Grid Grid.Row="2" Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="0,0,0,7.5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock
+                    Grid.Column="0"
+                    Margin="0,0,6,0"
+                    VerticalAlignment="Center"
+                    Text="Grabber"
+                    TextElement.FontFamily="{StaticResource FF_HypatiaSans_Semibold}"
+                    TextElement.FontSize="14"
+                    TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+
+                <Border
+                    Grid.Column="1"
+                    Width="1"
+                    Height="24"
+                    Margin="0,0,6,0"
+                    Background="{DynamicResource SeparatorBorderBrush}"
+                    CornerRadius="0.5" />
+
+                <Border
+                    Grid.Column="2"
+                    Margin="0,0,6,0"
+                    Background="{DynamicResource ButtonBackground}"
+                    BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4">
+                    <baseControls:MenuButton x:Name="MBTN_GrabberInfo" CaptionText="How does it work?">
+                        <baseControls:MenuButton.IconContent>
+                            <ui:SymbolIcon Symbol="Lightbulb20" />
+                        </baseControls:MenuButton.IconContent>
+                    </baseControls:MenuButton>
+                </Border>
+
+                <Border
+                    Grid.Column="3"
+                    Height="1"
+                    Background="{DynamicResource SeparatorBorderBrush}"
+                    CornerRadius="0.5" />
+
+            </Grid>
+            <Border
+                Grid.Row="1"
+                Margin="0,0,3,0"
+                Background="{DynamicResource CalendarViewBorderBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.40*" />
+                            <ColumnDefinition Width="0.60*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            x:Name="TB_EmptyView"
+                            Grid.Column="0"
+                            Padding="25,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Opacity="0.5"
+                            TextAlignment="Center"
+                            TextElement.FontFamily="{StaticResource FF_HypatiaSans_Semibold}"
+                            TextElement.FontSize="14"
+                            TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                            TextWrapping="Wrap"
+                            Visibility="Visible">
+                            Select a game object type and refresh the view to see the details
+                        </TextBlock>
+                        <TreeView
+                            x:Name="TV_Models"
+                            Grid.Column="0"
+                            Margin="6"
+                            HorizontalContentAlignment="Stretch"
+                            AllowDrop="True"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                            ScrollViewer.VerticalScrollBarVisibility="Visible"
+                            TextElement.FontFamily="{StaticResource FF_HypatiaSans_Regular}"
+                            TextElement.FontSize="12"
+                            VirtualizingPanel.IsVirtualizing="True"
+                            Visibility="Collapsed" />
+
+                        <Border
+                            Grid.Column="1"
+                            Background="{DynamicResource CardStrokeColorDefaultBrush}"
+                            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                            CornerRadius="0,8,0,0">
+                            <ui:DynamicScrollViewer Margin="6" VirtualizingPanel.IsVirtualizing="True">
+                                <StackPanel
+                                    x:Name="SPNL_Attributes"
+                                    HorizontalAlignment="Stretch"
+                                    Orientation="Vertical"
+                                    TextElement.FontFamily="{StaticResource FF_HypatiaSans_Regular}"
+                                    TextElement.FontSize="12" />
+                            </ui:DynamicScrollViewer>
+                        </Border>
+                    </Grid>
+
+                    <Border
+                        Grid.Row="1"
+                        Background="{DynamicResource CalendarViewBorderBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        CornerRadius="0,0,8,8"
+                        TextElement.FontFamily="{StaticResource FF_HypatiaSans_Regular}"
+                        TextElement.FontSize="12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.40*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="0.60*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border
+                                    Grid.Column="1"
+                                    Margin="12,9,3,9"
+                                    Background="{DynamicResource ButtonBackground}"
+                                    BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                    <baseControls:MenuButton x:Name="MBTN_Refresh" Grid.Column="1">
+                                        <baseControls:MenuButton.ToolTip>
+                                            Refresh view
+                                        </baseControls:MenuButton.ToolTip>
+
+                                        <baseControls:MenuButton.IconContent>
+                                            <ui:SymbolIcon Symbol="ArrowClockwise20" />
+                                        </baseControls:MenuButton.IconContent>
+                                    </baseControls:MenuButton>
+                                </Border>
+
+                                <ComboBox
+                                    x:Name="CB_VisualType"
+                                    Grid.Column="3"
+                                    MinWidth="150"
+                                    MaxWidth="150"
+                                    Margin="3,9,12,9"
+                                    HorizontalAlignment="Left"
+                                    FontFamily="{StaticResource FF_HypatiaSans_Semibold}"
+                                    SelectionChanged="ObjectTypesBox_SelectionChanged"
+                                    TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+
+                            </Grid>
+
+                            <Separator Grid.Column="1" Height="45" />
+
+                            <Grid Grid.Column="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <ui:TextBox
+                                    x:Name="TBX_FindLabel"
+                                    Grid.Column="0"
+                                    MinWidth="175"
+                                    MaxWidth="175"
+                                    Margin="3,9,12,9"
+                                    HorizontalAlignment="Right"
+                                    BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                                    PlaceholderText="Search attribute..."
+                                    TextChanged="SearchBox_TextChanged" />
+                            </Grid>
+
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="3" Margin="15,0,15,15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="0,0,0,7.5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock
+                    Grid.Column="0"
+                    Margin="0,0,6,0"
+                    VerticalAlignment="Center"
+                    Text="Loader"
+                    TextElement.FontFamily="{StaticResource FF_HypatiaSans_Semibold}"
+                    TextElement.FontSize="14"
+                    TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+
+                <Border
+                    Grid.Column="1"
+                    Width="1"
+                    Height="24"
+                    Margin="0,0,6,0"
+                    Background="{DynamicResource SeparatorBorderBrush}"
+                    CornerRadius="0.5" />
+
+                <Border
+                    Grid.Column="2"
+                    Margin="0,0,6,0"
+                    Background="{DynamicResource ButtonBackground}"
+                    BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4">
+                    <baseControls:MenuButton x:Name="MBTN_LoaderInfo" CaptionText="How does it work?">
+                        <baseControls:MenuButton.IconContent>
+                            <ui:SymbolIcon Symbol="Lightbulb20" />
+                        </baseControls:MenuButton.IconContent>
+                    </baseControls:MenuButton>
+                </Border>
+
+                <Border
+                    Grid.Column="3"
+                    Height="1"
+                    Background="{DynamicResource SeparatorBorderBrush}"
+                    CornerRadius="0.5" />
+
+            </Grid>
+            <Grid Grid.Row="2" Margin="0,7.5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel
+                    Grid.Column="0"
+                    Margin="0,0,12,0"
+                    Orientation="Vertical">
+                    <TextBlock
+                        Margin="0,0,0,3"
+                        Opacity="0.5"
+                        Text="Game Object"
+                        TextElement.FontFamily="{StaticResource FF_HypatiaSans_Regular}"
+                        TextElement.FontSize="12"
+                        TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                    <ComboBox
+                        x:Name="CB_ModelType"
+                        MinWidth="200"
+                        MaxWidth="200"
+                        FontFamily="{StaticResource FF_HypatiaSans_Semibold}"
+                        SelectionChanged="ObjectTypesBox_SelectionChanged"
+                        TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="12,0,0,0"
+                    Orientation="Vertical">
+                    <TextBlock
+                        Margin="0,0,0,3"
+                        Opacity="0.5"
+                        Text="Parameters"
+                        TextElement.FontFamily="{StaticResource FF_HypatiaSans_Regular}"
+                        TextElement.FontSize="12"
+                        TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                    <ui:TextBox
+                        x:Name="TBX_Parameters"
+                        HorizontalAlignment="Stretch"
+                        BorderBrush="{DynamicResource ControlElevationBorderBrush}" />
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Column="2"
+                    Margin="6,0,0,0"
+                    Orientation="Vertical">
+                    <TextBlock
+                        Margin="0,0,0,3"
+                        Opacity="0.5"
+                        Text=""
+                        TextElement.FontFamily="{StaticResource FF_HypatiaSans_Regular}"
+                        TextElement.FontSize="12"
+                        TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                    <Border
+                        Background="{DynamicResource ButtonBackground}"
+                        BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4">
+                        <baseControls:MenuButton x:Name="MBTN_Load" Height="33.5">
+                            <baseControls:MenuButton.ToolTip>
+                                Load the Game Object
+                            </baseControls:MenuButton.ToolTip>
+
+                            <baseControls:MenuButton.IconContent>
+                                <ui:SymbolIcon Symbol="ArrowUpRight20" />
+                            </baseControls:MenuButton.IconContent>
+                        </baseControls:MenuButton>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <!--  MystWindow's Base Controls  -->
+        <ContentPresenter
+            x:Name="CPST_ContentDialog"
+            Grid.Row="1"
+            Grid.RowSpan="4" />
+        <ui:SnackbarPresenter
+            x:Name="SBPST_Base"
+            Grid.Row="1"
+            Grid.RowSpan="4" />
+
+    </Grid>
+
+</base:MystWindow>

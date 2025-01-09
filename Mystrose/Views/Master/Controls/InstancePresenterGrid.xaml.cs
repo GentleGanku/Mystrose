@@ -35,10 +35,9 @@ public partial class InstancePresenterGrid : UserControl
     #region Methods: Utility
     private void SortButtons()
     {
-        Response<string[]> response = SVCGameManager.GetCodenames();
         int count = 0;
 
-        foreach (string codename in response.Output)
+        foreach (string codename in MSVCGame.Instance.ActiveCollection.Keys)
         {
             InstanceButton? instanceButton = Instances.Find(i => i.NameText.Equals(codename));
 
@@ -59,7 +58,7 @@ public partial class InstancePresenterGrid : UserControl
         InstanceButton? instanceButton = Instances.Find(i => i.NameText.Equals(codename));
         if (instanceButton is not null)
         {
-            SVCLogger.LogOnTrace($"Instance '{codename}' already exists.");
+            HSVCLogger.Instance.LogOnTrace($"Instance '{codename}' already exists.");
             return;
         }
 
@@ -84,7 +83,7 @@ public partial class InstancePresenterGrid : UserControl
         InstanceButton? instanceButton = Instances.Find(i => i.NameText.Equals(codename));
         if (instanceButton is null)
         {
-            SVCLogger.LogOnTrace($"Instance '{codename}' does not exist.");
+            HSVCLogger.Instance.LogOnTrace($"Instance '{codename}' does not exist.");
             return;
         }
 
@@ -104,19 +103,16 @@ public partial class InstancePresenterGrid : UserControl
             {
                 if (indexToRemove == GRD_Instances.Children.Count)
                 {
-                    // Removed the last instance, select the previous index (left-side)
-                    SVCGameManager.Select(Instances[indexToRemove - 1].NameText);
+                    MSVCGame.Instance.Select(Instances[indexToRemove - 1].NameText);
                 }
                 else
                 {
-                    // Removed an instance in the middle or the first instance, select the next index (right-side)
-                    SVCGameManager.Select(Instances[indexToRemove].NameText);
+                    MSVCGame.Instance.Select(Instances[indexToRemove].NameText);
                 }
             }
             else
             {
-                // No instances left
-                SVCGameManager.Deselect();
+                MSVCGame.Instance.Deselect();
             }
         });
     }
@@ -125,7 +121,7 @@ public partial class InstancePresenterGrid : UserControl
     {
         if (Instances.Count <= 0)
         {
-            SVCLogger.LogOnTrace($"No instances currently exist.");
+            HSVCLogger.Instance.LogOnTrace($"No instances currently exist.");
             return;
         }
 
@@ -170,16 +166,16 @@ public partial class InstancePresenterGrid : UserControl
     #region Handlers: Events
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        SVCGameManager.ActivatedGameEvent += AddIncomingInstance;
-        SVCGameManager.DeactivatedGameEvent += RemoveIncomingInstance;
-        SVCGameManager.SelectedGameEvent += SelectIncomingInstance;
+        MSVCGame.Instance.ActivatedGameEvent += AddIncomingInstance;
+        MSVCGame.Instance.DeactivatedGameEvent += RemoveIncomingInstance;
+        MSVCGame.Instance.SelectedGameEvent += SelectIncomingInstance;
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        SVCGameManager.ActivatedGameEvent -= AddIncomingInstance;
-        SVCGameManager.DeactivatedGameEvent -= RemoveIncomingInstance;
-        SVCGameManager.SelectedGameEvent -= SelectIncomingInstance;
+        MSVCGame.Instance.ActivatedGameEvent -= AddIncomingInstance;
+        MSVCGame.Instance.DeactivatedGameEvent -= RemoveIncomingInstance;
+        MSVCGame.Instance.SelectedGameEvent -= SelectIncomingInstance;
 
         Loaded -= OnLoaded;
         Unloaded -= OnUnloaded;

@@ -1,12 +1,14 @@
-﻿namespace Mystrose.Services.Instantiable;
+﻿using Mystrose.Services.Instantiable.Subservices;
 
-public class ISVCFlashAPI
+namespace Mystrose.Services.Instantiable;
+
+public class ISVCFlashAPI : InstantiableService
 {
 
     #region Constructor
-    public ISVCFlashAPI(ClientUseIdentifier identifier)
+    public ISVCFlashAPI(ClientInstanceIdentifier identifier) : base(identifier, nameof(ISVCFlashAPI))
     {
-        _identifier = identifier;
+        Construct();
     }
     #endregion
 
@@ -17,45 +19,61 @@ public class ISVCFlashAPI
 
     #region Fields
     private AxShockwaveFlash _client = new();
-    private ClientUseIdentifier _identifier;
     #endregion
 
-    #region Methods: Setup
-    public async void Initialize(HSTGame game)
+    #region Properties
+    public SSVCBank Bank
     {
-        _client?.Dispose();
-
-        _client = new AxShockwaveFlash()
-        {
-            Dock = DockStyle.Fill
-        };
-
-        _client.BeginInit();
-        _client.FlashCall += OnCall;
-        game.Child = _client;
-        _client.EndInit();
-
-        byte[] swf = Properties.Resources.Mystrose;
-        MemoryStream stream = new();
-
-        using BinaryWriter writer = new(stream);
-        writer.Write(8 + swf.Length);
-        writer.Write(1432769894);
-        writer.Write(swf.Length);
-        writer.Write(swf);
-        writer.Seek(0, SeekOrigin.Begin);
-
-        _client.OcxState = new AxHost.State(stream, 1, manualUpdate: false, null);
+        get;
+        private set;
     }
 
-    public void Dispose()
+    public SSVCCombat Combat
     {
-        _client.FlashCall -= OnCall;
-        _client?.Dispose();
+        get;
+        private set;
     }
+    
+    public SSVCDrop Drop
+    {
+        get;
+        private set;
+    }
+    
+    public SSVCInventory Inventory
+    {
+        get;
+        private set;
+    }
+    
+    public SSVCMap Map
+    {
+        get;
+        private set;
+    }
+    
+    public SSVCQuest Quest
+    {
+        get;
+        private set;
+    }
+
+    public SSVCServer Server
+    {
+        get;
+        private set;
+    }
+    
+    public SSVCShop Shop
+    {
+        get;
+        private set;
+    }
+    
+    
     #endregion
 
-    #region Methods: Actions
+    #region (Private) Methods: Helper
     private void CheckupProgress(int percentile)
     {
         if (percentile < 100)
@@ -63,7 +81,7 @@ public class ISVCFlashAPI
             return;
         }
 
-        //SVCGameManager.Select(_identifier.Codename);
+        //SVCGameManager.InstanceSelect(_identifier.Codename);
     }
 
     private string TamperServerInfo(string response)
@@ -89,7 +107,7 @@ public class ISVCFlashAPI
     {
         List<Server> servers = JsonSerializer.Deserialize<List<Server>>(serverInfo)!;
 
-        SVCRepository.AddModel(servers);
+        HSVCRepository.Instance.AddModel(servers);
     }
 
     private async void OpenExternalLink(string args)
@@ -107,14 +125,117 @@ public class ISVCFlashAPI
     }
     #endregion
 
+    #region (Private) Methods: Handlers
+    private void OnCall(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
+    {
+        XElement el = XElement.Parse(e.request);
+        string? name = el.Attribute("name")?.Value;
+        string? args = el.Element("arguments")?.Value;
+
+        switch (name)
+        {
+            case "progress":
+                CheckupProgress(int.Parse(args));
+                break;
+            case "registerServers":
+                _client.SetReturnValue("<string>" + TamperServerInfo(args) + "</string>");
+                break;
+            case "openLink":
+                OpenExternalLink(args);
+                break;
+        }
+
+        CallEvent?.Invoke(name, args);
+    }
+    #endregion
+    
+    #region Methods: Builder
+    public override void Construct()
+    {
+        try
+        {
+            Bank = new(this);
+            Drop = new(this);
+            Inventory = new(this);
+            Map = new(this);
+            Quest = new(this);
+            Shop = new(this);
+            
+            Log("Flash API has been constructed.", "Construct");
+        }
+        catch (Exception ex)
+        {
+            Log(ex.ToString(), "Construct");
+        }
+    }
+
+    public override void Deconstruct()
+    {
+        try
+        {
+            _client.FlashCall -= OnCall;
+            _client?.Dispose();
+
+            Log("Flash API has been deconstructed.", "Deconstruct");
+        }
+        catch (Exception ex)
+        {
+            Log(ex.ToString(), "Deconstruct");
+        }
+    }
+
+    public void Initialize(HSTGame game)
+    {
+        _client?.Dispose();
+
+        _client = new AxShockwaveFlash()
+        {
+            Dock = DockStyle.Fill
+        };
+
+        _client.BeginInit();
+        _client.FlashCall += OnCall;
+        game.Child = _client;
+        _client.EndInit();
+
+        byte[] swf = Properties.Resources.Mystrose;
+        MemoryStream stream = new();
+
+        using BinaryWriter writer = new(stream);
+        writer.Write(8 + swf.Length);
+        writer.Write(1432769894);
+        writer.Write(swf.Length);
+        writer.Write(swf);
+        writer.Seek(0, SeekOrigin.Begin);
+
+        _client.OcxState = new AxHost.State(stream, 1, manualUpdate: false, null);
+
+        Construct();
+    }
+    #endregion
+
     #region Methods: ActionScript
     /// <summary>
     /// Calls the Send Packet function in the actionscript object with the given packet string.
     /// </summary>
     /// <param name="packetString">The string of the packet to apply with.</param>
-    public void SendPacket(string packetString)
+    public bool SendToServer(string packetString)
     {
-        Call("sendPacket", packetString);
+        bool isValid = packetString switch
+        {
+            _ when packetString[0].Equals('{') => false,
+            _ when packetString[0].Equals('<') => false,
+            _ when packetString.Substring(1, 2).Equals("ct") => false,
+            _ when packetString.Substring(1, 2).Equals("xt") => true,
+            _ => false
+        };
+
+        if (isValid)
+        {
+            Call("sendPacket", packetString);
+        }
+
+        return isValid;
     }
 
     /// <summary>
@@ -122,9 +243,23 @@ public class ISVCFlashAPI
     /// Calls the Send Client Packet function in the actionscript object with the given packet string.
     /// </summary>
     /// <param name="packetString">The string of the packet to apply with.</param>
-    public void SendClientPacket(string packetString)
+    public bool SendToClient(string packetString)
     {
-        Call("sendClientPacket", packetString);
+        bool isValid = packetString switch
+        {
+            _ when packetString[0].Equals('{') => true,
+            _ when packetString[0].Equals('<') => true,
+            _ when packetString.Substring(1, 2).Equals("ct") => false,
+            _ when packetString.Substring(1, 2).Equals("xt") => true,
+            _ => false
+        };
+
+        if (isValid)
+        {
+            Call("sendClientPacket", packetString);
+        }
+
+        return isValid;
     }
 
     /// <summary>
@@ -226,7 +361,7 @@ public class ISVCFlashAPI
     /// <returns>The value of the object returned by calling the function as a serialzied JSON string.</returns>
     public string CallGameFunction(string path, params object[] args)
     {
-        return args.Length > 0 ? Call("callGameFunctionOnArgs", [path, true, .. args]) : Call("callGameFunction", path, true);
+        return args.Length > 0 ? Call("callGameFunctionByArgs", [path, true, .. args]) : Call("callGameFunction", path, true);
     }
 
     /// <summary>
@@ -370,7 +505,7 @@ public class ISVCFlashAPI
         }
         catch (Exception e)
         {
-            SVCLogger.LogOnException("(Flash Call) " + e.ToString());
+            HSVCLogger.Instance.LogOnException("(Flash Call) " + e.ToString());
             return default;
         }
     }
@@ -429,30 +564,6 @@ public class ISVCFlashAPI
             default:
                 return el.Value;
         }
-    }
-    #endregion
-
-    #region Events: Handlers
-    private void OnCall(object sender, _IShockwaveFlashEvents_FlashCallEvent e)
-    {
-        XElement el = XElement.Parse(e.request);
-        string? name = el.Attribute("name")?.Value;
-        string? args = el.Element("arguments")?.Value;
-
-        switch (name)
-        {
-            case "progress":
-                CheckupProgress(int.Parse(args));
-                break;
-            case "registerServers":
-                _client.SetReturnValue("<string>" + TamperServerInfo(args) + "</string>");
-                break;
-            case "openLink":
-                OpenExternalLink(args);
-                break;
-        }
-
-        CallEvent?.Invoke(name, args);
     }
     #endregion
 

@@ -1,29 +1,56 @@
-﻿namespace Mystrose.Services;
+﻿namespace Mystrose.Services.Helper;
 
-public class SVCRepository
+public class HSVCRepository() : HelperService(nameof(HSVCRepository))
 {
 
     #region Delegates & Handlers
     public delegate void ModelHandler<T>(T modelItem);
-    public static event ModelHandler<Server> ServerEvent;
-    public static event ModelHandler<MapFormat> MapEvent;
+    public event ModelHandler<Server> ServerEvent;
+    public event ModelHandler<MapFormat> MapEvent;
+    #endregion
+
+    #region (Static) Fields
+    public static HSVCRepository Instance
+    {
+        get
+        {
+            if (_instance is null)
+            {
+                _instance = new HSVCRepository();
+                _instance.Construct();
+            }
+            
+            return _instance;
+        }
+    }
+    #endregion
+
+    #region (Private) Fields
+    private static HSVCRepository? _instance;
     #endregion
 
     #region Fields
-    private static string _pathToFolder => "repository";
-    private static JsonSerializerOptions _serializerOptions = new()
+    private readonly string _pathToFolder = "repository";
+    private readonly JsonSerializerOptions _serializerOptions = new()
     {
         WriteIndented = true
     };
-    public static readonly Dictionary<string, RepositoryModel<GameObject>> Models = new()
+    #endregion
+
+    #region Properties
+    public Dictionary<string, RepositoryModel<GameObject>> Models
+    {
+        get;
+        init;
+    } = new()
     {
         [nameof(Server)] = new(),
         [nameof(MapFormat)] = new()
     };
     #endregion
-
-    #region Methods: Filing
-    public static void Checkup()
+    
+    #region Methods: Builder
+    public override void Construct()
     {
         try
         {
@@ -42,15 +69,32 @@ public class SVCRepository
                 LoadModel(model.Key);
             }
 
-            SVCLogger.LogOnConsole("Repository checkup has been completed.", "SVCRepository", "Checkup");
+            Log("Repository constructed successfully.", "Construct");
         }
         catch (Exception ex)
         {
-            SVCLogger.LogOnConsole(ex.ToString(), "SVCRepository", "Checkup");
+            Log(ex.ToString(), "Construct");
         }
     }
 
-    public static void Flush()
+    public override void Deconstruct()
+    {
+        try
+        {
+            foreach (var model in Models)
+            {
+                model.Value.List.Clear();
+            }
+
+            Log("Repository deconstructed successfully.", "Deconstruct");
+        }
+        catch (Exception ex)
+        {
+            Log(ex.ToString(), "Deconstruct");
+        }
+    }
+
+    public void Flush()
     {
         try
         {
@@ -59,17 +103,17 @@ public class SVCRepository
                 SaveModel(model.Key);
             }
 
-            SVCLogger.LogOnConsole("Repository has been flushed.", "SVCRepository", "Flush");
+            Log("Repository flushed successfully.", "Flush");
         }
         catch (Exception ex)
         {
-            SVCLogger.LogOnConsole(ex.ToString(), "SVCRepository", "Flush");
+            Log(ex.ToString(), "Flush");
         }
     }
     #endregion
 
     #region Methods: Read/Write
-    public static Response<RepositoryModel<GameObject>?> LoadModel(string typeName)
+    public Response<RepositoryModel<GameObject>?> LoadModel(string typeName)
     {
         string jsonDictionary = File.ReadAllText(_pathToFolder + $"\\{typeName}.json");
 
@@ -104,7 +148,7 @@ public class SVCRepository
             Models[typeName]);
     }
 
-    public static Response<RepositoryModel<GameObject>?> AddModel(List<Server> items)
+    public Response<RepositoryModel<GameObject>?> AddModel(List<Server> items)
     {
         RepositoryModel<GameObject> repositoryModel = Models[nameof(Server)];
         foreach (var item in items)
@@ -130,7 +174,7 @@ public class SVCRepository
             repositoryModel);
     }
 
-    public static Response<RepositoryModel<GameObject>?> AddModel(List<MapFormat> items)
+    public Response<RepositoryModel<GameObject>?> AddModel(List<MapFormat> items)
     {
         RepositoryModel<GameObject> repositoryModel = Models[nameof(MapFormat)];
         foreach (var item in items)
@@ -156,7 +200,7 @@ public class SVCRepository
             repositoryModel);
     }
 
-    public static Response<RepositoryModel<GameObject>?> SaveModel(string typeName)
+    public Response<RepositoryModel<GameObject>?> SaveModel(string typeName)
     {
         if (!Models.TryGetValue(typeName, out RepositoryModel<GameObject> repositoryModel))
         {

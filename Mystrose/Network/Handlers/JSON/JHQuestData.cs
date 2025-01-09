@@ -1,45 +1,22 @@
 ﻿namespace Mystrose.Network.Handlers.JSON;
 
-public static class JHQuestData
+public class JHQuestData() : MessageHandler<JSONMessage>(new()
+{
+    ["getQuests"] = HandleGetQuests,
+    ["getQuests2"] = HandleGetQuests,
+    ["acceptQuest"] = HandleAcceptQuest,
+    ["ccqr"] = HandleCompleteQuest
+})
 {
 
-    #region Fields
-    private static readonly Dictionary<string, Action<JSONMessage>> _handlers = new()
-    {
-        ["getQuests"] = HandleGetQuests,
-        ["getQuests2"] = HandleGetQuests,
-        ["acceptQuest"] = HandleAcceptQuest,
-        ["ccqr"] = HandleCompleteQuest
-    };
-    #endregion
-
-    #region Methods: Invoker
-    public static void Invoke(JSONMessage message)
-    {
-        if (!_handlers.TryGetValue(message.Command, out var handler))
-        {
-            return;
-        }
-
-        try
-        {
-            handler.Invoke(message);
-        }
-        catch (Exception ex)
-        {
-            SVCLogger.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
-        }
-    }
-    #endregion
-
-    #region Handlers
+    #region Methods: Handlers
     private static void HandleGetQuests(JSONMessage message)
     {
         foreach (KeyValuePair<string, JsonNode> questInfo in message.DataObject["quests"].Deserialize<JsonObject>()!)
         {
             Quest quest = questInfo.Value.Deserialize<Quest>()!;
 
-            Quest? existingQuest = message.World.Quests.Find(
+            Quest? existingQuest = message.HostWorld.Quests.Find(
                 (q) =>
                 {
                     return q.ID == quest.ID;
@@ -48,9 +25,9 @@ public static class JHQuestData
             if (existingQuest is null)
             {
                 quest.ProcessType = QuestProcessType.Loaded;
-                message.World.Quests.Add(quest);
+                message.HostWorld.Quests.Add(quest);
 
-                SVCScriptManager.InvokeTrigger(message.Identifier.Codename, quest);
+                MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, quest);
             }
         }
     }
@@ -60,7 +37,7 @@ public static class JHQuestData
         bool isSuccess = message.DataObject["bSuccess"].Deserialize<int>() == 1;
         int id = message.DataObject["QuestID"].Deserialize<int>();
 
-        Quest? quest = message.World.Quests.Find(
+        Quest? quest = message.HostWorld.Quests.Find(
             (q) =>
             {
                 return q.ID == id;
@@ -74,7 +51,7 @@ public static class JHQuestData
         quest.StatusType = QuestStatusType.Active;
         quest.ProcessType = QuestProcessType.Accepted;
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, quest);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, quest);
     }
 
     private static void HandleCompleteQuest(JSONMessage message)
@@ -82,7 +59,7 @@ public static class JHQuestData
         bool isSuccess = message.DataObject["bSuccess"].Deserialize<int>() == 1;
         int id = message.DataObject["QuestID"].Deserialize<int>();
 
-        Quest? quest = message.World.Quests.Find(
+        Quest? quest = message.HostWorld.Quests.Find(
             (q) =>
             {
                 return q.ID == id;
@@ -96,7 +73,7 @@ public static class JHQuestData
         quest.StatusType = QuestStatusType.Inactive;
         quest.ProcessType = QuestProcessType.Completed;
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, quest);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, quest);
     }
     #endregion
 

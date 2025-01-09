@@ -4,7 +4,7 @@ public class ZMMessage : Message
 {
 
     #region Constructor
-    public ZMMessage(ClientUseIdentifier identifier, string raw) : base(identifier)
+    public ZMMessage(ClientInstanceIdentifier identifier, string raw) : base(identifier)
     {
         RawContent = raw;
         Arguments = raw.Split('%');

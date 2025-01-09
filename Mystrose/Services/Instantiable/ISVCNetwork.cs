@@ -2,15 +2,13 @@
 
 namespace Mystrose.Services.Instantiable;
 
-public class ISVCNetwork
+public class ISVCNetwork : InstantiableService
 {
 
     #region Constructor
-    public ISVCNetwork(ClientUseIdentifier identifier)
+    public ISVCNetwork(ClientInstanceIdentifier identifier) : base(identifier, nameof(ISVCNetwork))
     {
-        _identifier = identifier;
-        Initialize();
-        Checkup();
+        Construct();
     }
     #endregion
 
@@ -29,109 +27,139 @@ public class ISVCNetwork
     #endregion
 
     #region Fields
-    private ClientUseIdentifier _identifier;
+    private readonly List<MessageHandler<JSONMessage>> _jsonMessageHandlers =
+    [
+        new JHArea(),
+        new JHBankInterface(),
+        new JHBoostStatus(),
+        new JHClassData(),
+        new JHCombat(),
+        new JHCurrency(),
+        new JHDrop(),
+        new JHEntityStats(),
+        new JHEquipmentEnhancement(),
+        new JHEventMessage(),
+        new JHFactionData(),
+        new JHInventory(),
+        new JHInventorySlots(),
+        new JHItemEquipment(),
+        new JHPartyInterface(),
+        new JHQuestData(),
+        new JHShopInterface(),
+        new JHUserData(),
+        new JHVanityEquipmentData()
+    ];
+    private readonly List<MessageHandler<XTMessage>> _xtMessageHandlers =
+    [
+        new XHConnectionResponse(),
+        new XHDungeonInterface(),
+        new XHEntityStats(),
+        new XHMapPlayer(),
+        new XHRespawn()
+    ];
+    private readonly List<MessageHandler<ZMMessage>> _zmMessageHandlers =
+    [
+        new ZHBank(),
+        new ZHConnection(),
+        new ZHMapMovement(),
+        new ZHSkillCooldown()
+    ];
     #endregion
-
-    #region Methods: Setup
-    public void Initialize()
+    
+    #region Methods: Builder
+    public override void Construct()
     {
-        JSONMessageEvent += JHArea.Invoke;
-        JSONMessageEvent += JHBoostStatus.Invoke;
-        JSONMessageEvent += JHClassData.Invoke;
-        JSONMessageEvent += JHCombat.Invoke;
-        JSONMessageEvent += JHDrop.Invoke;
-        JSONMessageEvent += JHEntityStats.Invoke;
-        JSONMessageEvent += JHEventMessage.Invoke;
-        JSONMessageEvent += JHInventory.Invoke;
-        JSONMessageEvent += JHPartyInterface.Invoke;
-        JSONMessageEvent += JHQuestData.Invoke;
-        JSONMessageEvent += JHUserData.Invoke;
-        JSONMessageEvent += JHItemEquipment.Invoke;
-        JSONMessageEvent += JHFactionData.Invoke;
-        JSONMessageEvent += JHCurrency.Invoke;
-        JSONMessageEvent += JHShopInterface.Invoke;
-        JSONMessageEvent += JHBankInterface.Invoke;
-        JSONMessageEvent += JHVanityEquipmentData.Invoke;
-        JSONMessageEvent += JHInventorySlots.Invoke;
-        JSONMessageEvent += JHEquipmentEnhancement.Invoke;
+        try
+        {
+            QueueInvokes();
 
-        XTMessageEvent += XHEntityStats.Invoke;
-        XTMessageEvent += XHRespawn.Invoke;
-        XTMessageEvent += XHMapPlayer.Invoke;
-        XTMessageEvent += XHDungeonInterface.Invoke;
-        XTMessageEvent += XHConnectionResponse.Invoke;
+            Log("Network constructed successfully.", "Construct");
 
-        ZMMessageEvent += ZHConnection.Invoke;
-        ZMMessageEvent += ZHBank.Invoke;
-        ZMMessageEvent += ZHMapMovement.Invoke;
-        ZMMessageEvent += ZHSkillCooldown.Invoke;
+            if (!HSVCSettings.Instance.Get(SettingOption.DebugNetwork).Output!.Get<bool>())
+            {
+                return;
+            }
+
+            string pathToFolder = "packetFormats";
+            string pathToJsonFolder = pathToFolder + "\\json";
+            string pathToXtFolder = pathToFolder + "\\xt";
+            string pathToZmFolder = pathToFolder + "\\zm";
+
+            if (!Directory.Exists(pathToFolder))
+            {
+                Directory.CreateDirectory(pathToFolder);
+            }
+            if (!Directory.Exists(pathToJsonFolder))
+            {
+                Directory.CreateDirectory(pathToJsonFolder);
+            }
+            if (!Directory.Exists(pathToXtFolder))
+            {
+                Directory.CreateDirectory(pathToXtFolder);
+            }
+            if (!Directory.Exists(pathToZmFolder))
+            {
+                Directory.CreateDirectory(pathToZmFolder);
+            }
+
+            JSONMessageEvent += new JHTester().Invoke;
+            XTMessageEvent += new XHTester().Invoke;
+            ZMMessageEvent += new ZHTester().Invoke;
+        }
+        catch (Exception ex)
+        {
+            Log(ex.ToString(), "Construct");
+        }
     }
 
-    public void Checkup()
+    public override void Deconstruct()
     {
-        if (!SVCSettings.Get("debugNetwork").Output!.Get<bool>())
+        try
         {
-            return;
-        }
+            DequeueInvokes();
 
-        string pathToFolder = "packetFormats";
-        string pathToJsonFolder = pathToFolder + "\\json";
-        string pathToXtFolder = pathToFolder + "\\xt";
-        string pathToZmFolder = pathToFolder + "\\zm";
-
-        if (!Directory.Exists(pathToFolder))
-        {
-            Directory.CreateDirectory(pathToFolder);
+            Log("Network deconstructed successfully.", "Deconstruct");
         }
-        if (!Directory.Exists(pathToJsonFolder))
+        catch (Exception ex)
         {
-            Directory.CreateDirectory(pathToJsonFolder);
+            Log(ex.ToString(), "Deconstruct");
         }
-        if (!Directory.Exists(pathToXtFolder))
-        {
-            Directory.CreateDirectory(pathToXtFolder);
-        }
-        if (!Directory.Exists(pathToZmFolder))
-        {
-            Directory.CreateDirectory(pathToZmFolder);
-        }
-
-        JSONMessageEvent += JHTester.Invoke;
-        XTMessageEvent += XHTester.Invoke;
-        ZMMessageEvent += ZHTester.Invoke;
     }
 
-    public void Dispose()
+    public void QueueInvokes()
     {
-        JSONMessageEvent -= JHArea.Invoke;
-        JSONMessageEvent -= JHBoostStatus.Invoke;
-        JSONMessageEvent -= JHClassData.Invoke;
-        JSONMessageEvent -= JHCombat.Invoke;
-        JSONMessageEvent -= JHDrop.Invoke;
-        JSONMessageEvent -= JHEntityStats.Invoke;
-        JSONMessageEvent -= JHEventMessage.Invoke;
-        JSONMessageEvent -= JHInventory.Invoke;
-        JSONMessageEvent -= JHPartyInterface.Invoke;
-        JSONMessageEvent -= JHQuestData.Invoke;
-        JSONMessageEvent -= JHUserData.Invoke;
-        JSONMessageEvent -= JHItemEquipment.Invoke;
-        JSONMessageEvent -= JHFactionData.Invoke;
-        JSONMessageEvent -= JHCurrency.Invoke;
-        JSONMessageEvent -= JHShopInterface.Invoke;
-        JSONMessageEvent -= JHBankInterface.Invoke;
-        JSONMessageEvent -= JHVanityEquipmentData.Invoke;
-        JSONMessageEvent -= JHInventorySlots.Invoke;
-        JSONMessageEvent -= JHEquipmentEnhancement.Invoke;
+        foreach (MessageHandler<JSONMessage> handler in _jsonMessageHandlers)
+        {
+            JSONMessageEvent += handler.Invoke;
+        }
+        
+        foreach (MessageHandler<XTMessage> handler in _xtMessageHandlers)
+        {
+            XTMessageEvent += handler.Invoke;
+        }
+        
+        foreach (MessageHandler<ZMMessage> handler in _zmMessageHandlers)
+        {
+            ZMMessageEvent += handler.Invoke;
+        }
+    }
 
-        XTMessageEvent -= XHEntityStats.Invoke;
-        XTMessageEvent -= XHRespawn.Invoke;
-        XTMessageEvent -= XHMapPlayer.Invoke;
-        XTMessageEvent -= XHDungeonInterface.Invoke;
-
-        ZMMessageEvent -= ZHConnection.Invoke;
-        ZMMessageEvent -= ZHBank.Invoke;
-        ZMMessageEvent -= ZHMapMovement.Invoke;
-        ZMMessageEvent -= ZHSkillCooldown.Invoke;
+    public void DequeueInvokes()
+    {
+        foreach (MessageHandler<JSONMessage> handler in _jsonMessageHandlers)
+        {
+            JSONMessageEvent -= handler.Invoke;
+        }
+        
+        foreach (MessageHandler<XTMessage> handler in _xtMessageHandlers)
+        {
+            XTMessageEvent -= handler.Invoke;
+        }
+        
+        foreach (MessageHandler<ZMMessage> handler in _zmMessageHandlers)
+        {
+            ZMMessageEvent -= handler.Invoke;
+        }
     }
     #endregion
 
@@ -142,25 +170,29 @@ public class ISVCNetwork
 
         Message message = args switch
         {
-            _ when args[0].Equals('{') => new JSONMessage(_identifier, args),
-            _ when args[0].Equals('<') => new XMLMessage(_identifier, args),
-            _ when args.Substring(4, 2).Equals("zm") => new ZMMessage(_identifier, args),
-            _ => new XTMessage(_identifier, args)
+            _ when args[0].Equals('{') => new JSONMessage(Identifier, args),
+            _ when args[0].Equals('<') => new XMLMessage(Identifier, args),
+            _ when args.Substring(4, 2).Equals("zm") => new ZMMessage(Identifier, args),
+            _ => new XTMessage(Identifier, args)
         };
 
         switch (message)
         {
             case JSONMessage jsonMessage:
                 JSONMessageEvent?.Invoke(jsonMessage);
+                MSVCInterceptor.Instance.WriteInJson(Identifier.Codename, jsonMessage.Command, jsonMessage.RawContent);
                 break;
             case XMLMessage xmlMessage:
                 XMLMessageEvent?.Invoke(xmlMessage);
+                MSVCInterceptor.Instance.WriteInXml(Identifier.Codename, xmlMessage.Command, xmlMessage.RawContent);
                 break;
             case XTMessage xtMessage:
                 XTMessageEvent?.Invoke(xtMessage);
+                MSVCInterceptor.Instance.WriteInXt(Identifier.Codename, xtMessage.Command, xtMessage.RawContent);
                 break;
             case ZMMessage zmMessage:
                 ZMMessageEvent?.Invoke(zmMessage);
+                MSVCInterceptor.Instance.WriteInZm(Identifier.Codename, zmMessage.Command, zmMessage.RawContent);
                 break;
         }
     }

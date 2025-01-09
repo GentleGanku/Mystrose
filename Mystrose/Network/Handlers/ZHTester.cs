@@ -1,10 +1,10 @@
 ﻿namespace Mystrose.Network.Handlers;
 
-public static class ZHTester
+public class ZHTester() : MessageHandler<ZMMessage>([])
 {
 
     #region Methods: Invoker
-    public static void Invoke(ZMMessage message)
+    public override void Invoke(ZMMessage message)
     {
         try
         {
@@ -12,13 +12,13 @@ public static class ZHTester
         }
         catch (Exception ex)
         {
-            SVCLogger.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
+            HSVCLogger.Instance.LogOnException($"({nameof(message)} - {message.Command}) {ex}");
         }
     }
     #endregion
 
-    #region Handlers
-    public static void Handle(ZMMessage message)
+    #region Methods: Handlers
+    private void Handle(ZMMessage message)
     {
         string zmPath = "packetFormats\\zm\\" + message.Command + ".txt";
         string[] zmContentArray = message.RawContent.Split("%");

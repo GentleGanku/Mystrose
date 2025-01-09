@@ -1,39 +1,16 @@
 ﻿namespace Mystrose.Network.Handlers.JSON;
 
-public static class JHEntityStats
+public class JHEntityStats() : MessageHandler<JSONMessage>(new()
+{
+    ["uotls"] = HandleUserStats,
+    ["mtls"] = HandleMonsterStats
+})
 {
 
-    #region Fields
-    private static readonly Dictionary<string, Action<JSONMessage>> _handlers = new()
+    #region Methods: Handlers
+    private static void HandleUserStats(JSONMessage message)
     {
-        ["uotls"] = HandleUserStats,
-        ["mtls"] = HandleMonsterStats
-    };
-    #endregion
-
-    #region Methods: Invoker
-    public static void Invoke(JSONMessage message)
-    {
-        if (!_handlers.TryGetValue(message.Command, out var handler))
-        {
-            return;
-        }
-
-        try
-        {
-            handler.Invoke(message);
-        }
-        catch (Exception ex)
-        {
-            SVCLogger.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
-        }
-    }
-    #endregion
-
-    #region Handlers
-    public static void HandleUserStats(JSONMessage message)
-    {
-        Avatar? avatar = message.World.Area.Players.Find(
+        Avatar? avatar = message.HostWorld.Area.Players.Find(
             (avt) =>
             {
                 return avt.Name.Equals(message.DataObject["unm"].Deserialize<string>());
@@ -42,25 +19,25 @@ public static class JHEntityStats
         if (avatar is null)
         {
             avatar = message.DataObject["o"].Deserialize<JsonObject>().Deserialize<Avatar>();
-            message.World.Area.Players.Add(avatar!);
+            message.HostWorld.Area.Players.Add(avatar!);
         }
         else
         {
             avatar.SetProperties(message.DataObject["o"].Deserialize<JsonObject>()!);
 
-            if (avatar.Name.Equals(message.World.Avatar.Name))
+            if (avatar.Name.Equals(message.HostWorld.Avatar.Name))
             {
-                message.World.Avatar.SetProperties(message.DataObject["o"].Deserialize<JsonObject>()!);
-                SVCScriptManager.InvokeTrigger(message.Identifier.Codename, message.World.Avatar);
+                message.HostWorld.Avatar.SetProperties(message.DataObject["o"].Deserialize<JsonObject>()!);
+                MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, message.HostWorld.Avatar);
             }
         }
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, avatar!);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, avatar!);
     }
 
-    public static void HandleMonsterStats(JSONMessage message)
+    private static void HandleMonsterStats(JSONMessage message)
     {
-        Monster? monster = message.World.Area.Monsters.Find(
+        Monster? monster = message.HostWorld.Area.Monsters.Find(
             (mst) =>
             {
                 return mst.MonMapID == message.DataObject["id"].Deserialize<int>();
@@ -78,7 +55,7 @@ public static class JHEntityStats
 
         monster.SetProperties(message.DataObject["o"].Deserialize<JsonObject>()!);
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, monster);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, monster);
     }
     #endregion
 

@@ -16,18 +16,18 @@ public partial class PNLGameScreen : MystPanel
     #region Methods: Setup
     protected override void Initialize()
     {
-        SVCGameManager.ActivatedGameEvent += ActivateIncomingGame;
-        SVCGameManager.SelectedGameEvent += SelectIncomingGame;
+        MSVCGame.Instance.ActivatedGameEvent += ActivateIncomingGame;
+        MSVCGame.Instance.SelectedGameEvent += SelectIncomingGame;
 
-        SVCLogger.LogOnConsole("PNLGameScreen is pre-initialized.", $"PNLGameScreen", "InitializeComponent");
+        HSVCLogger.Instance.LogOnConsole("PNLGameScreen is pre-initialized.", $"PNLGameScreen", "InitializeComponent");
     }
 
     public override void Destruct()
     {
-        SVCGameManager.ActivatedGameEvent -= ActivateIncomingGame;
-        SVCGameManager.SelectedGameEvent -= SelectIncomingGame;
+        MSVCGame.Instance.ActivatedGameEvent -= ActivateIncomingGame;
+        MSVCGame.Instance.SelectedGameEvent -= SelectIncomingGame;
 
-        SVCLogger.LogOnConsole("PNLGameScreen is destructed.", $"PNLGameScreen", "Destruct");
+        HSVCLogger.Instance.LogOnConsole("PNLGameScreen is destructed.", $"PNLGameScreen", "Destruct");
     }
     #endregion
 
@@ -80,12 +80,12 @@ public partial class PNLGameScreen : MystPanel
     #region Handlers: Events
     protected override void OnLoaded(object sender, RoutedEventArgs e)
     {
-        SVCLogger.LogOnConsole("PNLGameScreen is ready to go.", "PNLGameScreen", "OnLoaded");
+        HSVCLogger.Instance.LogOnConsole("PNLGameScreen is ready to go.", "PNLGameScreen", "OnLoaded");
     }
 
     protected override void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        SVCLogger.LogOnConsole("PNLGameScreen is removed.", "PNLGameScreen", "OnUnloaded");
+        HSVCLogger.Instance.LogOnConsole("PNLGameScreen is removed.", "PNLGameScreen", "OnUnloaded");
     }
     #endregion
 

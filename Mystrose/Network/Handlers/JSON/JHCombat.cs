@@ -1,38 +1,12 @@
-﻿using Mystrose.DataFormats.GameModels.Master;
-using System.Windows.Documents;
+﻿namespace Mystrose.Network.Handlers.JSON;
 
-namespace Mystrose.Network.Handlers.JSON;
-
-public static class JHCombat
+public class JHCombat() : MessageHandler<JSONMessage>(new()
 {
-
-    #region Fields
-    private static readonly Dictionary<string, Action<JSONMessage>> _handlers = new()
-    {
-        ["cb"] = HandleCombat,
-        ["ct"] = HandleCombat,
-        ["clearAuras"] = HandleAuraClear
-    };
-    #endregion
-
-    #region Methods: Invoker
-    public static void Invoke(JSONMessage message)
-    {
-        if (!_handlers.TryGetValue(message.Command, out var handler))
-        {
-            return;
-        }
-
-        try
-        {
-            handler.Invoke(message);
-        }
-        catch (Exception ex)
-        {
-            SVCLogger.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
-        }
-    }
-    #endregion
+    ["cb"] = HandleCombat,
+    ["ct"] = HandleCombat,
+    ["clearAuras"] = HandleAuraClear
+})
+{
 
     #region Methods: Command
     private static void CommandAnims(JSONMessage message, JsonArray animsArray)
@@ -40,9 +14,9 @@ public static class JHCombat
         foreach (JsonObject anim in animsArray)
         {
             CombatMessage msg = anim.Deserialize<CombatMessage>()!;
-            msg.RealignHeader(message.World.Area);
+            msg.RealignHeader(message.HostWorld.Area);
 
-            SVCScriptManager.InvokeTrigger(message.Identifier.Codename, msg);
+            MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, msg);
         }
     }
 
@@ -70,9 +44,9 @@ public static class JHCombat
 
                         CombatMessage plusMsg = aura.Deserialize<CombatMessage>()!;
                         plusMsg.Text = aura["msgOn"].Deserialize<string>() ?? aura["msgOff"].Deserialize<string>() ?? "";
-                        plusMsg.RealignHeader(message.World.Area);
+                        plusMsg.RealignHeader(message.HostWorld.Area);
 
-                        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, plusMsg);
+                        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, plusMsg);
                     }
                     break;
                 case "aura-":
@@ -83,9 +57,9 @@ public static class JHCombat
 
                         CombatMessage minMsg = aura.Deserialize<CombatMessage>()!;
                         minMsg.Text = aura["msgOn"].Deserialize<string>() ?? aura["msgOff"].Deserialize<string>() ?? "";
-                        minMsg.RealignHeader(message.World.Area);
+                        minMsg.RealignHeader(message.HostWorld.Area);
 
-                        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, minMsg);
+                        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, minMsg);
                     }
                     break;
                 case "aura+p":
@@ -99,7 +73,7 @@ public static class JHCombat
     {
         foreach (KeyValuePair<string, JsonNode> player in playerInfo)
         {
-            Avatar? avatar = message.World.Area.Players.Find(
+            Avatar? avatar = message.HostWorld.Area.Players.Find(
                 (avt) =>
                 {
                     return avt.Name == player.Key;
@@ -111,14 +85,14 @@ public static class JHCombat
             }
 
             avatar.SetProperties((JsonObject)player.Value);
-            if (avatar.Name.Equals(message.World.Avatar.Name))
+            if (avatar.Name.Equals(message.HostWorld.Avatar.Name))
             {
-                message.World.Avatar.SetProperties((JsonObject)player.Value);
+                message.HostWorld.Avatar.SetProperties((JsonObject)player.Value);
 
-                SVCScriptManager.InvokeTrigger(message.Identifier.Codename, message.World.Avatar);
+                MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, message.HostWorld.Avatar);
             }
 
-            SVCScriptManager.InvokeTrigger(message.Identifier.Codename, avatar);
+            MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, avatar);
         }
     }
 
@@ -126,7 +100,7 @@ public static class JHCombat
     {
         foreach (KeyValuePair<string, JsonNode> monster in monsterInfo)
         {
-            Monster? mon = message.World.Area.Monsters.Find(
+            Monster? mon = message.HostWorld.Area.Monsters.Find(
                 (mon) =>
                 {
                     return mon.MonMapID == int.Parse(monster.Key);
@@ -139,45 +113,45 @@ public static class JHCombat
 
             mon.SetProperties((JsonObject)monster.Value);
 
-            SVCScriptManager.InvokeTrigger(message.Identifier.Codename, mon);
+            MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, mon);
         }
     }
     #endregion
 
-    #region Methods: Utility
+    #region Methods: Data
     private static void AddAura(JSONMessage message, JsonObject auraObject, string sourceData, string targetData)
     {
         Aura aura = auraObject.Deserialize<Aura>()!.SetHeader(sourceData, targetData);
-        aura.RealignHeader(message.World.Area);
+        aura.RealignHeader(message.HostWorld.Area);
 
-        message.World.Auras.Add(aura);
+        message.HostWorld.Auras.Add(aura);
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, aura);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, aura);
 
         if (aura.Name.Equals("Skill Locked"))
         {
-            message.World.LockSkill(aura);
+            message.HostWorld.LockSkill(aura);
         }
     }
 
     private static void RemoveAura(JSONMessage message, JsonObject auraObject, string sourceData, string targetData)
     {
         Aura aura = auraObject.Deserialize<Aura>()!.SetHeader(sourceData, targetData);
-        aura.RealignHeader(message.World.Area);
+        aura.RealignHeader(message.HostWorld.Area);
 
-        message.World.Auras.Remove(aura);
+        message.HostWorld.Auras.Remove(aura);
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, aura);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, aura);
 
         if (aura.Name.Equals("Skill Locked"))
         {
-            message.World.UnlockSkill(aura);
+            message.HostWorld.UnlockSkill(aura);
         }
     }
     #endregion
 
-    #region Handlers
-    public static void HandleCombat(JSONMessage message)
+    #region Methods: Handlers
+    private static void HandleCombat(JSONMessage message)
     {
         foreach (KeyValuePair<string, JsonNode> actionObj in message.DataObject)
         {
@@ -199,9 +173,9 @@ public static class JHCombat
         }
     }
 
-    public static void HandleAuraClear(JSONMessage message)
+    private static void HandleAuraClear(JSONMessage message)
     {
-        message.World.Auras[EntityType.Player, message.World.Avatar.EntityID.ToString()]!.Clear();
+        message.HostWorld.Auras[EntityType.Player, message.HostWorld.Avatar.EntityID.ToString()]!.Clear();
     }
     #endregion
 

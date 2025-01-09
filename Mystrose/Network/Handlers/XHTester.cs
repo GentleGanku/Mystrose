@@ -1,10 +1,10 @@
 ﻿namespace Mystrose.Network.Handlers;
 
-public static class XHTester
+public class XHTester() : MessageHandler<XTMessage>([])
 {
 
     #region Methods: Invoker
-    public static void Invoke(XTMessage message)
+    public override void Invoke(XTMessage message)
     {
         try
         {
@@ -12,13 +12,13 @@ public static class XHTester
         }
         catch (Exception ex)
         {
-            SVCLogger.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
+            HSVCLogger.Instance.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
         }
     }
     #endregion
 
-    #region Handlers
-    public static void Handle(XTMessage message)
+    #region Methods: Handlers
+    protected void Handle(XTMessage message)
     {
         string xtPath = "packetFormats\\xt\\" + message.Command + ".txt";
         string[] xtContentArray = message.RawContent.Split("%");

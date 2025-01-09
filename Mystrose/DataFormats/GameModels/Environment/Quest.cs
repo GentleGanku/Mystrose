@@ -86,6 +86,26 @@ public class Quest : GameObject
     } = string.Empty;
 
     /// <summary>
+    /// The field of the quest.
+    /// </summary>
+    [JsonPropertyName("sField")]
+    public string Field
+    {
+        get; 
+        set;
+    } = string.Empty;
+
+    /// <summary>
+    /// The index of the quest.
+    /// </summary>
+    [JsonPropertyName("iIndex")]
+    public int Index
+    {
+        get;
+        set;
+    } = -1;
+    
+    /// <summary>
     /// The chain slot of the quest in the game.
     /// </summary>
     [JsonPropertyName("iSlot")]
@@ -97,7 +117,7 @@ public class Quest : GameObject
     } = -1;
 
     /// <summary>
-    /// The index of the quest that is connected with the chain slot.
+    /// The chain index of the quest that is connected with the chain slot.
     /// </summary>
     [JsonPropertyName("iValue")]
     [JsonConverter(typeof(StringIntConverter))]

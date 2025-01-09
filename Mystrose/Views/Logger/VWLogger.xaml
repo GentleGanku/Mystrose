@@ -59,7 +59,7 @@
                     <baseControls:MenuButton
                         x:Name="MBTN_Scroll"
                         Margin="0,0,3,0"
-                        CaptionText="Scroll to Selected Log">
+                        CaptionText="Scroll to selected log">
                         <baseControls:MenuButton.IconContent>
                             <ui:SymbolIcon Symbol="ArrowMove20" />
                         </baseControls:MenuButton.IconContent>
@@ -68,7 +68,7 @@
                     <baseControls:MenuButton
                         x:Name="MBTN_CopySelected"
                         Margin="0,0,3,0"
-                        CaptionText="Copy Selected Log as Text">
+                        CaptionText="Copy selected log as text">
                         <baseControls:MenuButton.IconContent>
                             <ui:SymbolIcon Symbol="CopySelect20" />
                         </baseControls:MenuButton.IconContent>
@@ -77,7 +77,7 @@
                     <baseControls:MenuButton
                         x:Name="MBTN_CopyAll"
                         Margin="0,0,3,0"
-                        CaptionText="Copy All as Text">
+                        CaptionText="Copy all as text">
                         <baseControls:MenuButton.IconContent>
                             <ui:SymbolIcon Symbol="DocumentCopy20" />
                         </baseControls:MenuButton.IconContent>
@@ -86,7 +86,7 @@
                     <baseControls:MenuButton
                         x:Name="MBTN_ClearCurrent"
                         Margin="0,0,0,0"
-                        CaptionText="Clear Current Log">
+                        CaptionText="Clear current log">
                         <baseControls:MenuButton.IconContent>
                             <ui:SymbolIcon Symbol="Broom20" />
                         </baseControls:MenuButton.IconContent>
@@ -107,7 +107,7 @@
         <Border
             Grid.Row="3"
             Margin="15,7.5,15,15"
-            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            Background="{DynamicResource CalendarViewBorderBrush}"
             BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
             BorderThickness="1"
             CornerRadius="8">
@@ -135,16 +135,17 @@
 
                 <Border
                     Grid.Row="1"
-                    Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
-                    CornerRadius="0,0,4,4"
+                    Background="{DynamicResource CalendarViewBorderBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    CornerRadius="0,0,8,8"
                     TextElement.FontFamily="{StaticResource FF_HypatiaSans_Regular}"
                     TextElement.FontSize="12"
                     TextElement.Foreground="{DynamicResource TextFillColorPrimaryBrush}">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock x:Name="TB_LogCount" Margin="15,6">
+                        <TextBlock x:Name="TB_LogCount" Margin="12,6">
                             Count: 0
                         </TextBlock>
-                        <TextBlock x:Name="TB_SelectedLog" Margin="15,6">
+                        <TextBlock x:Name="TB_SelectedLog" Margin="12,6">
                             Selected: -
                         </TextBlock>
                     </StackPanel>

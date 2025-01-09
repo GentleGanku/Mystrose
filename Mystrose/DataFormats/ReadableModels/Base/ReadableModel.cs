@@ -1,38 +1,33 @@
 ﻿namespace Mystrose.DataFormats.ReadableModels.Base;
 
-public abstract class ReadableModel
+public abstract class ReadableModel<T>(T model, World world) : IReadableModel where T : class
 {
-
-    #region Constructor
-    public ReadableModel(object? model, World? world)
-    {
-        World = world;
-        Model = model;
-        MandatorySearchProperties = [];
-    }
-    #endregion
 
     #region Properties
     [JsonIgnore]
-    public World? World
+    protected T Model
     {
         get;
-        set;
-    }
-
+        init;
+    } = model;
+    
     [JsonIgnore]
-    public object? Model
+    protected World World
     {
         get;
-        set;
-    }
+        init;
+    } = world;
 
-    [JsonIgnore]
-    public Dictionary<string, object> MandatorySearchProperties
+    [JsonIgnore] 
+    public Dictionary<string, object> KeyProperties
     {
         get;
-        set;
+        init;
     }
+    #endregion
+    
+    #region Abstract Methods
+    public abstract override string ToString();
     #endregion
 
 }

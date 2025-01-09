@@ -4,7 +4,13 @@ public class World : GameObject
 {
 
     #region Constructor
-    public World(ClientUseIdentifier identifier, Server server)
+    public World()
+    {
+        _identifier = new();
+        Server = new();
+    }
+    
+    public World(ClientInstanceIdentifier identifier, Server server)
     {
         _identifier = identifier;
         Server = server;
@@ -12,103 +18,91 @@ public class World : GameObject
     #endregion
 
     #region (Private) Fields
-    private ClientUseIdentifier _identifier;
-    private Server _server;
-    private MainAvatar _avatar;
-    private Dictionary<InventoryType, InventoryManager> _inventories;
-    private BoostStatuses _boosts;
-    private ActiveSkills _skills;
-    private AuraDictionary _auras;
-    private Party _party;
-    private Area _area;
-    private Shop _shop;
-    private Shop _enhancementShop;
-    private List<Faction> _factions;
-    private List<Quest> _quests;
-    private List<BaseItem> _drops;
+    private ClientInstanceIdentifier _identifier;
     #endregion
 
     #region Fields
-    public HSTGame Host => SVCGameManager.GetGameDict().Output[_identifier.Codename]!;
+    public MSVCScript ScriptService => MSVCScript.Instance;
+    public HSTGame Host => MSVCGame.Instance[_identifier.Codename].Item2!;
     #endregion
 
     #region Properties
     public Server Server
     {
-        get => _server;
-        set => _server = value;
+        get;
+        set;
     }
 
     public MainAvatar Avatar
     {
-        get => _avatar;
-        set => _avatar = value;
+        get;
+        set;
     }
 
     public Dictionary<InventoryType, InventoryManager> Inventories
     {
-        get => _inventories;
-        set => _inventories = value;
+        get;
+        set;
     }
 
     public BoostStatuses Boosts
     {
-        get => _boosts;
-        set => _boosts = value;
+        get;
+        set;
     }
 
     public ActiveSkills Skills
     {
-        get => _skills;
-        set => _skills = value;
+        get;
+        set;
     }
 
     public AuraDictionary Auras
     {
-        get => _auras;
-        set => _auras = value;
+        get;
+        set;
     }
 
     public Party Party
     {
-        get => _party;
-        set => _party = value;
+        get;
+        set;
     }
 
     public Area Area
     {
-        get => _area;
-        set => _area = value;
+        get;
+        set;
     }
 
     public Shop Shop
     {
-        get => _shop;
-        set => _shop = value;
+        get;
+        set;
     }
 
     public Shop EnhancementShop
     {
-        get => _enhancementShop;
-        set => _enhancementShop = value;
+        get;
+        set;
     }
 
     public List<Faction> Factions
     {
-        get => _factions;
-        set => _factions = value;
+        get;
+        set;
     }
 
     public List<Quest> Quests
     {
-        get => _quests;
-        set => _quests = value;
+        get;
+        set;
     }
 
     public List<BaseItem> Drops
     {
-        get => _drops;
-        set => _drops = value;
+        get;
+        set;
     }
     #endregion
 
@@ -175,7 +169,7 @@ public class World : GameObject
         {
             skill.IsLocked = true;
 
-            SVCScriptManager.InvokeTrigger(_identifier.Codename, skill);
+            ScriptService.InvokeTrigger(_identifier.Codename, skill);
         }
     }
 
@@ -192,7 +186,7 @@ public class World : GameObject
         {
             skill.IsLocked = false;
 
-            SVCScriptManager.InvokeTrigger(_identifier.Codename, skill);
+            ScriptService.InvokeTrigger(_identifier.Codename, skill);
         }
     }
     #endregion

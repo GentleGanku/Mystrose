@@ -1,61 +1,30 @@
 ﻿namespace Mystrose.DataFormats.ReadableModels.Game;
 
-public class RMCombatMessage : ReadableModel
+public class RMCombatMessage : ReadableModel<CombatMessage>
 {
 
     #region Constructor
-    public RMCombatMessage(CombatMessage? model = null, World? world = null) : base(model, world)
+    public RMCombatMessage(CombatMessage? model = null, World? world = null) 
+        : base(model ?? new CombatMessage(), world ?? new World())
     {
-        Model = model ?? new CombatMessage();
-        MandatorySearchProperties = new()
-        {
-            // 
-        };
-    }
-    #endregion
-
-    #region Private Fields
-    [JsonIgnore]
-    private CombatMessage CombatMessage
-    {
-        get => (CombatMessage)Model;
+        KeyProperties = new();
     }
     #endregion
 
     #region Properties
-    public string Animation_Label
-    {
-        get => CombatMessage.AnimationString;
-    }
+    public string Animation_Label => Model.AnimationString;
+    public string Text => Model.Text;
+    public string Cell => Model.Cell;
+    public string Source_Type => Model.SourceType.ToString();
+    public string Source_ID => Model.SourceID;
+    public string Target_Type => Model.TargetType.ToString();
+    public string Target_ID => Model.TargetID;
+    #endregion
 
-    public string Text
+    #region Methods: Overrides
+    public override string ToString()
     {
-        get => CombatMessage.Text;
-    }
-
-    public string Cell
-    {
-        get => CombatMessage.Cell;
-    }
-
-    public string Source_Type
-    {
-        get => CombatMessage.SourceType.ToString();
-    }
-
-    public string Source_ID
-    {
-        get => CombatMessage.SourceID;
-    }
-
-    public string Target_Type
-    {
-        get => CombatMessage.TargetType.ToString();
-    }
-
-    public string Target_ID
-    {
-        get => CombatMessage.TargetID;
+        return $"[{Target_ID}] {Text}";
     }
     #endregion
 

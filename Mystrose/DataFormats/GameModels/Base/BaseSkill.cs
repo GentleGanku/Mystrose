@@ -13,6 +13,11 @@ public class BaseSkill : GameObject
     }
     #endregion
 
+    #region Fields
+    private bool _isUsable = true;
+    protected DateTime _lastCooldownTiming = DateTime.MinValue;
+    #endregion
+
     #region Properties
     /// <summary>
     /// The ID of the skill.
@@ -82,9 +87,13 @@ public class BaseSkill : GameObject
     [JsonPropertyName("isOK")]
     public bool IsUsable
     {
-        get;
-        set;
-    } = true;
+        get => _isUsable;
+        set
+        {
+            _isUsable = value;
+            _lastCooldownTiming = value ? DateTime.MinValue : DateTime.Now;
+        }
+    }
     #endregion
 
     #region Methods

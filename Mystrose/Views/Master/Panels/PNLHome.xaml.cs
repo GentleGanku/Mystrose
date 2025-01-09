@@ -26,9 +26,9 @@ public partial class PNLHome : MystPanel
     #region Methods: Setup
     protected override void Initialize()
     {
-        SVCSettings.SettingsEvent += SetUpcomingOption;
+        HSVCSettings.Instance.SettingsEvent += SetUpcomingOption;
 
-        SVCSettings.ReadAll();
+        HSVCSettings.Instance.ReadAll();
 
         CHBBTN_IsHomeSkippable.Checked += CheckBox_Checked;
         CHBBTN_IsHomeSkippable.Unchecked += CheckBox_Checked;
@@ -37,7 +37,7 @@ public partial class PNLHome : MystPanel
         MBTN_JoinDiscord.Button.Click += MenuButton_Click;
         MBTN_Donate.Button.Click += MenuButton_Click;
 
-        SVCLogger.LogOnConsole("PNLHome is pre-initialized.", $"PNLHome", "InitializeComponent");
+        HSVCLogger.Instance.LogOnConsole("PNLHome is pre-initialized.", $"PNLHome", "InitializeComponent");
     }
 
     public override void Destruct()
@@ -49,9 +49,9 @@ public partial class PNLHome : MystPanel
         CHBBTN_IsHomeSkippable.Checked -= CheckBox_Checked;
         CHBBTN_IsHomeSkippable.Unchecked -= CheckBox_Checked;
 
-        SVCSettings.SettingsEvent -= SetUpcomingOption;
+        HSVCSettings.Instance.SettingsEvent -= SetUpcomingOption;
 
-        SVCLogger.LogOnConsole("PNLHome is destructed.", $"PNLHome", "Destruct");
+        HSVCLogger.Instance.LogOnConsole("PNLHome is destructed.", $"PNLHome", "Destruct");
     }
     #endregion
 
@@ -60,7 +60,7 @@ public partial class PNLHome : MystPanel
     {
         Response<Action> response = ParentWindow.Invoke(() =>
         {
-            SVCGameManager.Activate();
+            MSVCGame.Instance.Activate();
         });
     }
 
@@ -92,11 +92,11 @@ public partial class PNLHome : MystPanel
     #endregion
 
     #region Methods: Event Handlers
-    private void SetUpcomingOption(string key, Option option)
+    private void SetUpcomingOption(SettingOption key, Option option)
     {
         switch (key)
         {
-            case "skippableHome":
+            case SettingOption.SkippableHome:
                 CHBBTN_IsHomeSkippable.IsChecked = option.Get<bool>();
                 break;
         }
@@ -106,12 +106,12 @@ public partial class PNLHome : MystPanel
     #region Handlers: Events
     protected override void OnLoaded(object sender, RoutedEventArgs e)
     {
-        SVCLogger.LogOnConsole("PNLHome is ready to go.", "PNLHome", "OnLoaded");
+        HSVCLogger.Instance.LogOnConsole("PNLHome is ready to go.", "PNLHome", "OnLoaded");
     }
 
     protected override void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        SVCLogger.LogOnConsole("PNLHome is removed.", "PNLHome", "OnUnloaded");
+        HSVCLogger.Instance.LogOnConsole("PNLHome is removed.", "PNLHome", "OnUnloaded");
     }
 
     private void CheckBox_Checked(object sender, RoutedEventArgs e)
@@ -121,8 +121,8 @@ public partial class PNLHome : MystPanel
         switch (checkBox.Name)
         {
             case "CHBBTN_IsHomeSkippable":
-                Response<Option?> responseIsHomeSkippable = SVCSettings.Write("skippableHome", checkBox.IsChecked!);
-                SVCLogger.LogOnTrace(responseIsHomeSkippable.Message);
+                Response<Option?> responseIsHomeSkippable = HSVCSettings.Instance.Write(SettingOption.SkippableHome, checkBox.IsChecked!);
+                HSVCLogger.Instance.LogOnTrace(responseIsHomeSkippable.Message);
                 break;
         }
     }

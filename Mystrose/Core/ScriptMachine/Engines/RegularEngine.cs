@@ -4,7 +4,7 @@ public class RegularEngine : ScriptEngine
 {
 
     #region Constructor
-    public RegularEngine(ClientUseIdentifier identifier) : base(new(), ScriptEngineType.Regular)
+    public RegularEngine(ClientInstanceIdentifier identifier) : base(new(), ScriptEngineType.Regular)
     {
         // TODO: Implement all
     }

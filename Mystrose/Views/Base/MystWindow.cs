@@ -13,7 +13,7 @@ public class MystWindow : FluentWindow, IDestructible
         Unloaded += OnUnloaded;
         Closed += OnClosed;
 
-        SVCViewManager.Render(this);
+        MSVCView.Instance.Render(this);
     }
     #endregion
 
@@ -49,11 +49,11 @@ public class MystWindow : FluentWindow, IDestructible
 
             Process.Start(processStartInfo);
 
-            SVCLogger.LogOnTrace($"Hyperlink opened: {url}");
+            HSVCLogger.Instance.LogOnTrace($"Hyperlink opened: {url}");
         }
         catch (Exception ex)
         {
-            SVCLogger.LogOnException("(OpenHyperlink)" + ex.ToString());
+            HSVCLogger.Instance.LogOnException("(OpenHyperlink)" + ex.ToString());
         }
     }
     #endregion
@@ -79,7 +79,7 @@ public class MystWindow : FluentWindow, IDestructible
         catch (Exception ex)
         {
             //SVCLogger.LogOnException($"({action.Method.Name}) " + ex.ToString());
-            SVCLogger.LogOnConsole($"({action.Method.Name}) " + ex.ToString(), $"MystWindow-{Name}", "Invoke");
+            HSVCLogger.Instance.LogOnConsole($"({action.Method.Name}) " + ex.ToString(), $"MystWindow-{Name}", "Invoke");
         }
 
         Response<Action> response = new(isInvoked,
@@ -87,7 +87,7 @@ public class MystWindow : FluentWindow, IDestructible
             action);
 
         //SVCLogger.LogOnTrace(response.Message);
-        SVCLogger.LogOnConsole(response.Message, $"MystWindow-{Name}", "Invoke");
+        HSVCLogger.Instance.LogOnConsole(response.Message, $"MystWindow-{Name}", "Invoke");
 
         return response;
     }
@@ -240,7 +240,7 @@ public class MystWindow : FluentWindow, IDestructible
     #region Methods: Interface
     public void Dispose()
     {
-        SVCLogger.LogOnConsole("Disposing the MystWindow...", $"MystWindow-{Name}", "Dispose");
+        HSVCLogger.Instance.LogOnConsole("Disposing the MystWindow...", $"MystWindow-{Name}", "Dispose");
 
         GC.SuppressFinalize(this);
     }
@@ -249,17 +249,17 @@ public class MystWindow : FluentWindow, IDestructible
     #region Events: Read/Write
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        SVCLogger.LogOnConsole("Loaded the MystWindow into interface.", $"MystWindow-{Name}", "OnLoaded");
+        HSVCLogger.Instance.LogOnConsole("Loaded the MystWindow into interface.", $"MystWindow-{Name}", "OnLoaded");
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        SVCLogger.LogOnConsole("Unloaded the MystWindow from interface.", $"MystWindow-{Name}", "OnUnloaded");
+        HSVCLogger.Instance.LogOnConsole("Unloaded the MystWindow from interface.", $"MystWindow-{Name}", "OnUnloaded");
     }
 
     private void OnClosed(object? sender, EventArgs e)
     {
-        SVCViewManager.Unrender(this);
+        MSVCView.Instance.Unrender(this);
         Dispose();
     }
     #endregion

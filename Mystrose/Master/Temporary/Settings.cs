@@ -48,13 +48,6 @@ public class Settings
         get;
         set;
     } = false;
-
-    [JsonInclude]
-    public GroupType GroupType
-    {
-        get;
-        set;
-    } = GroupType.Default;
     #endregion
 
     #region Methods - Main

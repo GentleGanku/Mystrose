@@ -41,10 +41,18 @@ public partial class VWMaster : MystWindow
     #region Methods: Setup
     private void CheckupServices()
     {
-        SVCLogger.Checkup();
-        SVCSettings.Checkup();
-        SVCRepository.Checkup();
-        SVCGameManager.Checkup();
+        Service[] services =
+        [
+            HSVCLogger.Instance,
+            HSVCRepository.Instance,
+            HSVCSettings.Instance,
+            MSVCGame.Instance,
+            MSVCInterceptor.Instance,
+            MSVCScript.Instance, 
+            MSVCView.Instance, 
+            MSVCVisualizer.Instance, 
+            MSVCWorld.Instance, 
+        ];
     }
     #endregion
 
@@ -89,7 +97,7 @@ public partial class VWMaster : MystWindow
         Response<Action> response = Invoke(() =>
         {
             PNLGameScreen screenPanel = (PNLGameScreen)_panels[nameof(PNLGameScreen)];
-            List<HSTGame> games = SVCGameManager.GetGameDict().Output.Values.Where(g => g is not null).ToList()!;
+            List<HSTGame> games = [.. MSVCGame.Instance.ActiveCollection.Values];
             int rowCount = (int)Math.Ceiling((double)games.Count / 2);
 
             Grid rowGrid = new();
@@ -130,11 +138,11 @@ public partial class VWMaster : MystWindow
 
         if (response.IsSuccess)
         {
-            SVCLogger.LogOnTrace("Multi-screen mode set.");
+            HSVCLogger.Instance.LogOnTrace("Multi-screen mode set.");
         }
         else
         {
-            SVCLogger.LogOnTrace(response.Message);
+            HSVCLogger.Instance.LogOnTrace(response.Message);
         }
     }
     #endregion
@@ -154,8 +162,8 @@ public partial class VWMaster : MystWindow
     #region Events: Read/Write
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        SVCGameManager.ActivatedGameEvent += ActivateIncomingGame;
-        SVCGameManager.SelectedGameEvent += SelectIncomingPanel;
+        MSVCGame.Instance.ActivatedGameEvent += ActivateIncomingGame;
+        MSVCGame.Instance.SelectedGameEvent += SelectIncomingPanel;
     }
 
     private void OnContentRendered(object? sender, EventArgs e)
@@ -171,8 +179,8 @@ public partial class VWMaster : MystWindow
             "No",
             () =>
             {
-                SVCRepository.Flush();
-                SVCViewManager.UnrenderAll();
+                HSVCRepository.Instance.Flush();
+                MSVCView.Instance.UnrenderAll();
                 e.Cancel = false;
             },
             () => e.Cancel = true,
@@ -182,8 +190,8 @@ public partial class VWMaster : MystWindow
 
     private void OnClosed(EventArgs e)
     {
-        SVCGameManager.ActivatedGameEvent -= ActivateIncomingGame;
-        SVCGameManager.SelectedGameEvent -= SelectIncomingPanel;
+        MSVCGame.Instance.ActivatedGameEvent -= ActivateIncomingGame;
+        MSVCGame.Instance.SelectedGameEvent -= SelectIncomingPanel;
 
         DisposePanels();
     }

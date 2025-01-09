@@ -1,36 +1,25 @@
 ﻿namespace Mystrose.DataFormats.ReadableModels.Game;
 
-public class RMEventMessage : ReadableModel
+public class RMEventMessage : ReadableModel<EventMessage>
 {
 
     #region Constructor
-    public RMEventMessage(EventMessage? model = null, World? world = null) : base(model, world)
+    public RMEventMessage(EventMessage? model = null, World? world = null)
+        : base(model ?? new EventMessage(), world ?? new World())
     {
-        Model = model ?? new EventMessage();
-        MandatorySearchProperties = new()
-        {
-            // 
-        };
-    }
-    #endregion
-
-    #region Private Fields
-    [JsonIgnore]
-    private EventMessage EventMessage
-    {
-        get => (EventMessage)Model;
+        KeyProperties = new();
     }
     #endregion
 
     #region Properties
-    public string Signature_Header
-    {
-        get => EventMessage.Sign;
-    }
+    public string Signature_Header => Model.Sign;
+    public string Value => Model.Value;
+    #endregion
 
-    public string Value
+    #region Methods: Overrides
+    public override string ToString()
     {
-        get => EventMessage.Value;
+        return $"{Signature_Header} | {Value}";
     }
     #endregion
 

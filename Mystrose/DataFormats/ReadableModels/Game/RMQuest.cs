@@ -1,41 +1,30 @@
 ﻿namespace Mystrose.DataFormats.ReadableModels.Game;
 
-public class RMQuest : ReadableModel
+public class RMQuest : ReadableModel<Quest>
 {
 
     #region Constructor
-    public RMQuest(Quest? model = null, World? world = null) : base(model, world)
+    public RMQuest(Quest? model = null, World? world = null) 
+        : base(model ?? new Quest(), world ?? new World())
     {
-        Model = model ?? new Quest();
-        MandatorySearchProperties = new()
+        KeyProperties = new()
         {
             [nameof(ID)] = ID
         };
     }
     #endregion
 
-    #region Private Fields
-    [JsonIgnore]
-    private Quest Quest
-    {
-        get => (Quest)Model;
-    }
+    #region Properties
+    public int ID => Model.ID;
+    public string Name => Model.Name;
+    public bool Is_One_Time => Model.IsOneTime;
+    public string Status => Model.StatusType.ToString();
     #endregion
 
-    #region Properties
-    public int ID
+    #region Methods: Overrides
+    public override string ToString()
     {
-        get => Quest.ID;
-    }
-
-    public bool Is_One_Time
-    {
-        get => Quest.IsOneTime;
-    }
-
-    public string Status
-    {
-        get => Quest.StatusType.ToString();
+        return $"[{ID}] {Name}";
     }
     #endregion
 

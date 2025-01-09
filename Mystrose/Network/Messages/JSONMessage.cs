@@ -4,12 +4,12 @@ public class JSONMessage : Message
 {
 
     #region Constructor
-    public JSONMessage(ClientUseIdentifier identifier, string raw) : base(identifier)
+    public JSONMessage(ClientInstanceIdentifier identifier, string raw) : base(identifier)
     {
         RawContent = raw;
         Object = (JsonObject)JsonNode.Parse(raw)!;
-        DataObject = (JsonObject)Object?["b"]?["o"]!;
-        Command = DataObject?["cmd"]?.GetValue<string>()!;
+        DataObject = (JsonObject)Object["b"]!["o"]!;
+        Command = DataObject["cmd"]!.GetValue<string>()!;
     }
     #endregion
 
@@ -30,7 +30,7 @@ public class JSONMessage : Message
     #region Overrides
     public override string ToString()
     {
-        return Object?.ToJsonString();
+        return Object.ToJsonString();
     }
     #endregion
 

@@ -1,156 +1,49 @@
 ﻿namespace Mystrose.DataFormats.ReadableModels.Game;
 
-public class RMSelf : ReadableModel
+public class RMSelf : ReadableModel<MainAvatar>
 {
 
     #region Constructor
-    public RMSelf(MainAvatar? model = null, World? world = null) : base(model, world)
+    public RMSelf(MainAvatar? model = null, World? world = null) 
+        : base(model ?? new MainAvatar(), world ?? new World())
     {
-        Model = model ?? new MainAvatar();
-        MandatorySearchProperties = new()
-        {
-            //
-        };
-    }
-    #endregion
-
-    #region Private Fields
-    [JsonIgnore]
-    private MainAvatar MainAvatar
-    {
-        get => (MainAvatar)Model;
+        KeyProperties = new();
     }
     #endregion
 
     #region Properties
-    public int State
-    {
-        get => (int)MainAvatar.State;
-    }
+    public int State => (int)Model.State;
+    public string Cell => Model.Cell;
+    public string Pad => Model.Pad;
+    public double X_Coordinate => Model.X;
+    public double Y_Coordinate => Model.Y;
+    public string Gender => Model.Gender.ToString();
+    public int Level => Model.Level;
+    public string Class => Model.Class;
+    public int Class_Points => Model.ClassPoints;
+    public int Class_Rank => Model.ClassRank;
+    public string Equipments => string.Join("|", Model.Equipments.Values.Select(i => i.ID));
+    public bool Is_AFK => Model.IsAFK;
+    public bool Is_Resting => Model.IsResting;
+    public bool Is_Member => Model.IsMember;
+    public int Max_HP => Model.MaxHP;
+    public int HP => Model.HP;
+    public int Max_MP => Model.MaxMP;
+    public int MP => Model.MP;
+    public int Max_SP => Model.MaxSP;
+    public int SP => Model.SP;
+    public string Targets => string.Join("|", Model.Targets);
+    public int Available_Inventory_Slots => World?.Inventories[InventoryType.Base].FreeSlots ?? 0;
+    public int Available_House_Inventory_Slots => World?.Inventories[InventoryType.House].FreeSlots ?? 0;
+    public int Available_Bank_Slots => World?.Inventories[InventoryType.Bank].FreeSlots ?? 0;
+    public int Gold => Model.Gold;
+    public int Adventure_Coins => Model.Coins;
+    #endregion
 
-    public string Cell
+    #region Methods: Overrides
+    public override string ToString()
     {
-        get => MainAvatar.Cell;
-    }
-
-    public string Pad
-    {
-        get => MainAvatar.Pad;
-    }
-
-    public double X_Coordinate
-    {
-        get => MainAvatar.X;
-    }
-
-    public double Y_Coordinate
-    {
-        get => MainAvatar.Y;
-    }
-
-    public string Gender
-    {
-        get => MainAvatar.Gender.ToString();
-    }
-
-    public int Level
-    {
-        get => MainAvatar.Level;
-    }
-
-    public string Class
-    {
-        get => MainAvatar.Class;
-    }
-
-    public int Class_Points
-    {
-        get => MainAvatar.ClassPoints;
-    }
-
-    public int Class_Rank
-    {
-        get => MainAvatar.ClassRank;
-    }
-
-    public string Equipments
-    {
-        get => string.Join("|", MainAvatar.Equipments.Values.Select(i => i.ID));
-    }
-
-    public bool Is_AFK
-    {
-        get => MainAvatar.IsAFK;
-    }
-
-    public bool Is_Resting
-    {
-        get => MainAvatar.IsResting;
-    }
-
-    public bool Is_Member
-    {
-        get => MainAvatar.IsMember;
-    }
-
-    public int Max_HP
-    {
-        get => MainAvatar.MaxHP;
-    }
-
-    public int HP
-    {
-        get => MainAvatar.HP;
-    }
-
-    public int Max_MP
-    {
-        get => MainAvatar.MaxMP;
-    }
-
-    public int MP
-    {
-        get => MainAvatar.MP;
-    }
-
-    public int Max_SP
-    {
-        get => MainAvatar.MaxSP;
-    }
-
-    public int SP
-    {
-        get => MainAvatar.SP;
-    }
-
-    public string Targets
-    {
-        get => string.Join("|", MainAvatar.Targets);
-    }
-
-    public int Available_Inventory_Slots
-    {
-        get => World is not null ? World.Inventories[InventoryType.Base].FreeSlots : 0;
-    }
-
-    public int Available_House_Inventory_Slots
-    {
-        get => World is not null ? World.Inventories[InventoryType.House].FreeSlots : 0;
-    }
-
-    public int Available_Bank_Slots
-    {
-        get => World is not null ? World.Inventories[InventoryType.Bank].FreeSlots : 0;
-    }
-
-    public int Gold
-    {
-        get => MainAvatar.Gold;
-    }
-
-    public int Adventure_Coins
-    {
-        get => MainAvatar.Coins;
+        return $"{Model.Name} (State: {State})";
     }
     #endregion
 

@@ -7,43 +7,36 @@ public class Message
 {
 
     #region Constructor
-    public Message(ClientUseIdentifier identifier)
+    public Message(ClientInstanceIdentifier identifier)
     {
         Identifier = identifier;
-        Host = SVCGameManager.GetGameDict().Output[identifier.Codename]!;
-        World = SVCWorldVisualizer.GetWorldDict().Output[identifier.Codename]!;
+        HostWorld = MSVCWorld.Instance[identifier.Codename].Item2!;
     }
     #endregion
 
     #region Properties
-    public ClientUseIdentifier Identifier
+    public ClientInstanceIdentifier Identifier
     {
         get;
-        set;
+        protected set;
     }
 
-    public HSTGame Host
+    public World HostWorld
     {
         get;
-        set;
-    }
-
-    public World World
-    {
-        get;
-        set;
+        protected set;
     }
 
     public string RawContent
     {
         get;
-        set;
+        protected set;
     }
 
     public string Command
     {
         get;
-        set;
+        protected set;
     }
     #endregion
 

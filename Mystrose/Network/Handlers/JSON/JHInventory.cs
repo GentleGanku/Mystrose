@@ -1,48 +1,25 @@
 ﻿namespace Mystrose.Network.Handlers.JSON;
 
-public static class JHInventory
+public class JHInventory() : MessageHandler<JSONMessage>(new()
+{
+    ["loadInventoryBig"] = HandleInventoryLoad,
+    ["turnIn"] = HandleTurnIn
+})
 {
 
-    #region Fields
-    private static readonly Dictionary<string, Action<JSONMessage>> _handlers = new()
-    {
-        ["loadInventoryBig"] = HandleInventoryLoad,
-        ["turnIn"] = HandleTurnIn
-    };
-    #endregion
-
-    #region Methods: Invoker
-    public static void Invoke(JSONMessage message)
-    {
-        if (!_handlers.TryGetValue(message.Command, out var handler))
-        {
-            return;
-        }
-
-        try
-        {
-            handler.Invoke(message);
-        }
-        catch (Exception ex)
-        {
-            SVCLogger.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
-        }
-    }
-    #endregion
-
-    #region Handlers
-    public static void HandleInventoryLoad(JSONMessage message)
+    #region Methods: Handlers
+    private static void HandleInventoryLoad(JSONMessage message)
     {
         List<InventoryItem> inventoryItems = message.DataObject["items"].Deserialize<List<InventoryItem>>()!;
         List<InventoryItem> houseInventoryItems = message.DataObject["hitems"].Deserialize<List<InventoryItem>>()!;
         List<Faction> factions = message.DataObject["factions"].Deserialize<List<Faction>>()!;
 
-        message.World.Inventories[InventoryType.Base].AddRange(inventoryItems);
-        message.World.Inventories[InventoryType.House].AddRange(houseInventoryItems);
-        message.World.Factions = new(factions);
+        message.HostWorld.Inventories[InventoryType.Base].AddRange(inventoryItems);
+        message.HostWorld.Inventories[InventoryType.House].AddRange(houseInventoryItems);
+        message.HostWorld.Factions = new(factions);
     }
 
-    public static void HandleTurnIn(JSONMessage message)
+    private static void HandleTurnIn(JSONMessage message)
     {
         if (!message.DataObject.ContainsKey("sItems"))
         {
@@ -59,9 +36,9 @@ public static class JHInventory
             int itemId = int.Parse(itemData[0]);
             int qty = int.Parse(itemData[1]);
 
-            InventoryItem? inventoryItem = message.World.Inventories[InventoryType.Base][itemId];
-            inventoryItem ??= message.World.Inventories[InventoryType.Temp][itemId];
-            inventoryItem ??= message.World.Inventories[InventoryType.House][itemId];
+            InventoryItem? inventoryItem = message.HostWorld.Inventories[InventoryType.Base][itemId];
+            inventoryItem ??= message.HostWorld.Inventories[InventoryType.Temp][itemId];
+            inventoryItem ??= message.HostWorld.Inventories[InventoryType.House][itemId];
 
             if (inventoryItem is null)
             {
@@ -73,10 +50,10 @@ public static class JHInventory
             if (inventoryItem.Quantity <= 0)
             {
                 inventoryItem.Quantity = 0;
-                message.World.Inventories[inventoryItem.InventoryType].Remove(inventoryItem.ID);
+                message.HostWorld.Inventories[inventoryItem.InventoryType].Remove(inventoryItem.ID);
             }
 
-            SVCScriptManager.InvokeTrigger(message.Identifier.Codename, inventoryItem);
+            MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, inventoryItem);
         }
     }
     #endregion

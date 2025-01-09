@@ -1,17 +1,17 @@
 ﻿namespace Mystrose.Network.Handlers;
 
-public static class JHTester
+public class JHTester() : MessageHandler<JSONMessage>([])
 {
 
     #region Fields
-    private static readonly JsonSerializerOptions _options = new()
+    private readonly JsonSerializerOptions _options = new()
     {
         WriteIndented = true
     };
     #endregion
 
     #region Methods: Invoker
-    public static void Invoke(JSONMessage message)
+    public override void Invoke(JSONMessage message)
     {
         try
         {
@@ -19,13 +19,13 @@ public static class JHTester
         }
         catch (Exception ex)
         {
-            SVCLogger.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
+            HSVCLogger.Instance.LogOnException($"({nameof(message)} - {message.Command}) {ex}");
         }
     }
     #endregion
 
-    #region Handlers
-    public static void Handle(JSONMessage message)
+    #region Methods: Handlers
+    protected void Handle(JSONMessage message)
     {
         string jsonPath = "packetFormats\\json\\" + message.Command + ".json";
         string jsonContent = JsonSerializer.Serialize(message.Object, _options);

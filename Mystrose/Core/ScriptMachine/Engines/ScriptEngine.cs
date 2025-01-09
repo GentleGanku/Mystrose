@@ -272,7 +272,7 @@ public class ScriptEngine
             return false;
         }
 
-        return SVCRegex.ScriptVariable().IsMatch(var.String);
+        return ScriptRegexes.ScriptVariable().IsMatch(var.String);
     }
 
     public ScriptParameter GetVariableValue(ScriptParameter param)
@@ -281,7 +281,7 @@ public class ScriptEngine
         {
             string combinedValue = param.String;
 
-            foreach (Match match in SVCRegex.ScriptVariable().Matches(param.String))
+            foreach (Match match in ScriptRegexes.ScriptVariable().Matches(param.String))
             {
                 string varName = match.Value.Replace("{", "").Replace("}", "");
 

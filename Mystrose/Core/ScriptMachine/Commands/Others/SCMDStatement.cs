@@ -75,7 +75,7 @@ public class SCMDStatement : ScriptCommand, IStatementCommand, IStackable
             return value;
         }
 
-        object? targetStatement = StatementType switch
+        IReadableModel targetModel = StatementType switch
         {
             ScriptStatementType.Variable => new RMScriptVariable(),
             ScriptStatementType.Self => new RMSelf(),
@@ -87,14 +87,13 @@ public class SCMDStatement : ScriptCommand, IStatementCommand, IStackable
             ScriptStatementType.Faction => new RMFaction(),
             ScriptStatementType.Quest => new RMQuest(),
             ScriptStatementType.Item => new RMInventoryItem(),
-            ScriptStatementType.Drop => new RMItemDrop()
+            ScriptStatementType.Drop => new RMItemDrop(),
+            _ => throw new NotImplementedException()
         };
 
-        ReadableModel targetModel = (ReadableModel)targetStatement;
-
         SecondaryParameters.Clear();
-        SecondaryParameters[key] = ScriptRepository.ConvertToConditionals(targetModel.MandatorySearchProperties);
-        SecondaryParameters["Optional"] = ScriptRepository.ConvertToConditionals(targetStatement).Where(k => !SecondaryParameters[key].ContainsKey(k.Key)).ToDictionary();
+        SecondaryParameters[key] = ScriptRepository.ConvertToConditionals(targetModel.KeyProperties);
+        SecondaryParameters["Optional"] = ScriptRepository.ConvertToConditionals(targetModel).Where(k => !SecondaryParameters[key].ContainsKey(k.Key)).ToDictionary();
 
         return SecondaryParameters[key];
     }

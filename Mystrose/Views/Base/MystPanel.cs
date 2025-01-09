@@ -26,7 +26,7 @@ public class MystPanel : UserControl, IDestructible
     #region Methods: Setup
     protected virtual void Initialize()
     {
-        SVCLogger.LogOnConsole("MystPanel is pre-initialized.", $"MystPanel-{Name}", "InitializeComponent");
+        HSVCLogger.Instance.LogOnConsole("MystPanel is pre-initialized.", $"MystPanel-{Name}", "InitializeComponent");
     }
 
     public virtual void Destruct()
@@ -46,12 +46,12 @@ public class MystPanel : UserControl, IDestructible
     {
         Initialize();
 
-        SVCLogger.LogOnConsole("MystPanel is ready to go.", $"MystPanel-{Name}", "OnLoaded");
+        HSVCLogger.Instance.LogOnConsole("MystPanel is ready to go.", $"MystPanel-{Name}", "OnLoaded");
     }
 
     protected virtual void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        SVCLogger.LogOnConsole("MystPanel is removed.", $"MystPanel-{Name}", "OnUnloaded");
+        HSVCLogger.Instance.LogOnConsole("MystPanel is removed.", $"MystPanel-{Name}", "OnUnloaded");
 
         Destruct();
         Dispose();

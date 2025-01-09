@@ -1,56 +1,33 @@
 ﻿namespace Mystrose.DataFormats.ReadableModels.Game;
 
-public class RMActiveSkill : ReadableModel
+public class RMActiveSkill : ReadableModel<ActiveSkill>
 {
 
     #region Constructor
-    public RMActiveSkill(ActiveSkill? model = null, World? world = null) : base(model, world)
+    public RMActiveSkill(ActiveSkill? model = null, World? world = null) 
+        : base(model ?? new ActiveSkill(), world ?? new World())
     {
-        Model = model ?? new ActiveSkill();
-        MandatorySearchProperties = new()
+        KeyProperties = new()
         {
             [nameof(Index)] = Index
         };
     }
     #endregion
 
-    #region Private Fields
-    [JsonIgnore]
-    private ActiveSkill ActiveSkill
-    {
-        get => (ActiveSkill)Model;
-    }
+    #region Properties
+    public int Index => Model.Index;
+    public string Name => Model.Name;
+    public bool Is_Safely_Usable => Model.IsSafeToUse;
+    public int Range => Model.Range;
+    public int Mana_Cost => Model.ManaCost;
+    public int Cooldown => Model.Cooldown;
+    public int Cooldown_Duration => Model.CooldownDuration;
     #endregion
 
-    #region Properties
-    public int Index
+    #region Methods: Overrides
+    public override string ToString()
     {
-        get => ActiveSkill.Index;
-    }
-
-    public string Name
-    {
-        get => ActiveSkill.Name;
-    }
-
-    public bool Is_Safely_Usable
-    {
-        get => ActiveSkill.IsSafeToUse;
-    }
-
-    public int Range
-    {
-        get => ActiveSkill.Range;
-    }
-
-    public int Mana_Cost
-    {
-        get => ActiveSkill.ManaCost;
-    }
-
-    public int Cooldown
-    {
-        get => ActiveSkill.Cooldown / 1000;
+        return $"{Name} (Index: {Index})";
     }
     #endregion
 

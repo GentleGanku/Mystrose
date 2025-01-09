@@ -19,6 +19,11 @@ public partial class InstanceButton : UserControl
     #endregion
 
     #region Fields
+    public MystWindow ParentWindow
+    {
+        get => (MystWindow)Window.GetWindow(this);
+    }
+
     public Button Button
     {
         get => BTN_Item;
@@ -37,6 +42,29 @@ public partial class InstanceButton : UserControl
     }
     #endregion
 
+    #region Methods
+    private void Deactivate()
+    {
+        ParentWindow.ShowActionMessageBox($"Deactivating {NameText}",
+            $"Are you sure you want to deactivate {NameText}? This will stop any related processes for it.",
+            "Yes",
+            "No",
+            () =>
+            {
+                MSVCGame.Instance.Deactivate(NameText);
+            },
+            () =>
+            {
+                return;
+            },
+            "Cancel",
+            () =>
+            {
+                return;
+            });
+    }
+    #endregion
+
     #region Handlers: Events
     private void Button_Click(object sender, RoutedEventArgs e)
     {
@@ -47,12 +75,12 @@ public partial class InstanceButton : UserControl
             case "BTN_Item":
                 if (button.Appearance is ControlAppearance.Transparent)
                 {
-                    SVCGameManager.Select(NameText);
+                    MSVCGame.Instance.Select(NameText);
                     button.Appearance = ControlAppearance.Primary;
                 }
                 break;
             case "BTN_Remove":
-                SVCGameManager.Deactivate(NameText);
+                Deactivate();
                 break;
         }
     }

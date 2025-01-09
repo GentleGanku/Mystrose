@@ -1,0 +1,64 @@
+﻿<UserControl
+    x:Class="Mystrose.Views.WorldVisualizer.Controls.VisualizerItem"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:baseControls="clr-namespace:Mystrose.Views.Base.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Mystrose.Views.WorldVisualizer.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    d:DesignWidth="959"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded"
+    mc:Ignorable="d">
+
+    <TreeViewItem x:Name="TV_Item">
+        <TreeViewItem.Header>
+            <TextBlock x:Name="TB_Label" Text="Hello, World!">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=Tag, ElementName=TB_Label}" Value="Auras">
+                                <Setter Property="Foreground" Value="{StaticResource FG_Model_Auras}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Tag, ElementName=TB_Label}" Value="Cells">
+                                <Setter Property="Foreground" Value="{StaticResource FG_Model_Cells}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Tag, ElementName=TB_Label}" Value="Combat Messages">
+                                <Setter Property="Foreground" Value="{StaticResource FG_Model_CombatMessages}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Tag, ElementName=TB_Label}" Value="Event Messages">
+                                <Setter Property="Foreground" Value="{StaticResource FG_Model_EventMessages}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Tag, ElementName=TB_Label}" Value="Factions">
+                                <Setter Property="Foreground" Value="{StaticResource FG_Model_Factions}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Tag, ElementName=TB_Label}" Value="Inventory Items">
+                                <Setter Property="Foreground" Value="{StaticResource FG_Model_InventoryItems}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Tag, ElementName=TB_Label}" Value="Item Drops">
+                                <Setter Property="Foreground" Value="{StaticResource FG_Model_ItemDrops}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Tag, ElementName=TB_Label}" Value="Monsters">
+                                <Setter Property="Foreground" Value="{StaticResource FG_Model_Monsters}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Tag, ElementName=TB_Label}" Value="Players">
+                                <Setter Property="Foreground" Value="{StaticResource FG_Model_Players}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Tag, ElementName=TB_Label}" Value="Quests">
+                                <Setter Property="Foreground" Value="{StaticResource FG_Model_Quests}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Tag, ElementName=TB_Label}" Value="Shop Items">
+                                <Setter Property="Foreground" Value="{StaticResource FG_Model_ShopItems}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=Tag, ElementName=TB_Label}" Value="Skills">
+                                <Setter Property="Foreground" Value="{StaticResource FG_Model_Skills}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </TreeViewItem.Header>
+    </TreeViewItem>
+
+</UserControl>

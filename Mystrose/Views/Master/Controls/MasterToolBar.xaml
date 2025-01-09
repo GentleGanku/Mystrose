@@ -40,7 +40,28 @@
                 </baseControls:MenuButton.IconContent>
             </baseControls:MenuButton>
 
-            <baseControls:MenuButton x:Name="MBTN_Logger" CaptionText="Log Tracker">
+            <baseControls:MenuButton
+                x:Name="MBTN_Visualizer"
+                Margin="0,0,3,0"
+                CaptionText="World Visualizer">
+                <baseControls:MenuButton.IconContent>
+                    <ui:SymbolIcon Symbol="SearchVisual20" />
+                </baseControls:MenuButton.IconContent>
+            </baseControls:MenuButton>
+
+            <baseControls:MenuButton
+                x:Name="MBTN_Interceptor"
+                Margin="0,0,3,0"
+                CaptionText="Packet Interceptor">
+                <baseControls:MenuButton.IconContent>
+                    <ui:SymbolIcon Symbol="VirtualNetwork20" />
+                </baseControls:MenuButton.IconContent>
+            </baseControls:MenuButton>
+
+            <baseControls:MenuButton
+                x:Name="MBTN_Logger"
+                Margin="0,0,3,0"
+                CaptionText="Log Tracker">
                 <baseControls:MenuButton.IconContent>
                     <ui:SymbolIcon Symbol="Notepad20" />
                 </baseControls:MenuButton.IconContent>
@@ -66,4 +87,5 @@
             </baseControls:MenuButton>
         </VirtualizingStackPanel>
     </Grid>
+
 </UserControl>

@@ -1,58 +1,35 @@
 ﻿namespace Mystrose.Network.Handlers.JSON;
 
-public static class JHShopInterface
+public class JHShopInterface() : MessageHandler<JSONMessage>(new()
+{
+    ["loadShop"] = HandleShopLoad,
+    ["loadEnhShop"] = HandleEnhShopLoad,
+    ["buyItem"] = HandleItemPurchase,
+    ["sellItem"] = HandleItemSale,
+    ["removeItem"] = HandleItemRemoval
+})
 {
 
-    #region Fields
-    private static readonly Dictionary<string, Action<JSONMessage>> _handlers = new()
-    {
-        ["loadShop"] = HandleShopLoad,
-        ["loadEnhShop"] = HandleEnhShopLoad,
-        ["buyItem"] = HandleItemPurchase,
-        ["sellItem"] = HandleItemSale,
-        ["removeItem"] = HandleItemRemoval
-    };
-    #endregion
-
-    #region Methods: Invoker
-    public static void Invoke(JSONMessage message)
-    {
-        if (!_handlers.TryGetValue(message.Command, out var handler))
-        {
-            return;
-        }
-
-        try
-        {
-            handler.Invoke(message);
-        }
-        catch (Exception ex)
-        {
-            SVCLogger.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
-        }
-    }
-    #endregion
-
-    #region Handlers
-    public static void HandleShopLoad(JSONMessage message)
+    #region Methods: Handlers
+    private static void HandleShopLoad(JSONMessage message)
     {
         Shop shop = message.DataObject["shopinfo"].Deserialize<Shop>()!;
 
-        message.World.Shop = shop;
+        message.HostWorld.Shop = shop;
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, message.World.Shop);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, message.HostWorld.Shop);
     }
 
-    public static void HandleEnhShopLoad(JSONMessage message)
+    private static void HandleEnhShopLoad(JSONMessage message)
     {
         Shop enhShop = message.DataObject["shopinfo"].Deserialize<Shop>()!;
 
-        message.World.EnhancementShop = enhShop;
+        message.HostWorld.EnhancementShop = enhShop;
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, message.World.EnhancementShop);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, message.HostWorld.EnhancementShop);
     }
 
-    public static void HandleItemPurchase(JSONMessage message)
+    private static void HandleItemPurchase(JSONMessage message)
     {
         bool isSuccess = message.DataObject["bitSuccess"]!.GetValue<int>() == 1;
 
@@ -65,7 +42,7 @@ public static class JHShopInterface
         int charItemID = message.DataObject["CharItemID"]!.GetValue<int>();
         int qty = message.DataObject["iQty"]!.GetValue<int>();
 
-        ShopItem shopItem = message.World.Shop.Items.Find(
+        ShopItem shopItem = message.HostWorld.Shop.Items.Find(
             (item) =>
             {
                 return item.ID == id;
@@ -73,22 +50,22 @@ public static class JHShopInterface
 
         if (shopItem.IsCoinTagged)
         {
-            message.World.Avatar.Coins -= shopItem.Cost * qty;
+            message.HostWorld.Avatar.Coins -= shopItem.Cost * qty;
         }
         else
         {
-            message.World.Avatar.Gold -= shopItem.Cost * qty;
+            message.HostWorld.Avatar.Gold -= shopItem.Cost * qty;
         }
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, message.World.Avatar);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, message.HostWorld.Avatar);
 
         if (shopItem.IsHouseItem)
         {
-            if (message.World.Inventories[InventoryType.House].TryGetValue(shopItem.ID, out InventoryItem? houseItem))
+            if (message.HostWorld.Inventories[InventoryType.House].TryGetValue(shopItem.ID, out InventoryItem? houseItem))
             {
                 houseItem.Quantity += qty;
 
-                SVCScriptManager.InvokeTrigger(message.Identifier.Codename, houseItem);
+                MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, houseItem);
             }
             else
             {
@@ -97,18 +74,18 @@ public static class JHShopInterface
                 newHouseItem.CharacterItemID = charItemID;
                 newHouseItem.Quantity = qty;
 
-                message.World.Inventories[InventoryType.House].Add(id, newHouseItem);
+                message.HostWorld.Inventories[InventoryType.House].Add(id, newHouseItem);
 
-                SVCScriptManager.InvokeTrigger(message.Identifier.Codename, newHouseItem);
+                MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, newHouseItem);
             }
         }
         else
         {
-            if (message.World.Inventories[InventoryType.Base].TryGetValue(shopItem.ID, out InventoryItem? baseItem))
+            if (message.HostWorld.Inventories[InventoryType.Base].TryGetValue(shopItem.ID, out InventoryItem? baseItem))
             {
                 baseItem.Quantity += qty;
 
-                SVCScriptManager.InvokeTrigger(message.Identifier.Codename, baseItem);
+                MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, baseItem);
             }
             else
             {
@@ -117,14 +94,14 @@ public static class JHShopInterface
                 newBaseItem.CharacterItemID = charItemID;
                 newBaseItem.Quantity = qty;
 
-                message.World.Inventories[InventoryType.Base].Add(id, newBaseItem);
+                message.HostWorld.Inventories[InventoryType.Base].Add(id, newBaseItem);
 
-                SVCScriptManager.InvokeTrigger(message.Identifier.Codename, newBaseItem);
+                MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, newBaseItem);
             }
         }
     }
 
-    public static void HandleItemSale(JSONMessage message)
+    private static void HandleItemSale(JSONMessage message)
     {
         int charItemID = message.DataObject["CharItemID"]!.GetValue<int>();
         int qty = message.DataObject["iQty"]!.GetValue<int>();
@@ -133,22 +110,22 @@ public static class JHShopInterface
 
         if (isCoins)
         {
-            message.World.Avatar.Coins += currencyAmount;
+            message.HostWorld.Avatar.Coins += currencyAmount;
         }
-        else if (message.World.Avatar.Gold < 100000000)
+        else if (message.HostWorld.Avatar.Gold < 100000000)
         {
-            message.World.Avatar.Gold += currencyAmount;
+            message.HostWorld.Avatar.Gold += currencyAmount;
         }
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, message.World.Avatar);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, message.HostWorld.Avatar);
 
-        InventoryItem? item = message.World.Inventories[InventoryType.Base].Values.FirstOrDefault(
+        InventoryItem? item = message.HostWorld.Inventories[InventoryType.Base].Values.FirstOrDefault(
             (item) =>
             {
                 return item.CharacterItemID == charItemID;
             });
 
-        item ??= message.World.Inventories[InventoryType.House].Values.FirstOrDefault(
+        item ??= message.HostWorld.Inventories[InventoryType.House].Values.FirstOrDefault(
             (item) =>
             {
                 return item.CharacterItemID == charItemID;
@@ -159,13 +136,13 @@ public static class JHShopInterface
         if (item.Quantity <= 0)
         {
             item.Quantity = 0;
-            message.World.Inventories[item.InventoryType].Remove(item.ID);
+            message.HostWorld.Inventories[item.InventoryType].Remove(item.ID);
         }
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, item);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, item);
     }
 
-    public static void HandleItemRemoval(JSONMessage message)
+    private static void HandleItemRemoval(JSONMessage message)
     {
         bool isSuccess = message.DataObject["bSuccess"]!.GetValue<int>() == 1;
 
@@ -177,13 +154,13 @@ public static class JHShopInterface
         int charItemID = message.DataObject["CharItemID"]!.GetValue<int>();
         int qty = message.DataObject["iQty"]!.GetValue<int>();
 
-        InventoryItem? item = message.World.Inventories[InventoryType.Base].Values.FirstOrDefault(
+        InventoryItem? item = message.HostWorld.Inventories[InventoryType.Base].Values.FirstOrDefault(
             (item) =>
             {
                 return item.CharacterItemID == charItemID;
             });
 
-        item ??= message.World.Inventories[InventoryType.House].Values.FirstOrDefault(
+        item ??= message.HostWorld.Inventories[InventoryType.House].Values.FirstOrDefault(
             (item) =>
             {
                 return item.CharacterItemID == charItemID;
@@ -194,10 +171,10 @@ public static class JHShopInterface
         if (item.Quantity <= 0)
         {
             item.Quantity = 0;
-            message.World.Inventories[item.InventoryType].Remove(item.ID);
+            message.HostWorld.Inventories[item.InventoryType].Remove(item.ID);
         }
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, item);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, item);
     }
     #endregion
 

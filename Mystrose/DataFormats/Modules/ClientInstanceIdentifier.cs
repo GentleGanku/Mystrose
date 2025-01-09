@@ -1,10 +1,10 @@
 ﻿namespace Mystrose.DataFormats.Modules;
 
-public struct ClientUseIdentifier
+public struct ClientInstanceIdentifier
 {
 
     #region Constructor
-    public ClientUseIdentifier(string codename)
+    public ClientInstanceIdentifier(string codename)
     {
         Codename = codename;
     }

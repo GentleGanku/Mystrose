@@ -50,16 +50,16 @@ public partial class MasterTabBar : UserControl
     {
         TBTN_Home.Button.Click += Button_Click;
 
-        SVCGameManager.ActivatedGameEvent += SelectIncomingTab;
-        SVCGameManager.SelectedGameEvent += SelectIncomingTab;
+        MSVCGame.Instance.ActivatedGameEvent += SelectIncomingTab;
+        MSVCGame.Instance.SelectedGameEvent += SelectIncomingTab;
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
         TBTN_Home.Button.Click -= Button_Click;
 
-        SVCGameManager.ActivatedGameEvent -= SelectIncomingTab;
-        SVCGameManager.SelectedGameEvent -= SelectIncomingTab;
+        MSVCGame.Instance.ActivatedGameEvent -= SelectIncomingTab;
+        MSVCGame.Instance.SelectedGameEvent -= SelectIncomingTab;
     }
     #endregion
 
@@ -73,7 +73,7 @@ public partial class MasterTabBar : UserControl
             case "TBTN_Home":
                 if (tabButton.Button.Appearance is ControlAppearance.Transparent)
                 {
-                    SVCGameManager.Deselect();
+                    MSVCGame.Instance.Deselect();
                 }
                 break;
         }
@@ -86,11 +86,11 @@ public partial class MasterTabBar : UserControl
         switch ((string)menuItem.Tag)
         {
             case "MI_OpenNewTab":
-                SVCGameManager.Activate();
+                MSVCGame.Instance.Activate();
                 break;
 
             case "MI_CloseAll":
-                SVCGameManager.DeactivateAll();
+                MSVCGame.Instance.DeactivateAll();
                 break;
 
             case "MI_CloseOthers":
@@ -102,7 +102,7 @@ public partial class MasterTabBar : UserControl
                 }
 
                 string exceptedCodename = exceptedButton.NameText;
-                SVCGameManager.DeactivateAll(exceptedCodename);
+                MSVCGame.Instance.DeactivateAll(exceptedCodename);
                 break;
 
             case "MI_Reload":
@@ -114,7 +114,7 @@ public partial class MasterTabBar : UserControl
                 }
 
                 string reloadingCodename = reloadingButton.NameText;
-                SVCGameManager.Render(reloadingCodename);
+                MSVCGame.Instance.Render(reloadingCodename);
                 break;
 
             case "MI_MultiScreen":

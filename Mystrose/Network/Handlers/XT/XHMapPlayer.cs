@@ -1,40 +1,17 @@
 ﻿namespace Mystrose.Network.Handlers.XT;
 
-public static class XHMapPlayer
+public class XHMapPlayer() : MessageHandler<XTMessage>(new()
+{
+    ["exitArea"] = HandleExit
+})
 {
 
-    #region Fields
-    private static readonly Dictionary<string, Action<XTMessage>> _handlers = new()
-    {
-        ["exitArea"] = HandleExit
-    };
-    #endregion
-
-    #region Methods: Invoker
-    public static void Invoke(XTMessage message)
-    {
-        if (!_handlers.TryGetValue(message.Command, out var handler))
-        {
-            return;
-        }
-
-        try
-        {
-            handler.Invoke(message);
-        }
-        catch (Exception ex)
-        {
-            SVCLogger.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
-        }
-    }
-    #endregion
-
-    #region Handlers
-    public static void HandleExit(XTMessage message)
+    #region Methods: Handlers
+    private static void HandleExit(XTMessage message)
     {
         int userId = int.Parse(message.Arguments[4]);
 
-        Avatar? avatar = message.World.Area.Players.Find(
+        Avatar? avatar = message.HostWorld.Area.Players.Find(
             (avt) =>
             {
                 return avt.EntityID == userId;
@@ -45,11 +22,11 @@ public static class XHMapPlayer
             return;
         }
 
-        message.World.Area.Players.Remove(avatar);
+        message.HostWorld.Area.Players.Remove(avatar);
 
         avatar.Cell = avatar.Pad = "None";
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, avatar);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, avatar);
     }
     #endregion
 

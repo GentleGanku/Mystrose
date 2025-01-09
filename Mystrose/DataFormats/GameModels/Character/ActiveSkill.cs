@@ -27,6 +27,22 @@ public class ActiveSkill : BaseSkill
     {
         get => IsUsable && !IsDisabled && !IsLocked;
     }
+
+    /// <summary>
+    /// The cooldown duration of the skill (in milliseconds).
+    /// </summary>
+    public int CooldownDuration
+    {
+        get
+        {
+            if (_lastCooldownTiming == DateTime.MinValue)
+            {
+                return 0;
+            }
+
+            return (int)(DateTime.Now - _lastCooldownTiming).TotalMilliseconds;
+        }
+    }
     #endregion
 
     #region Properties

@@ -1,38 +1,15 @@
 ﻿namespace Mystrose.Network.Handlers.JSON;
 
-public static class JHInventorySlots
+public class JHInventorySlots() : MessageHandler<JSONMessage>(new()
+{
+    ["buyBagSlots"] = HandleBagSlots,
+    ["buyBankSlots"] = HandleBankSlots,
+    ["buyHouseSlots"] = HandleHouseSlots
+})
 {
 
-    #region Fields
-    private static readonly Dictionary<string, Action<JSONMessage>> _handlers = new()
-    {
-        ["buyBagSlots"] = HandleBagSlots,
-        ["buyBankSlots"] = HandleBankSlots,
-        ["buyHouseSlots"] = HandleHouseSlots
-    };
-    #endregion
-
-    #region Methods: Invoker
-    public static void Invoke(JSONMessage message)
-    {
-        if (!_handlers.TryGetValue(message.Command, out var handler))
-        {
-            return;
-        }
-
-        try
-        {
-            handler.Invoke(message);
-        }
-        catch (Exception ex)
-        {
-            SVCLogger.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
-        }
-    }
-    #endregion
-
-    #region Handlers
-    public static void HandleBagSlots(JSONMessage message)
+    #region Methods: Handlers
+    private static void HandleBagSlots(JSONMessage message)
     {
         bool isSuccess = message.DataObject["bitSuccess"]!.GetValue<int>() == 1;
 
@@ -43,15 +20,15 @@ public static class JHInventorySlots
 
         int slots = message.DataObject["iSlots"]!.GetValue<int>();
 
-        message.World.Avatar.Coins -= slots * 200;
-        message.World.Avatar.InventorySlots += slots;
+        message.HostWorld.Avatar.Coins -= slots * 200;
+        message.HostWorld.Avatar.InventorySlots += slots;
 
-        message.World.Inventories[InventoryType.Base].TotalSlots += slots;
+        message.HostWorld.Inventories[InventoryType.Base].TotalSlots += slots;
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, message.World.Avatar);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, message.HostWorld.Avatar);
     }
 
-    public static void HandleBankSlots(JSONMessage message)
+    private static void HandleBankSlots(JSONMessage message)
     {
         bool isSuccess = message.DataObject["bitSuccess"]!.GetValue<int>() == 1;
 
@@ -62,15 +39,15 @@ public static class JHInventorySlots
 
         int slots = message.DataObject["iSlots"]!.GetValue<int>();
 
-        message.World.Avatar.Coins -= slots * 200;
-        message.World.Avatar.BankSlots += slots;
+        message.HostWorld.Avatar.Coins -= slots * 200;
+        message.HostWorld.Avatar.BankSlots += slots;
 
-        message.World.Inventories[InventoryType.Bank].TotalSlots += slots;
+        message.HostWorld.Inventories[InventoryType.Bank].TotalSlots += slots;
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, message.World.Avatar);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, message.HostWorld.Avatar);
     }
 
-    public static void HandleHouseSlots(JSONMessage message)
+    private static void HandleHouseSlots(JSONMessage message)
     {
         bool isSuccess = message.DataObject["bitSuccess"]!.GetValue<int>() == 1;
 
@@ -81,12 +58,12 @@ public static class JHInventorySlots
 
         int slots = message.DataObject["iSlots"]!.GetValue<int>();
 
-        message.World.Avatar.Coins -= slots * 200;
-        message.World.Avatar.HouseSlots += slots;
+        message.HostWorld.Avatar.Coins -= slots * 200;
+        message.HostWorld.Avatar.HouseSlots += slots;
 
-        message.World.Inventories[InventoryType.House].TotalSlots += slots;
+        message.HostWorld.Inventories[InventoryType.House].TotalSlots += slots;
 
-        SVCScriptManager.InvokeTrigger(message.Identifier.Codename, message.World.Avatar);
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, message.HostWorld.Avatar);
     }
     #endregion
 

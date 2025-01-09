@@ -100,7 +100,7 @@ public class SCMDTrigger : ScriptCommand, ITriggerCommand, IStackable
             return value;
         }
 
-        object? targetStatement = TriggerType switch
+        IReadableModel targetModel = TriggerType switch
         {
             ScriptTriggerType.Variable => new RMScriptVariable(),
             ScriptTriggerType.Self => new RMSelf(),
@@ -114,14 +114,13 @@ public class SCMDTrigger : ScriptCommand, ITriggerCommand, IStackable
             ScriptTriggerType.Item => new RMInventoryItem(),
             ScriptTriggerType.Drop => new RMItemDrop(),
             ScriptTriggerType.CombatMessage => new RMCombatMessage(),
-            ScriptTriggerType.EventMessage => new RMEventMessage()
+            ScriptTriggerType.EventMessage => new RMEventMessage(),
+            _ => throw new NotImplementedException()
         };
 
-        ReadableModel targetModel = (ReadableModel)targetStatement;
-
         SecondaryParameters.Clear();
-        SecondaryParameters[key] = ScriptRepository.ConvertToConditionals(targetModel.MandatorySearchProperties);
-        SecondaryParameters["Optional"] = ScriptRepository.ConvertToConditionals(targetStatement).Where(k => !SecondaryParameters[key].ContainsKey(k.Key)).ToDictionary();
+        SecondaryParameters[key] = ScriptRepository.ConvertToConditionals(targetModel.KeyProperties);
+        SecondaryParameters["Optional"] = ScriptRepository.ConvertToConditionals(targetModel).Where(k => !SecondaryParameters[key].ContainsKey(k.Key)).ToDictionary();
 
         return SecondaryParameters[key];
     }

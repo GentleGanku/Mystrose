@@ -1,30 +1,62 @@
-﻿namespace Mystrose.Services;
+﻿namespace Mystrose.Services.Helper;
 
-public class SVCSettings
+public class HSVCSettings() : HelperService(nameof(HSVCSettings))
 {
 
     #region Delegates & Handlers
-    public delegate void SettingsHandler(string key, Option option);
-    public static event SettingsHandler SettingsEvent;
+    public delegate void SettingsHandler(SettingOption key, Option option);
+    public event SettingsHandler SettingsEvent;
+    #endregion
+
+    #region (Static) Fields
+    public static HSVCSettings Instance
+    {
+        get
+        {
+            if (_instance is null)
+            {
+                _instance = new HSVCSettings();
+                _instance.Construct();
+            }
+            
+            return _instance;
+        }
+    }
+    #endregion
+
+    #region (Private) Fields
+    private static HSVCSettings? _instance;
     #endregion
 
     #region Fields
-    private static string _pathToSettings => "settings.json";
-    private static JsonSerializerOptions _serializerOptions = new()
+    private readonly string _pathToSettings = "settings.json";
+    private readonly JsonSerializerOptions _serializerOptions = new()
     {
         WriteIndented = true
     };
-    private static readonly Dictionary<string, Option> _options = new()
+    private readonly Dictionary<SettingOption, Option> _options = new()
     {
-        ["firstTime"] = new("First-Time User", "Brings the user to the app's introduction board.", false, true),
-        ["maximizedMainWindow"] = new("Maximized App Window on Startup", "Maximizes the main window after the app opens.", true, false),
-        ["skippableHome"] = new("Home Skip", "Immediately redirects to the game screen after the app opens.", true, false),
-        ["debugNetwork"] = new("Network Debugging", "Enables network debugging.", false, false)
+        [SettingOption.FirstTime] = new(JsonSerializer.Serialize(SettingOption.FirstTime), 
+            "Brings the user to the app's introduction board.", 
+            false, 
+            true),
+        [SettingOption.MaximizedMainWindow] = new(JsonSerializer.Serialize(SettingOption.MaximizedMainWindow), 
+            "Maximizes the main window after the app opens.", 
+            true, 
+            false),
+        [SettingOption.SkippableHome] = new(JsonSerializer.Serialize(SettingOption.SkippableHome), 
+            "Immediately redirects to the game screen after the app opens.", 
+            true, 
+            false),
+        [SettingOption.DebugNetwork] = new(JsonSerializer.Serialize(SettingOption.DebugNetwork), 
+            "Enables network debugging.", 
+            false, 
+            false)
     };
     #endregion
 
-    #region Methods: Filing
-    public static void Checkup()
+    #region Methods: Builder
+    public override void Construct()
     {
         try
         {
@@ -36,15 +68,29 @@ public class SVCSettings
 
             Refresh();
 
-            SVCLogger.LogOnConsole("Settings checkup completed.", "SVCSettings", "Checkup");
+            Log("Settings constructed successfully.", "Construct");
         }
         catch (Exception ex)
         {
-            SVCLogger.LogOnConsole(ex.ToString(), "SVCSettings", "Checkup");
+            Log(ex.ToString(), "Construct");
         }
     }
 
-    public static void Reset()
+    public override void Deconstruct()
+    {
+        try
+        {
+            _options.Clear();
+
+            Log("Settings deconstructed successfully.", "Deconstruct");
+        }
+        catch (Exception ex)
+        {
+            Log(ex.ToString(), "Deconstruct");
+        }
+    }
+
+    public void Reset()
     {
         try
         {
@@ -57,20 +103,20 @@ public class SVCSettings
             }, _serializerOptions);
             File.WriteAllText(_pathToSettings, jsonDictionary);
 
-            SVCLogger.LogOnConsole("Settings reset completed.", "SVCSettings", "Reset");
+            Log("Settings reset successfully.", "Reset");
         }
         catch (Exception ex)
         {
-            SVCLogger.LogOnConsole(ex.ToString(), "SVCSettings", "Reset");
+            Log(ex.ToString(), "Reset");
         }
     }
 
-    public static void Refresh()
+    public void Refresh()
     {
         try
         {
             string jsonDictionary = File.ReadAllText(_pathToSettings);
-            var settings = JsonSerializer.Deserialize<Dictionary<string, Option>>(jsonDictionary, _serializerOptions)!;
+            var settings = JsonSerializer.Deserialize<Dictionary<SettingOption, Option>>(jsonDictionary, _serializerOptions)!;
 
             foreach (var setting in settings)
             {
@@ -84,17 +130,17 @@ public class SVCSettings
                 SettingsEvent?.Invoke(setting.Key, option);
             }
 
-            SVCLogger.LogOnConsole("Settings refresh completed.", "SVCSettings", "Refresh");
+            Log("Settings refreshed successfully.", "Refresh");
         }
         catch (Exception ex)
         {
-            SVCLogger.LogOnConsole(ex.ToString(), "SVCSettings", "Refresh");
+            Log(ex.ToString(), "Refresh");
         }
     }
     #endregion
 
     #region Methods: Read/Write
-    public static Response<Option?> Read(string key)
+    public Response<Option?> Read(SettingOption key)
     {
         if (!_options.TryGetValue(key, out Option? option))
         {
@@ -110,7 +156,7 @@ public class SVCSettings
             option);
     }
 
-    public static Response<Option?> Write(string key, object value)
+    public Response<Option?> Write(SettingOption key, object value)
     {
         if (!_options.TryGetValue(key, out Option? option))
         {
@@ -130,7 +176,7 @@ public class SVCSettings
             option);
     }
 
-    public static Response<int> ReadAll()
+    public Response<int> ReadAll()
     {
         if (_options.Count <= 0)
         {
@@ -149,7 +195,7 @@ public class SVCSettings
             _options.Count);
     }
 
-    public static Response<Dictionary<string, Option>> Save(string key)
+    public Response<Dictionary<SettingOption, Option>> Save(SettingOption key)
     {
         if (!_options.TryGetValue(key, out Option? option))
         {
@@ -159,7 +205,7 @@ public class SVCSettings
         }
 
         string jsonDictionary = File.ReadAllText(_pathToSettings);
-        var settings = JsonSerializer.Deserialize<Dictionary<string, Option>>(jsonDictionary, _serializerOptions)!;
+        var settings = JsonSerializer.Deserialize<Dictionary<SettingOption, Option>>(jsonDictionary, _serializerOptions)!;
 
         settings[key] = option;
 
@@ -171,7 +217,7 @@ public class SVCSettings
             _options);
     }
 
-    public static Response<Dictionary<string, Option>> SaveAll()
+    public Response<Dictionary<SettingOption, Option>> SaveAll()
     {
         string jsonDictionary = JsonSerializer.Serialize(_options, _serializerOptions);
         File.WriteAllText(_pathToSettings, jsonDictionary);
@@ -183,7 +229,7 @@ public class SVCSettings
     #endregion
 
     #region Methods: Getter/Setter
-    public static Response<Option?> Get(string key)
+    public Response<Option?> Get(SettingOption key)
     {
         if (!_options.TryGetValue(key, out Option? option))
         {

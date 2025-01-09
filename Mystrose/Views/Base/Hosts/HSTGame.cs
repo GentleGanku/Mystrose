@@ -1,31 +1,20 @@
 ﻿namespace Mystrose.Views.Base.Hosts;
 
-public class HSTGame : WindowsFormsHost
+public class HSTGame(ClientInstanceIdentifier identifier) : WindowsFormsHost
 {
-
-    #region Constructor
-    public HSTGame(ClientUseIdentifier identifier)
-    {
-        FlashAPI = new(identifier);
-        NetworkMonitor = new(identifier);
-
-        Loaded += OnLoaded;
-        Unloaded += OnUnloaded;
-    }
-    #endregion
 
     #region Properties
     public ISVCFlashAPI FlashAPI
     {
         get;
-        set;
-    }
+        init;
+    } = new(identifier);
 
     public ISVCNetwork NetworkMonitor
     {
         get;
-        set;
-    }
+        init;
+    } = new(identifier);
     #endregion
 
     #region Methods: Setup
@@ -33,8 +22,8 @@ public class HSTGame : WindowsFormsHost
     {
         Child = null;
 
-        FlashAPI.Dispose();
-        NetworkMonitor.Dispose();
+        FlashAPI.Deconstruct();
+        NetworkMonitor.Deconstruct();
         Dispose();
     }
     #endregion
@@ -72,14 +61,14 @@ public class HSTGame : WindowsFormsHost
         }
         catch (Exception ex)
         {
-            SVCLogger.LogOnException($"({action.Method.Name}) " + ex.ToString());
+            HSVCLogger.Instance.LogOnException($"({action.Method.Name}) " + ex.ToString());
         }
 
         Response<Action> response = new(isInvoked,
             $"({action.Method.Name}) " + (isInvoked is true ? "Action invoked to the interface successfully." : "Action failed to invoke."),
             action);
 
-        SVCLogger.LogOnTrace(response.Message);
+        HSVCLogger.Instance.LogOnTrace(response.Message);
 
         return response;
     }
@@ -96,18 +85,6 @@ public class HSTGame : WindowsFormsHost
             case "interceptClient":
                 break;
         }
-    }
-    #endregion
-
-    #region Handlers: Events
-    private void OnLoaded(object sender, RoutedEventArgs e)
-    {
-        SVCLogger.LogOnConsole("Loaded HSTGame into the screen.", "HSTGame", "OnLoaded");
-    }
-
-    private void OnUnloaded(object sender, RoutedEventArgs e)
-    {
-        SVCLogger.LogOnConsole("Unloaded HSTGame from the screen.", "HSTGame", "OnUnloaded");
     }
     #endregion
 

@@ -1,49 +1,26 @@
 ﻿namespace Mystrose.Network.Handlers.JSON;
 
-public static class JHVanityEquipmentData
+public class JHVanityEquipmentData() : MessageHandler<JSONMessage>(new()
+{
+    ["wearItem"] = HandleItemWearing,
+    ["unwearItem"] = HandleItemUnwearing
+})
 {
 
-    #region Fields
-    private static readonly Dictionary<string, Action<JSONMessage>> _handlers = new()
-    {
-        ["wearItem"] = HandleItemWearing,
-        ["unwearItem"] = HandleItemUnwearing
-    };
-    #endregion
-
-    #region Methods: Invoker
-    public static void Invoke(JSONMessage message)
-    {
-        if (!_handlers.TryGetValue(message.Command, out var handler))
-        {
-            return;
-        }
-
-        try
-        {
-            handler.Invoke(message);
-        }
-        catch (Exception ex)
-        {
-            SVCLogger.LogOnException($"({nameof(message)} - {message.Command}) {ex.ToString()}");
-        }
-    }
-    #endregion
-
-    #region Handlers
-    public static void HandleItemWearing(JSONMessage message)
+    #region Methods: Handlers
+    private static void HandleItemWearing(JSONMessage message)
     {
         int userId = message.DataObject["uid"]!.GetValue<int>();
         string eqpType = message.DataObject["sES"]!.GetValue<string>();
 
         BaseItem vanityItem = message.DataObject.Deserialize<BaseItem>()!;
 
-        if (message.World.Avatar.EntityID == userId)
+        if (message.HostWorld.Avatar.EntityID == userId)
         {
-            message.World.Avatar.VanityEquipments[eqpType] = vanityItem;
+            message.HostWorld.Avatar.VanityEquipments[eqpType] = vanityItem;
         }
 
-        Avatar? avatar = message.World.Area.Players.Find(
+        Avatar? avatar = message.HostWorld.Area.Players.Find(
             (avt) =>
             {
                 return avt.EntityID == userId;
@@ -57,17 +34,17 @@ public static class JHVanityEquipmentData
         avatar.VanityEquipments[eqpType] = vanityItem;
     }
 
-    public static void HandleItemUnwearing(JSONMessage message)
+    private static void HandleItemUnwearing(JSONMessage message)
     {
         int userId = message.DataObject["uid"]!.GetValue<int>();
         string eqpType = message.DataObject["sES"]!.GetValue<string>();
 
-        if (message.World.Avatar.EntityID == userId)
+        if (message.HostWorld.Avatar.EntityID == userId)
         {
-            message.World.Avatar.VanityEquipments[eqpType] = null;
+            message.HostWorld.Avatar.VanityEquipments[eqpType] = null;
         }
 
-        Avatar? avatar = message.World.Area.Players.Find(
+        Avatar? avatar = message.HostWorld.Area.Players.Find(
             (avt) =>
             {
                 return avt.EntityID == userId;

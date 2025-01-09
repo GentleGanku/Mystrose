@@ -1,56 +1,32 @@
 ﻿namespace Mystrose.DataFormats.ReadableModels.Game;
 
-public class RMFaction : ReadableModel
+public class RMFaction : ReadableModel<Faction>
 {
 
     #region Constructor
-    public RMFaction(Faction? model = null, World? world = null) : base(model, world)
+    public RMFaction(Faction? model = null, World? world = null) 
+        : base(model ?? new Faction(), world ?? new World())
     {
-        Model = model ?? new Faction();
-        MandatorySearchProperties = new()
+        KeyProperties = new()
         {
             [nameof(Name)] = Name
         };
     }
     #endregion
 
-    #region Private Fields
-    [JsonIgnore]
-    private Faction Faction
-    {
-        get => (Faction)Model;
-    }
+    #region Properties
+    public int ID => Model.ID;
+    public string Name => Model.Name;
+    public int Reputation_Points => Model.Points;
+    public int Rank => Model.Rank;
+    public int Required_Rank_Points => Model.RequiredRankPoints;
+    public int Required_Maximum_Points => Model.RequiredMaxPoints;
     #endregion
 
-    #region Properties
-    public int ID
+    #region Methods: Overrides
+    public override string ToString()
     {
-        get => Faction.ID;
-    }
-
-    public string Name
-    {
-        get => Faction.Name;
-    }
-
-    public int Reputation_Points
-    {
-        get => Faction.Points;
-    }
-
-    public int Rank
-    {
-        get => Faction.Rank;
-    }
-
-    public int Required_Rank_Points
-    {
-        get => Faction.RequiredRankPoints;
-    }
-
-    public int Required_Maximum_Points
-    {
-        get => Faction.RequiredMaxPoints;
+        return $"{Name}";
     }
     #endregion
 

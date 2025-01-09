@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:Mystrose.Views.Master.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    Margin="0,0,2,0"
+    Margin="0,0,3,0"
     d:DesignHeight="32"
     Focusable="False"
     mc:Ignorable="d">
@@ -40,7 +40,7 @@
                 Height="14"
                 Margin="0,0,3,0"
                 VerticalAlignment="Center"
-                FontFamily="{StaticResource FF_Albertus_Light}"
+                FontFamily="{StaticResource FF_Albertus_Regular}"
                 FontSize="12"
                 Text="{Binding NameText}"
                 TextAlignment="Left"

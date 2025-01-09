@@ -25,46 +25,12 @@ public static class TabMethods
     #region Methods - Maximum
     public static int GetTabGroupsMax()
     {
-        int max = 0;
-        switch (ClientMaster.Settings.GroupType)
-        {
-            case GroupType.Default:
-                max = 4;
-                break;
-            case GroupType.Minimal:
-                max = 6;
-                break;
-            case GroupType.Intermediate:
-                max = 3;
-                break;
-            case GroupType.Ultra:
-                max = 2;
-                break;
-        }
-
-        return max;
+        return 4;
     }
 
     public static int GetGameTabsMax()
     {
-        int max = 0;
-        switch (ClientMaster.Settings.GroupType)
-        {
-            case GroupType.Default:
-                max = 6;
-                break;
-            case GroupType.Minimal:
-                max = 4;
-                break;
-            case GroupType.Intermediate:
-                max = 8;
-                break;
-            case GroupType.Ultra:
-                max = 12;
-                break;
-        }
-
-        return max;
+        return 6;
     }
     #endregion
 

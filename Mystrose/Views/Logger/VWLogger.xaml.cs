@@ -34,9 +34,9 @@ public partial class VWLogger : MystWindow
             CB_LogTypes.Items.Add(logType);
         }
 
-        _logs["Trace"].AddRange(ConvertStringToList(SVCLogger.GetLogsOnTrace().Output));
-        _logs["Script"].AddRange(ConvertStringToList(SVCLogger.GetLogsOnScript().Output));
-        _logs["Exception"].AddRange(ConvertStringToList(SVCLogger.GetLogsOnException().Output));
+        _logs["Trace"].AddRange(ConvertStringToList(HSVCLogger.Instance.GetLogsOnTrace().Output));
+        _logs["Script"].AddRange(ConvertStringToList(HSVCLogger.Instance.GetLogsOnScript().Output));
+        _logs["Exception"].AddRange(ConvertStringToList(HSVCLogger.Instance.GetLogsOnException().Output));
 
         CB_LogTypes.SelectedIndex = 0;
     }
@@ -50,6 +50,7 @@ public partial class VWLogger : MystWindow
         {
             LV_LogMessages.Items.Add(msg);
         }
+        LV_LogMessages.ScrollIntoView(LV_LogMessages.Items[LV_LogMessages.Items.Count - 1]);
 
         RefreshStats();
     }
@@ -190,6 +191,8 @@ public partial class VWLogger : MystWindow
             LV_LogMessages.Items.Add(logMessage);
             RefreshStats();
         }
+
+        LV_LogMessages.ScrollIntoView(logMessage);
     }
     #endregion
 
@@ -201,12 +204,12 @@ public partial class VWLogger : MystWindow
         MBTN_CopyAll.Button.Click += MenuButton_Click;
         MBTN_ClearCurrent.Button.Click += MenuButton_Click;
 
-        SVCLogger.LogEvent += AddIncomingLog;
+        HSVCLogger.Instance.LogEvent += AddIncomingLog;
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        SVCLogger.LogEvent -= AddIncomingLog;
+        HSVCLogger.Instance.LogEvent -= AddIncomingLog;
 
         MBTN_Scroll.Button.Click -= MenuButton_Click;
         MBTN_CopySelected.Button.Click -= MenuButton_Click;

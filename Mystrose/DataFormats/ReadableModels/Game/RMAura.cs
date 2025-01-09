@@ -1,13 +1,13 @@
 ﻿namespace Mystrose.DataFormats.ReadableModels.Game;
 
-public class RMAura : ReadableModel
+public class RMAura : ReadableModel<Aura>
 {
 
     #region Constructor
-    public RMAura(Aura? model = null, World? world = null) : base(model, world)
+    public RMAura(Aura? model = null, World? world = null) 
+        : base(model ?? new Aura(), world ?? new World())
     {
-        Model = model ?? new Aura();
-        MandatorySearchProperties = new()
+        KeyProperties = new()
         {
             [nameof(Name)] = Name,
             [nameof(Target_Type)] = Target_Type,
@@ -16,68 +16,24 @@ public class RMAura : ReadableModel
     }
     #endregion
 
-    #region Private Fields
-    [JsonIgnore]
-    private Aura Aura
-    {
-        get => (Aura)Model;
-    }
+    #region Properties
+    public string Name => Model.Name;
+    public string Value => Model.Value;
+    public int Stack_Value => Model.StackValue;
+    public int Duration => Model.Duration;
+    public int Runtime => Model.Runtime;
+    public string Source_Type => Model.SourceType.ToString();
+    public string Source_ID => Model.SourceID;
+    public string Target_Type => Model.TargetType.ToString();
+    public string Target_ID => Model.TargetID;
+    public string Disable_Type => Model.DisableType.ToString();
+    public bool Is_Added => Model.IsAdded;
     #endregion
 
-    #region Fields
-    public string Name
+    #region Methods: Overrides
+    public override string ToString()
     {
-        get => Aura.Name;
-    }
-
-    public string Value
-    {
-        get => Aura.Value;
-    }
-
-    public int Stack_Value
-    {
-        get => Aura.StackValue;
-    }
-
-    public int Duration
-    {
-        get => Aura.Duration;
-    }
-
-    public int Runtime
-    {
-        get => Aura.Runtime;
-    }
-
-    public string Source_Type
-    {
-        get => Aura.SourceType.ToString();
-    }
-
-    public string Source_ID
-    {
-        get => Aura.SourceID;
-    }
-
-    public string Target_Type
-    {
-        get => Aura.TargetType.ToString();
-    }
-
-    public string Target_ID
-    {
-        get => Aura.TargetID;
-    }
-
-    public string Disable_Type
-    {
-        get => Aura.DisableType.ToString();
-    }
-
-    public bool Is_Added
-    {
-        get => Aura.IsAdded;
+        return $"[{Target_ID}] {Name}";
     }
     #endregion
 
