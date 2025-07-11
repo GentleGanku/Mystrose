@@ -19,7 +19,6 @@ public class MSVCGame() : ManagerService<HSTGame>(nameof(MSVCGame))
             if (_instance is null)
             {
                 _instance = new MSVCGame();
-                _instance.Construct();
             }
             
             return _instance;
@@ -44,7 +43,7 @@ public class MSVCGame() : ManagerService<HSTGame>(nameof(MSVCGame))
     {
         try
         {
-            Response<Option?> response = HSVCSettings.Instance.Get(SettingOption.SkippableHome);
+            Response<Option?> response = HSVCSettings.Instance.Get(SettingOption.SkippableHomeScreen);
             bool isHomeSkippable = response.Output!.Get<bool>();
 
             if (!isHomeSkippable)
@@ -246,10 +245,10 @@ public class MSVCGame() : ManagerService<HSTGame>(nameof(MSVCGame))
                 $"Game host with the codename {codename} is already rendered.",
                 null);
         }
-
-        await Task.Delay(100);
+        
+        await Task.Delay(1000);
         game!.Refresh();
-
+        
         RenderedGameEvent?.Invoke(codename, game);
 
         Select(codename);

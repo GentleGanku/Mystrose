@@ -41,12 +41,7 @@ public class JHCombat() : MessageHandler<JSONMessage>(new()
                     foreach (JsonObject aura in auras)
                     {
                         AddAura(message, aura, sourceData, targetData);
-
-                        CombatMessage plusMsg = aura.Deserialize<CombatMessage>()!;
-                        plusMsg.Text = aura["msgOn"].Deserialize<string>() ?? aura["msgOff"].Deserialize<string>() ?? "";
-                        plusMsg.RealignHeader(message.HostWorld.Area);
-
-                        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, plusMsg);
+                        SendCombatMessage(message, aura);
                     }
                     break;
                 case "aura-":
@@ -54,12 +49,7 @@ public class JHCombat() : MessageHandler<JSONMessage>(new()
                     foreach (JsonObject aura in auras)
                     {
                         RemoveAura(message, aura, sourceData, targetData);
-
-                        CombatMessage minMsg = aura.Deserialize<CombatMessage>()!;
-                        minMsg.Text = aura["msgOn"].Deserialize<string>() ?? aura["msgOff"].Deserialize<string>() ?? "";
-                        minMsg.RealignHeader(message.HostWorld.Area);
-
-                        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, minMsg);
+                        SendCombatMessage(message, aura);
                     }
                     break;
                 case "aura+p":
@@ -126,12 +116,13 @@ public class JHCombat() : MessageHandler<JSONMessage>(new()
 
         message.HostWorld.Auras.Add(aura);
 
-        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, aura);
-
         if (aura.Name.Equals("Skill Locked"))
         {
             message.HostWorld.LockSkill(aura);
         }
+        
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, aura);
+        MSVCVisualizer.Instance.AddRecordObject(message.Identifier.Codename, aura);
     }
 
     private static void RemoveAura(JSONMessage message, JsonObject auraObject, string sourceData, string targetData)
@@ -141,12 +132,22 @@ public class JHCombat() : MessageHandler<JSONMessage>(new()
 
         message.HostWorld.Auras.Remove(aura);
 
-        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, aura);
-
         if (aura.Name.Equals("Skill Locked"))
         {
             message.HostWorld.UnlockSkill(aura);
         }
+        
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, aura);
+    }
+    
+    private static void SendCombatMessage(JSONMessage message, JsonObject auraObject)
+    {
+        CombatMessage msg = auraObject.Deserialize<CombatMessage>()!;
+        msg.Text = auraObject["msgOn"].Deserialize<string>() ?? auraObject["msgOff"].Deserialize<string>() ?? "";
+        msg.RealignHeader(message.HostWorld.Area);
+
+        MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, msg);
+        MSVCVisualizer.Instance.AddRecordObject(message.Identifier.Codename, msg);
     }
     #endregion
 

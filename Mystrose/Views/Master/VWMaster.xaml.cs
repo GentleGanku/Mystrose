@@ -39,7 +39,7 @@ public partial class VWMaster : MystWindow
     #endregion
 
     #region Methods: Setup
-    private void CheckupServices()
+    private void CheckUpServices()
     {
         Service[] services =
         [
@@ -53,6 +53,27 @@ public partial class VWMaster : MystWindow
             MSVCVisualizer.Instance, 
             MSVCWorld.Instance, 
         ];
+    }
+
+    private void CheckOutServices()
+    {
+        Service[] services =
+        [
+            HSVCLogger.Instance,
+            HSVCRepository.Instance,
+            HSVCSettings.Instance,
+            MSVCGame.Instance,
+            MSVCInterceptor.Instance,
+            MSVCScript.Instance, 
+            MSVCView.Instance, 
+            MSVCVisualizer.Instance, 
+            MSVCWorld.Instance, 
+        ];
+
+        foreach (var service in services)
+        {
+            service.Deconstruct();
+        }
     }
     #endregion
 
@@ -168,7 +189,7 @@ public partial class VWMaster : MystWindow
 
     private void OnContentRendered(object? sender, EventArgs e)
     {
-        CheckupServices();
+        CheckUpServices();
     }
 
     protected void OnClosing(object? sender, CancelEventArgs e)
@@ -181,6 +202,7 @@ public partial class VWMaster : MystWindow
             {
                 HSVCRepository.Instance.Flush();
                 MSVCView.Instance.UnrenderAll();
+                CheckOutServices();
                 e.Cancel = false;
             },
             () => e.Cancel = true,

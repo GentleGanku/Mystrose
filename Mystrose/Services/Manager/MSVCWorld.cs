@@ -58,7 +58,7 @@ public class MSVCWorld() : ManagerService<World>(nameof(MSVCWorld))
     #endregion
 
     #region Methods: Read/Write
-    public Response<World?> Activate(string codename, string serverName)
+    public Response<World?> Activate(string codename)
     {
         if (Items.TryGetValue(codename, out World? world) && world is not null)
         {
@@ -68,10 +68,26 @@ public class MSVCWorld() : ManagerService<World>(nameof(MSVCWorld))
         }
 
         ClientInstanceIdentifier identifier = new(codename);
+        Items[codename] = new(identifier);
+
+        return new(true,
+            $"World with the codename {codename} has been activated.",
+            world);
+    }
+    
+    public Response<World?> Activate(string codename, string serverName)
+    {
+        if (Items.TryGetValue(codename, out World? world) && world is not null)
+        {
+            return new(false,
+                $"World with the codename {codename} is already activated.",
+                world);
+        }
+        
         List<Server> servers = HSVCRepository.Instance.Models[nameof(Server)].Get<Server>();
         Server server = servers.Find(s => s.Name.Equals(serverName))!;
 
-        Items[codename] = new(identifier, server);
+        Items[codename]!.RefreshServer(server);
 
         ActivatedWorldEvent?.Invoke(codename, Items[codename]);
 
@@ -88,8 +104,7 @@ public class MSVCWorld() : ManagerService<World>(nameof(MSVCWorld))
                 $"World with the codename {codename} is already deactivated.",
                 world);
         }
-
-        Items[codename]!.Destruct();
+        
         Items[codename] = null;
 
         DeactivatedWorldEvent?.Invoke(codename, null);

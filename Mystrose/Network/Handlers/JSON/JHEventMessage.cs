@@ -14,6 +14,7 @@ public class JHEventMessage() : MessageHandler<JSONMessage>(new()
             EventMessage evtMsg = new(eventObj.Key, eventObj.Value);
 
             MSVCScript.Instance.InvokeTrigger(message.Identifier.Codename, evtMsg);
+            MSVCVisualizer.Instance.AddRecordObject(message.Identifier.Codename, evtMsg);
         }
     }
     #endregion

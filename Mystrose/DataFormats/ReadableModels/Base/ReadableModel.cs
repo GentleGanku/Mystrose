@@ -5,14 +5,14 @@ public abstract class ReadableModel<T>(T model, World world) : IReadableModel wh
 
     #region Properties
     [JsonIgnore]
-    protected T Model
+    public T Model
     {
         get;
         init;
     } = model;
     
     [JsonIgnore]
-    protected World World
+    public World World
     {
         get;
         init;
@@ -27,6 +27,11 @@ public abstract class ReadableModel<T>(T model, World world) : IReadableModel wh
     #endregion
     
     #region Abstract Methods
+    public object ToObject()
+    {
+        return Model;
+    }
+    
     public abstract override string ToString();
     #endregion
 

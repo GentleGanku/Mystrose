@@ -24,7 +24,13 @@ public class RMCombatMessage : ReadableModel<CombatMessage>
     #region Methods: Overrides
     public override string ToString()
     {
-        return $"[{Target_ID}] {Text}";
+        string entitiesResponsible = Source_ID.Equals(Target_ID) ? 
+            $"On {Target_Type.ToLower()} {Target_ID}" : 
+            $"From {Source_Type.ToLower()} {Source_ID} to {Target_Type.ToLower()} {Target_ID}";
+        string textLabel = string.IsNullOrEmpty(Text) ? 
+            ": No text provided" : 
+            $": {Text}";
+        return $"{Animation_Label} | {entitiesResponsible}{textLabel}";
     }
     #endregion
 

@@ -96,7 +96,7 @@ public partial class PNLHome : MystPanel
     {
         switch (key)
         {
-            case SettingOption.SkippableHome:
+            case SettingOption.SkippableHomeScreen:
                 CHBBTN_IsHomeSkippable.IsChecked = option.Get<bool>();
                 break;
         }
@@ -121,7 +121,7 @@ public partial class PNLHome : MystPanel
         switch (checkBox.Name)
         {
             case "CHBBTN_IsHomeSkippable":
-                Response<Option?> responseIsHomeSkippable = HSVCSettings.Instance.Write(SettingOption.SkippableHome, checkBox.IsChecked!);
+                Response<Option?> responseIsHomeSkippable = HSVCSettings.Instance.Write(SettingOption.SkippableHomeScreen, checkBox.IsChecked!);
                 HSVCLogger.Instance.LogOnTrace(responseIsHomeSkippable.Message);
                 break;
         }

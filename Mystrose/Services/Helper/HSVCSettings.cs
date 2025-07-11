@@ -44,7 +44,7 @@ public class HSVCSettings() : HelperService(nameof(HSVCSettings))
             "Maximizes the main window after the app opens.", 
             true, 
             false),
-        [SettingOption.SkippableHome] = new(JsonSerializer.Serialize(SettingOption.SkippableHome), 
+        [SettingOption.SkippableHomeScreen] = new(JsonSerializer.Serialize(SettingOption.SkippableHomeScreen), 
             "Immediately redirects to the game screen after the app opens.", 
             true, 
             false),
@@ -94,12 +94,24 @@ public class HSVCSettings() : HelperService(nameof(HSVCSettings))
     {
         try
         {
-            string jsonDictionary = JsonSerializer.Serialize(new Dictionary<string, Option>()
+            string jsonDictionary = JsonSerializer.Serialize(new Dictionary<SettingOption, Option>()
             {
-                ["firstTime"] = new("First-Time User", "Brings the user to the app's introduction board.", false, true),
-                ["maximizedMainWindow"] = new("Maximized App Window on Startup", "Maximizes the main window after the app opens.", true, false),
-                ["skippableHome"] = new("Home Skip", "Immediately redirects to the game screen after the app opens.", true, false),
-                ["debugNetwork"] = new("Network Debugging", "Enables network debugging.", false, false)
+                [SettingOption.FirstTime] = new(JsonSerializer.Serialize(SettingOption.FirstTime), 
+                    "Brings the user to the app's introduction board.", 
+                    false, 
+                    true),
+                [SettingOption.MaximizedMainWindow] = new(JsonSerializer.Serialize(SettingOption.MaximizedMainWindow), 
+                    "Maximizes the main window after the app opens.", 
+                    true, 
+                    false),
+                [SettingOption.SkippableHomeScreen] = new(JsonSerializer.Serialize(SettingOption.SkippableHomeScreen), 
+                    "Immediately redirects to the game screen after the app opens.", 
+                    true, 
+                    false),
+                [SettingOption.DebugNetwork] = new(JsonSerializer.Serialize(SettingOption.DebugNetwork), 
+                    "Enables network debugging.", 
+                    false, 
+                    false)
             }, _serializerOptions);
             File.WriteAllText(_pathToSettings, jsonDictionary);
 
@@ -126,7 +138,6 @@ public class HSVCSettings() : HelperService(nameof(HSVCSettings))
                 }
 
                 option.Set(setting.Value.Value.ToString()!);
-
                 SettingsEvent?.Invoke(setting.Key, option);
             }
 

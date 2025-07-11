@@ -1,23 +1,23 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--  Brushes  -->
-    <SolidColorBrush x:Key="FG_Message_Neutral" Color="Gray" />
-    <SolidColorBrush x:Key="FG_Message_Json" Color="DeepSkyBlue" />
-    <SolidColorBrush x:Key="FG_Message_Xml" Color="LightYellow" />
-    <SolidColorBrush x:Key="FG_Message_Xt" Color="LightCoral" />
-    <SolidColorBrush x:Key="FG_Message_Zm" Color="LightGreen" />
+    <SolidColorBrush Color="Gray" x:Key="FG_Message_Neutral" />
+    <SolidColorBrush Color="DeepSkyBlue" x:Key="FG_Message_Json" />
+    <SolidColorBrush Color="LightYellow" x:Key="FG_Message_Xml" />
+    <SolidColorBrush Color="LightCoral" x:Key="FG_Message_Xt" />
+    <SolidColorBrush Color="LightGreen" x:Key="FG_Message_Zm" />
 
-    <SolidColorBrush x:Key="FG_Model_Auras" Color="#60AFFF" />
-    <SolidColorBrush x:Key="FG_Model_Cells" Color="#C9E3AC" />
-    <SolidColorBrush x:Key="FG_Model_CombatMessages" Color="#B74F6F" />
-    <SolidColorBrush x:Key="FG_Model_EventMessages" Color="#0075C4" />
-    <SolidColorBrush x:Key="FG_Model_Factions" Color="#A06CD5" />
-    <SolidColorBrush x:Key="FG_Model_InventoryItems" Color="#09814A" />
-    <SolidColorBrush x:Key="FG_Model_ItemDrops" Color="#F3B700" />
-    <SolidColorBrush x:Key="FG_Model_Monsters" Color="#E01A4F" />
-    <SolidColorBrush x:Key="FG_Model_Players" Color="#FFD97D" />
-    <SolidColorBrush x:Key="FG_Model_Quests" Color="#AAFCB8" />
-    <SolidColorBrush x:Key="FG_Model_ShopItems" Color="#AEB8FE" />
-    <SolidColorBrush x:Key="FG_Model_Skills" Color="#FFACE4" />
+    <SolidColorBrush Color="#77BBFF" x:Key="FG_Model_Auras" />
+    <SolidColorBrush Color="#D1E7B7" x:Key="FG_Model_Cells" />
+    <SolidColorBrush Color="#C16782" x:Key="FG_Model_CombatMessages" />
+    <SolidColorBrush Color="#008FEF" x:Key="FG_Model_EventMessages" />
+    <SolidColorBrush Color="#AE81DB" x:Key="FG_Model_Factions" />
+    <SolidColorBrush Color="#0CB268" x:Key="FG_Model_InventoryItems" />
+    <SolidColorBrush Color="#FFC61C" x:Key="FG_Model_ItemDrops" />
+    <SolidColorBrush Color="#E83766" x:Key="FG_Model_Monsters" />
+    <SolidColorBrush Color="#FFDE92" x:Key="FG_Model_Players" />
+    <SolidColorBrush Color="#B7FCC3" x:Key="FG_Model_Quests" />
+    <SolidColorBrush Color="#BAC2FE" x:Key="FG_Model_ShopItems" />
+    <SolidColorBrush Color="#FFB9E8" x:Key="FG_Model_Skills" />
 
 </ResourceDictionary>

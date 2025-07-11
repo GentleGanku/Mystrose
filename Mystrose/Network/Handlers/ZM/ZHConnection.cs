@@ -28,14 +28,12 @@ public class ZHConnection() : MessageHandler<ZMMessage>(new()
         string loginInfoString = message.RawContent.Split("[INFO]")[1];
         JsonObject loginInfo = JsonSerializer.Deserialize<JsonObject>(loginInfoString)!;
 
-        message.HostWorld.Avatar = new()
-        {
-            MemberDays = loginInfo["iUpgDays"]!.GetValue<int>(),
-            Level = loginInfo["iLevel"]!.GetValue<int>(),
-            AccessType = (AccessType)loginInfo["iAccess"]!.GetValue<int>(),
-            Username = loginInfo["unm"]!.GetValue<string>(),
-            UserID = loginInfo["userid"]!.GetValue<int>()
-        };
+        message.HostWorld.Avatar.Username = loginInfo["unm"]!.GetValue<string>();
+        message.HostWorld.Avatar.Name = message.HostWorld.Avatar.Username.ToLower();
+        message.HostWorld.Avatar.UserID = loginInfo["userid"]!.GetValue<int>();
+        message.HostWorld.Avatar.AccessType = (AccessType)loginInfo["iAccess"]!.GetValue<int>();
+        message.HostWorld.Avatar.MemberDays = loginInfo["iUpgDays"]!.GetValue<int>();
+        message.HostWorld.Avatar.Level = loginInfo["iLevel"]!.GetValue<int>();
     }
 
     private static void HandleDisconnection(ZMMessage message)
@@ -47,7 +45,7 @@ public class ZHConnection() : MessageHandler<ZMMessage>(new()
             return;
         }
 
-        MSVCWorld.Instance.Deactivate(message.Identifier.Codename);
+        MSVCWorld.Instance.Activate(message.Identifier.Codename);
     }
     #endregion
 

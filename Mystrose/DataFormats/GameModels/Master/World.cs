@@ -1,24 +1,10 @@
 ﻿namespace Mystrose.DataFormats.GameModels.Master;
 
-public class World : GameObject
+public class World(ClientInstanceIdentifier? identifier = null) : GameObject
 {
 
-    #region Constructor
-    public World()
-    {
-        _identifier = new();
-        Server = new();
-    }
-    
-    public World(ClientInstanceIdentifier identifier, Server server)
-    {
-        _identifier = identifier;
-        Server = server;
-    }
-    #endregion
-
     #region (Private) Fields
-    private ClientInstanceIdentifier _identifier;
+    private readonly ClientInstanceIdentifier _identifier = identifier ?? new();
     #endregion
 
     #region Fields
@@ -31,118 +17,102 @@ public class World : GameObject
     {
         get;
         set;
-    }
+    } = new();
 
     public MainAvatar Avatar
     {
         get;
-        set;
-    }
+        init;
+    } = new();
 
     public Dictionary<InventoryType, InventoryManager> Inventories
     {
         get;
-        set;
-    }
+        init;
+    } = new()
+    {
+        [InventoryType.Base] = new(99),
+        [InventoryType.Temp] = new(99),
+        [InventoryType.House] = new(99),
+        [InventoryType.Bank] = new(99)
+    };
 
     public BoostStatuses Boosts
     {
         get;
         set;
-    }
+    } = new();
 
     public ActiveSkills Skills
     {
         get;
         set;
-    }
+    } = new([]);
 
     public AuraDictionary Auras
     {
         get;
-        set;
-    }
+        init;
+    } = new();
 
     public Party Party
     {
         get;
         set;
-    }
+    } = new();
 
     public Area Area
     {
         get;
         set;
-    }
+    } = new();
 
     public Shop Shop
     {
         get;
         set;
-    }
+    } = new();
 
     public Shop EnhancementShop
     {
         get;
         set;
-    }
+    } = new();
 
     public List<Faction> Factions
     {
         get;
-        set;
-    }
+        init;
+    } = [];
 
     public List<Quest> Quests
     {
         get;
-        set;
-    }
+        init;
+    } = [];
 
     public List<BaseItem> Drops
     {
         get;
-        set;
-    }
-    #endregion
-
-    #region Methods: Setup
-    public void Destruct()
-    {
-        Inventories.Clear();
-        Skills.Clear();
-        Auras.Clear();
-        Factions.Clear();
-        Quests.Clear();
-        Drops.Clear();
-    }
+        init;
+    } = [];
     #endregion
 
     #region Methods: Actions
+    public void RefreshServer(Server server)
+    {
+        Server = server;
+    }
+    
     public void RefreshAvatar(MainAvatar avatar)
     {
-        int memberDays = Avatar.MemberDays;
-        AccessType accessType = Avatar.AccessType;
-        string username = Avatar.Username;
-        int userId = Avatar.UserID;
-        int level = Avatar.Level;
+        JsonObject avatarJson = JsonSerializer.Deserialize<JsonObject>(JsonSerializer.Serialize(avatar))!;
 
-        Avatar = avatar;
-        Avatar.MemberDays = memberDays;
-        Avatar.AccessType = accessType;
-        Avatar.Username = username;
-        Avatar.UserID = userId;
-        Avatar.Level = level;
+        Avatar.SetProperties(avatarJson);
 
-        Inventories = new()
-        {
-            [InventoryType.Base] = new(Avatar.InventorySlots),
-            [InventoryType.Temp] = new(99),
-            [InventoryType.House] = new(Avatar.HouseSlots),
-            [InventoryType.Bank] = new(Avatar.BankSlots)
-        };
-
-        Auras = new();
+        Inventories[InventoryType.Base].TotalSlots = Avatar.InventorySlots;
+        Inventories[InventoryType.House].TotalSlots = Avatar.HouseSlots;
+        Inventories[InventoryType.Bank].TotalSlots = Avatar.BankSlots;
     }
 
     public void LockSkill(Aura aura)

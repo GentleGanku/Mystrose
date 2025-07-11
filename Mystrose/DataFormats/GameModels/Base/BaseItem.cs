@@ -38,6 +38,7 @@ public class BaseItem : GameObject
     /// An integer representing the item's ID.
     /// </returns>
     [JsonPropertyName("ItemID")]
+    [JsonConverter(typeof(StringIntConverter))]
     public int ID
     {
         get;
@@ -65,6 +66,7 @@ public class BaseItem : GameObject
     /// An integer representing the item's level.
     /// </returns>
     [JsonPropertyName("iLvl")]
+    [JsonConverter(typeof(StringIntConverter))]
     public int Level
     {
         get;
@@ -104,6 +106,7 @@ public class BaseItem : GameObject
     /// An integer representing the item's maximum quantity.
     /// </returns>
     [JsonPropertyName("iStk")]
+    [JsonConverter(typeof(StringIntConverter))]
     public int MaxStack
     {
         get;

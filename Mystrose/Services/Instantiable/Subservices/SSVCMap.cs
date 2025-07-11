@@ -83,6 +83,11 @@ public class SSVCMap(ISVCFlashAPI service) : Subservice<ISVCFlashAPI>(service)
     {
         return Execute(() => GetRoomID());
     }
+
+    public Cell[] GetCells()
+    {
+        return Execute(() => Service.GetGameObject<Cell[]>("world.map.currentScene.labels"));
+    }
     #endregion
 
     #region Methods: Overrides

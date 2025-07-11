@@ -32,7 +32,7 @@ public class RMInventoryItem : ReadableModel<InventoryItem>
     #region Methods: Overrides
     public override string ToString()
     {
-        return $"[{ID}] {Name}";
+        return $"{Name} | {Category_Type} / ID {ID}";
     }
     #endregion
 

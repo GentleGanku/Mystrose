@@ -27,6 +27,7 @@ public class Shop : GameObject
     /// An integer representing the shop's ID.
     /// </returns>
     [JsonPropertyName("ShopID")]
+    [JsonConverter(typeof(StringIntConverter))]
     public int ID
     {
         get;

@@ -45,7 +45,7 @@ public class RMAvatar : ReadableModel<Avatar>
     #region Methods: Overrides
     public override string ToString()
     {
-        return $"{Name} (Level: {Level})";
+        return $"{Name} | In {Cell}, {Pad}";
     }
     #endregion
 

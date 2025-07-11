@@ -12,14 +12,14 @@ public class RMEventMessage : ReadableModel<EventMessage>
     #endregion
 
     #region Properties
-    public string Signature_Header => Model.Sign;
+    public string Sign => Model.Sign;
     public string Value => Model.Value;
     #endregion
 
     #region Methods: Overrides
     public override string ToString()
     {
-        return $"{Signature_Header} | {Value}";
+        return $"{Sign} | Highlights for {Value}";
     }
     #endregion
 

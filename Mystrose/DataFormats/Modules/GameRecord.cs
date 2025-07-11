@@ -1,13 +1,13 @@
 ﻿namespace Mystrose.DataFormats.Modules;
 
-public class GameRecord<T> where T : GameObject
+public class GameRecord
 {
 
     #region Constructor
-    public GameRecord(bool isTemporary, params T[] objects)
+    public GameRecord(bool isTemporary, params GameObject[] objects)
     {
         IsTemporary = isTemporary;
-        Objects = new List<T>(objects);
+        Objects = new List<(DateTime, GameObject)>(objects.Select(obj => (DateTime.Now, obj)));
     }
     #endregion
 
@@ -15,20 +15,37 @@ public class GameRecord<T> where T : GameObject
     public bool IsTemporary
     {
         get;
-        set;
+        init;
     }
 
-    public List<T> Objects
+    public List<(DateTime, GameObject)> Objects
     {
         get;
-        set;
+        init;
     }
     #endregion
 
-    #region Methods
-    public void Add(T obj)
+    #region Fields
+    public (DateTime, GameObject) this[int index]
     {
-        Objects.Add(obj);
+        get => Objects[index];
+    }
+    #endregion
+
+    #region Getters
+    public (DateTime, T)[] GetObjects<T>() where T : GameObject
+    {
+        return Objects
+            .Where(o => o.Item2 is T)
+            .Select(o => (o.Item1, (T)o.Item2))
+            .ToArray();
+    }
+    #endregion
+    
+    #region Methods
+    public void Add(GameObject obj)
+    {
+        Objects.Add(new (DateTime.Now, obj));
     }
 
     public void Expire()

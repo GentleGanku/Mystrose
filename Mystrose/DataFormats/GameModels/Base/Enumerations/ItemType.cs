@@ -22,6 +22,8 @@ public enum ItemType
     [EnumMember(Value = "Bow")]
     Bow,
     [EnumMember(Value = "Crossbow")]
+    Crossbow,
+    [EnumMember(Value = "Mace")]
     Mace,
     [EnumMember(Value = "Polearm")]
     Polearm,

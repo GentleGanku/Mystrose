@@ -3,12 +3,12 @@
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum SettingOption
 {
-    [EnumMember(Value = "First-Time User")]
+    [EnumMember(Value = "isFirstTimeUser")]
     FirstTime,
-    [EnumMember(Value = "Maximized App Window on Startup")]
+    [EnumMember(Value = "hasMaximizedAppWindowOnStartup")]
     MaximizedMainWindow,
-    [EnumMember(Value = "Home Skip")]
-    SkippableHome,
-    [EnumMember(Value = "Network Debugging")]
+    [EnumMember(Value = "isHomeScreenSkippable")]
+    SkippableHomeScreen,
+    [EnumMember(Value = "enableNetworkDebugging")]
     DebugNetwork
 }

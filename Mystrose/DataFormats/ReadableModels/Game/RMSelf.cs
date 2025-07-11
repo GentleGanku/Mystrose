@@ -43,7 +43,7 @@ public class RMSelf : ReadableModel<MainAvatar>
     #region Methods: Overrides
     public override string ToString()
     {
-        return $"{Model.Name} (State: {State})";
+        return $"{Model.Name}";
     }
     #endregion
 

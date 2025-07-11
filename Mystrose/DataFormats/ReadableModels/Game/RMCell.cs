@@ -20,7 +20,7 @@ public class RMCell : ReadableModel<Cell>
     #region Methods: Overrides
     public override string ToString()
     {
-        return $"{Name}";
+        return $"{Name} | {Model.MapItems.Count} map items";
     }
     #endregion
 

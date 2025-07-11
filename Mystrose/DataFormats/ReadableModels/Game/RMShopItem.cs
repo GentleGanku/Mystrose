@@ -32,7 +32,7 @@ public class RMShopItem : ReadableModel<ShopItem>
     #region Methods: Overrides
     public override string ToString()
     {
-        return $"[{Shop_Item_ID}] {Name}";
+        return $"{Name} | {Category_Type} / SIID {Shop_Item_ID}";
     }
     #endregion
 

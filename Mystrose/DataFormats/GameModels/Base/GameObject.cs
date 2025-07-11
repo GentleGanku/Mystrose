@@ -72,7 +72,7 @@ public abstract class GameObject
         }
 
         PropertyInfo? propInfo = GetProperty(key);
-        if (propInfo is null)
+        if (propInfo is null || !propInfo.CanWrite)
         {
             return;
         }

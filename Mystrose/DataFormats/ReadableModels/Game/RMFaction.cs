@@ -26,7 +26,7 @@ public class RMFaction : ReadableModel<Faction>
     #region Methods: Overrides
     public override string ToString()
     {
-        return $"{Name}";
+        return $"{Name} | Rank {Rank}";
     }
     #endregion
 

@@ -42,7 +42,7 @@ public class RMMonster : ReadableModel<Monster>
     #region Methods: Overrides
     public override string ToString()
     {
-        return $"[{Monster_Map_ID}] {Name}";
+        return $"{Name} | MMID {Monster_Map_ID} / In {Cell}";
     }
     #endregion
 

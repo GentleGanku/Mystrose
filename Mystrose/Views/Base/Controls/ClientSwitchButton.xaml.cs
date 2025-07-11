@@ -58,6 +58,49 @@ public partial class ClientSwitchButton : UserControl
     }
     #endregion
 
+    #region Methods: Action
+    public void RemoveInstance(string codename)
+    {
+        if (string.IsNullOrEmpty(codename))
+        {
+            return;
+        }
+
+        foreach (string item in CB_Item.Items)
+        {
+            if (item.Equals(codename))
+            {
+                CB_Item.Items.Remove(item);
+                break;
+            }
+        }
+
+        UnselectInstance();
+    }
+    
+    public void SelectInstance(string codename)
+    {
+        if (string.IsNullOrEmpty(codename))
+        {
+            return;
+        }
+
+        foreach (string item in CB_Item.Items)
+        {
+            if (item.Equals(codename))
+            {
+                CB_Item.SelectedItem = item;
+                break;
+            }
+        }
+    }
+    
+    public void UnselectInstance()
+    {
+        CB_Item.SelectedIndex = CB_Item.Items.Count > 0 ? 0 : -1;
+    }
+    #endregion
+    
     #region Methods: Service Handlers
     private void ManageCodename(string codename, HSTGame? game)
     {

@@ -155,6 +155,11 @@ public partial class InstancePresenterGrid : UserControl
     private void RemoveIncomingInstance(string codename, HSTGame? game)
     {
         RemoveInstance(codename);
+
+        MSVCScript.Instance.Deactivate(codename);
+        MSVCInterceptor.Instance.ActiveCollection[codename] = [];
+        MSVCVisualizer.Instance.RefreshGameRecord(codename);
+        MSVCWorld.Instance.Deactivate(codename);
     }
 
     private void SelectIncomingInstance(string codename, HSTGame? game)
@@ -169,6 +174,8 @@ public partial class InstancePresenterGrid : UserControl
         MSVCGame.Instance.ActivatedGameEvent += AddIncomingInstance;
         MSVCGame.Instance.DeactivatedGameEvent += RemoveIncomingInstance;
         MSVCGame.Instance.SelectedGameEvent += SelectIncomingInstance;
+        
+        MSVCGame.Instance.Construct();
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs e)

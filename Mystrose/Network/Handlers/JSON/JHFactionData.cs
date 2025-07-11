@@ -12,7 +12,7 @@ public class JHFactionData() : MessageHandler<JSONMessage>(new()
     {
         List<Faction> factions = JsonSerializer.Deserialize<List<Faction>>(message.DataObject["factions"])!;
 
-        message.HostWorld.Factions = new(factions);
+        message.HostWorld.Factions.AddRange(factions);
     }
 
     private static void HandleAddFaction(JSONMessage message)

@@ -4,7 +4,7 @@ public class SSVCDrop(ISVCFlashAPI service) : Subservice<ISVCFlashAPI>(service)
 {
     
     #region Methods: Service
-    public bool Accept(BaseItem item)
+    public bool AcceptDrop(BaseItem item)
     {
         return Execute(() =>
         {
@@ -13,7 +13,16 @@ public class SSVCDrop(ISVCFlashAPI service) : Subservice<ISVCFlashAPI>(service)
         });
     }
     
-    public void RejectAll()
+    public bool AcceptDrop(int itemId)
+    {
+        return Execute(() =>
+        {
+            int roomId = Service.Map.GetRoomID();
+            return Service.SendToServer($"%xt%zm%getDrop%{roomId}%{itemId}%");
+        });
+    }
+    
+    public void RejectAllDrops()
     {
         Execute(() =>
         {
@@ -21,11 +30,23 @@ public class SSVCDrop(ISVCFlashAPI service) : Subservice<ISVCFlashAPI>(service)
         });
     }
     
-    public void RejectExcept(params string[] itemNames)
+    public void RejectDropsExcept(params string[] itemNames)
     {
         Execute(() =>
         {
             Service.Call("rejectExcept", itemNames.Select(n => n.ToLower()));
+        });
+    }
+    
+    public void RejectDrop(string itemName)
+    {
+        Execute(() =>
+        {
+            string[] exceptions = [.. MSVCWorld.Instance.ActiveCollection[Service.Identifier.Codename]!.Drops
+                .Where(d => !d.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase))
+                .Select(d => d.Name.ToLower())];
+            
+            Service.Call("rejectExcept", exceptions);
         });
     }
     #endregion

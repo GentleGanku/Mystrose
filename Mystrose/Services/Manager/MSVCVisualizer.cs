@@ -2,7 +2,7 @@
 
 namespace Mystrose.Services;
 
-public class MSVCVisualizer() : ManagerService<List<GameRecord<GameObject>>>(nameof(MSVCVisualizer))
+public class MSVCVisualizer() : ManagerService<GameRecord>(nameof(MSVCVisualizer))
 {
 
     #region Delegates & Handlers
@@ -46,17 +46,17 @@ public class MSVCVisualizer() : ManagerService<List<GameRecord<GameObject>>>(nam
 
             _timer.Elapsed += OnTimerElapse;
 
-            RecordEvent += AddRecordObject;
-
-            foreach (var pair in Items)
+            Items = new()
             {
-                Items[pair.Key] = new()
-                {
-                    [0] = new (true, []), // Aura
-                    [1] = new(true, []), // Combat Message
-                    [2] = new(true, []) // Event Message
-                };
-            }
+                ["Avernus"] = new(true, []),
+                ["Beatrix"] = new(true, []),
+                ["Cassiopeia"] = new(true, []),
+                ["Durandal"] = new(true, []),
+                ["Eligos"] = new(true, []),
+                ["Fenrir"] = new(true, []),
+                ["Gwyndell"] = new(true, []),
+                ["Harbinger"] = new(true, []),
+            };
 
             Log("World Visualizer constructed successfully.", "Construct");
         }
@@ -73,8 +73,6 @@ public class MSVCVisualizer() : ManagerService<List<GameRecord<GameObject>>>(nam
             _timer.Elapsed -= OnTimerElapse;
             _timer.Dispose();
 
-            RecordEvent -= AddRecordObject;
-
             Items.Clear();
 
             Log("World Visualizer deconstructed successfully.", "Deconstruct");
@@ -85,19 +83,19 @@ public class MSVCVisualizer() : ManagerService<List<GameRecord<GameObject>>>(nam
         }
     }
     #endregion
-
+    
     #region Methods: Read
     public Response<RMAura[]> GetAuraModels(string codename)
     {
-        if (!Items.TryGetValue(codename, out var records))
+        if (!Items.TryGetValue(codename, out var record))
         {
             return new(false,
                 $"World with the codename {codename} does not exist.",
                 []);
         }
 
-        RMAura[] models = [.. records![0].Objects.Select(aura => new RMAura((Aura)aura))];
-
+        RMAura[] models = [.. record!.GetObjects<Aura>().Select(aura => new RMAura(aura.Item2))];
+        
         return new(true,
             $"Aura models from {codename}'s World has been retrieved.",
             models);
@@ -105,14 +103,14 @@ public class MSVCVisualizer() : ManagerService<List<GameRecord<GameObject>>>(nam
 
     public Response<RMCombatMessage[]> GetCombatMessageModels(string codename)
     {
-        if (!Items.TryGetValue(codename, out var records))
+        if (!Items.TryGetValue(codename, out var record))
         {
             return new(false,
                 $"World with the codename {codename} does not exist.",
                 []);
         }
 
-        RMCombatMessage[] models = [.. records![1].Objects.Select(cbtMsg => new RMCombatMessage((CombatMessage)cbtMsg))];
+        RMCombatMessage[] models = [.. record!.GetObjects<CombatMessage>().Select(cbtMsg => new RMCombatMessage(cbtMsg.Item2))];
 
         return new(true,
             $"Combat Message models from {codename}'s World has been retrieved.",
@@ -121,14 +119,14 @@ public class MSVCVisualizer() : ManagerService<List<GameRecord<GameObject>>>(nam
 
     public Response<RMEventMessage[]> GetEventMessageModels(string codename)
     {
-        if (!Items.TryGetValue(codename, out var records))
+        if (!Items.TryGetValue(codename, out var record))
         {
             return new(false,
                 $"World with the codename {codename} does not exist.",
                 []);
         }
 
-        RMEventMessage[] models = [.. records![2].Objects.Select(evtMsg => new RMEventMessage((EventMessage)evtMsg))];
+        RMEventMessage[] models = [.. record!.GetObjects<EventMessage>().Select(evtMsg => new RMEventMessage(evtMsg.Item2))];
 
         return new(true,
             $"Event Message models from {codename}'s World has been retrieved.",
@@ -192,8 +190,17 @@ public class MSVCVisualizer() : ManagerService<List<GameRecord<GameObject>>>(nam
                 []);
         }
 
-        RMCell[] models = [.. world.Area.Format.Cells.Select(cell => new RMCell(cell, world))];
+        // RMCell[] models = [.. world.Area.Format.Cells.Select(cell => new RMCell(cell, world))];
 
+        if (!MSVCGame.Instance.Collection.TryGetValue(codename, out var game))
+        {
+            return new(false,
+                $"Game with the codename {codename} does not exist.",
+                []);
+        }
+        
+        RMCell[] models = [.. game.FlashAPI.Map.GetCells().Select(cell => new RMCell(cell, world))];
+        
         return new(true,
             $"Cell models from {codename}'s World has been retrieved.",
             models);
@@ -255,7 +262,7 @@ public class MSVCVisualizer() : ManagerService<List<GameRecord<GameObject>>>(nam
                 $"World with the codename {codename} does not exist.",
                 []);
         }
-
+        
         Dictionary<InventoryType, RMInventoryItem[]> models = new()
         {
             [InventoryType.Base] = [.. world.Inventories[InventoryType.Base].Values.Select(inventoryItem => new RMInventoryItem(inventoryItem, world))],
@@ -285,39 +292,65 @@ public class MSVCVisualizer() : ManagerService<List<GameRecord<GameObject>>>(nam
             models);
     }
     #endregion
-
-    #region Methods: Service Handlers
-    private void AddRecordObject(string codename, object recordObject)
+    
+    #region Methods: Write
+    public Response<GameRecord?> RefreshGameRecord(string codename)
     {
-        if (!Items.TryGetValue(codename, out List<GameRecord<GameObject>>? value))
+        if (!Items.TryGetValue(codename, out var record))
         {
-            return;
+            return new(false,
+                $"World with the codename {codename} does not exist.",
+                null);
+        }
+
+        Items[codename] = new(true, []);
+
+        return new(true,
+            $"World with the codename {codename} has been refreshed.",
+            Items[codename]);
+    }
+    
+    public Response<bool> AddRecordObject(string codename, object recordObject)
+    {
+        if (!Items.TryGetValue(codename, out var record))
+        {
+            return new(false,
+                $"World with the codename {codename} does not exist.",
+                false);
         }
 
         switch (recordObject)
         {
             case Aura aura:
-                value![0].Add(aura);
+                record!.Add(aura);
                 break;
             case CombatMessage combatMessage:
-                value![1].Add(combatMessage);
+                record!.Add(combatMessage);
                 break;
             case EventMessage eventMessage:
-                value![2].Add(eventMessage);
+                record!.Add(eventMessage);
                 break;
-
+            
             default:
-                return;
+                return new(false,       
+                    $"Record object of type {recordObject.GetType().Name} is not supported.",
+                    false);
         }
+        
+        RecordEvent?.Invoke(codename, recordObject);
+        
+        return new(true,
+            $"Record object of type {recordObject.GetType().Name} has been added to the world with codename {codename}.",
+            true);
     }
+    #endregion
 
+    #region Methods: Service Handlers
     private void OnTimerElapse(object? sender, ElapsedEventArgs e)
     {
-        foreach (var pair in Items)
+        foreach (var gameRecordPair in ActiveCollection)
         {
-            pair.Value![0].Expire();
-            pair.Value![1].Expire();
-            pair.Value![2].Expire();
+            gameRecordPair.Value!.Expire();
         }
     }
     #endregion

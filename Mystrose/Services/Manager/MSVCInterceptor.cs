@@ -36,6 +36,46 @@ public class MSVCInterceptor() : ManagerService<InterceptorMessage[]>(nameof(MSV
     };
     #endregion
 
+    #region Methods: Builder
+    public override void Construct()
+    {
+        try
+        {
+            Items = new()
+            {
+                ["Avernus"] = [],
+                ["Beatrix"] = [],
+                ["Cassiopeia"] = [],
+                ["Durandal"] = [],
+                ["Eligos"] = [],
+                ["Fenrir"] = [],
+                ["Gwyndell"] = [],
+                ["Harbinger"] = []
+            };
+
+            Log("Interceptor Manager constructed.", "Construct");
+        }
+        catch (Exception ex)
+        {
+            Log(ex.ToString(), "Construct");
+        }
+    }
+
+    public override void Deconstruct()
+    {
+        try
+        {
+            Items.Clear();
+
+            Log("Interceptor Manager deconstructed.", "Deconstruct");
+        }
+        catch (Exception ex)
+        {
+            Log(ex.ToString(), "Deconstruct");
+        }
+    }
+    #endregion
+    
     #region Methods: Interception
     public Response<bool> GetInterceptionStatus()
     {

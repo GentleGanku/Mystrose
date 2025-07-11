@@ -24,7 +24,7 @@ public class RMQuest : ReadableModel<Quest>
     #region Methods: Overrides
     public override string ToString()
     {
-        return $"[{ID}] {Name}";
+        return $"{Name} | ID {ID}";
     }
     #endregion
 

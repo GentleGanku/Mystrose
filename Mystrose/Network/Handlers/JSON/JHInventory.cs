@@ -16,7 +16,7 @@ public class JHInventory() : MessageHandler<JSONMessage>(new()
 
         message.HostWorld.Inventories[InventoryType.Base].AddRange(inventoryItems);
         message.HostWorld.Inventories[InventoryType.House].AddRange(houseInventoryItems);
-        message.HostWorld.Factions = new(factions);
+        message.HostWorld.Factions.AddRange(factions);
     }
 
     private static void HandleTurnIn(JSONMessage message)

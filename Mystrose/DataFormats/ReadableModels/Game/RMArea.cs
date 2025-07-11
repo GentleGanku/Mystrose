@@ -26,7 +26,7 @@ public class RMArea : ReadableModel<Area>
     #region Methods: Overrides
     public override string ToString()
     {
-        return $"{Name} (ID: {ID}, Instance: {Instance_Number})";
+        return $"{Name}-{Instance_Number} | {Player_Count_in_Area} players";
     }
     #endregion
 

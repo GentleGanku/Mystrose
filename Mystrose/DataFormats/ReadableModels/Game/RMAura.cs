@@ -33,7 +33,10 @@ public class RMAura : ReadableModel<Aura>
     #region Methods: Overrides
     public override string ToString()
     {
-        return $"[{Target_ID}] {Name}";
+        string entitiesResponsible = Source_ID.Equals(Target_ID) ? 
+            $"On {Target_Type.ToLower()} {Target_ID}" : 
+            $"From {Source_Type.ToLower()} {Source_ID} to {Target_Type.ToLower()} {Target_ID}";
+        return $"{Name} | {entitiesResponsible}";
     }
     #endregion
 

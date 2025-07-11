@@ -46,7 +46,7 @@ public abstract class ManagerService<T>(string name = "Default") : Service($"[Ma
     protected Dictionary<string, T?> Items
     {
         get;
-        init;
+        set;
     } = new()
     {
         ["Avernus"] = default,

@@ -4,21 +4,22 @@ namespace Mystrose.Views.WorldVisualizer.Controls;
 
 public partial class VisualizerItem : UserControl
 {
-
+    
     #region Constructor
-    public VisualizerItem(IReadableModel model, string groupType)
+    public VisualizerItem(IReadableModel? readableModel, string groupType)
     {
         InitializeComponent();
 
-        Model = model;
-        Label = model.ToString();
+        ReadableModel = readableModel;
+        Label = readableModel is not null ? readableModel.ToString() : "No data available.";
         GroupType = groupType;
     }
     #endregion
 
     #region (Private) Fields
-    private IReadableModel _model;
+    private IReadableModel? _readableModel;
     private string _label;
+    private string _context;
     private string _groupType;
     #endregion
 
@@ -27,16 +28,14 @@ public partial class VisualizerItem : UserControl
     {
         get => (MystWindow)Window.GetWindow(this);
     }
+
     #endregion
 
     #region Properties
-    public IReadableModel Model
+    public IReadableModel? ReadableModel
     {
-        get => _model;
-        set
-        {
-            _model = value;
-        }
+        get => _readableModel;
+        set { _readableModel = value; }
     }
 
     public string Label
@@ -44,11 +43,27 @@ public partial class VisualizerItem : UserControl
         get => _label;
         set
         {
-            _label = value;
-            TB_Label.Text = value;
+            string[] modelString = value.Split(" | ");
+            
+            _label = modelString[0];
+            TB_Label.Text = _label;
+            TB_Label.Opacity = _label == "No data available." ? 0.5 : 1;
+
+            Context = modelString.Length > 1 ? value.Split(" | ")[1] : "";
         }
     }
 
+    public string Context
+    {
+        get => _context;
+        set
+        {
+            _context = value;
+            TB_Context.Text = _context;
+            TB_Context.Visibility = string.IsNullOrEmpty(_context) ? Visibility.Collapsed : Visibility.Visible;
+        }
+    }
+    
     public string GroupType
     {
         get => _groupType;
@@ -60,31 +75,14 @@ public partial class VisualizerItem : UserControl
     }
     #endregion
 
-    #region Methods: Actions
-    public void ShowContextMenu()
-    {
-    }
-    #endregion
-
     #region Events: Read/Write
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        MouseRightButtonDown += OnMouseRightButtonDown;
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        MouseRightButtonDown -= OnMouseRightButtonDown;
     }
     #endregion
-
-    #region Events: Interface
-    private void OnMouseRightButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        if (e.RightButton == MouseButtonState.Pressed)
-        {
-        }
-    }
-    #endregion
-
+    
 }

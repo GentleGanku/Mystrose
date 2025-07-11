@@ -76,11 +76,12 @@ public class ISVCFlashAPI : InstantiableService
     #region (Private) Methods: Helper
     private void CheckupProgress(int percentile)
     {
-        if (percentile < 100)
+        if (percentile != 100)
         {
             return;
         }
 
+        MSVCWorld.Instance.Activate(Identifier.Codename);
         //SVCGameManager.InstanceSelect(_identifier.Codename);
     }
 

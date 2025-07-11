@@ -27,7 +27,7 @@ public class RMActiveSkill : ReadableModel<ActiveSkill>
     #region Methods: Overrides
     public override string ToString()
     {
-        return $"{Name} (Index: {Index})";
+        return $"{Name} | {NumberHelper.ToOrdinal(Index)} active skill";
     }
     #endregion
 

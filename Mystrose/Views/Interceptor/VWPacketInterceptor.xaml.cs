@@ -380,13 +380,28 @@ public partial class VWPacketInterceptor : MystWindow, IClientSwitcher
             LV_Packets.ScrollIntoView(message);
         });
     }
+    
+    public void DeactivateInstance(string codename, object? args)
+    {
+        if (!codename.Equals(SwitchButton.SelectedCodename))
+        {
+            return;
+        }
+
+        Response<Action> response = Invoke(() =>
+        {
+            SwitchButton.RemoveInstance(codename);
+        });
+    }
     #endregion
 
     #region Events: Read/Write
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        SwitchButton.Item.SelectionChanged += SwitchButton_SelectionChanged;
         MSVCInterceptor.Instance.InterceptEvent += AppendPacket;
+        MSVCGame.Instance.DeactivatedGameEvent += DeactivateInstance;
+        
+        SwitchButton.Item.SelectionChanged += SwitchButton_SelectionChanged;
 
         MBTN_CopySelected.Button.Click += MenuButton_Click;
         MBTN_CopyFormatted.Button.Click += MenuButton_Click;
@@ -401,9 +416,11 @@ public partial class VWPacketInterceptor : MystWindow, IClientSwitcher
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        SwitchButton.Item.SelectionChanged -= SwitchButton_SelectionChanged;
         MSVCInterceptor.Instance.InterceptEvent -= AppendPacket;
+        MSVCGame.Instance.DeactivatedGameEvent -= DeactivateInstance;
 
+        SwitchButton.Item.SelectionChanged -= SwitchButton_SelectionChanged;
+        
         MBTN_CopySelected.Button.Click -= MenuButton_Click;
         MBTN_CopyFormatted.Button.Click -= MenuButton_Click;
         MBTN_ClearCaptured.Button.Click -= MenuButton_Click;

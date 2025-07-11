@@ -14,7 +14,7 @@ public struct ClientInstanceIdentifier
     public string Codename
     {
         get;
-        set;
+        init;
     }
     #endregion
 

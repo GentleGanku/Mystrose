@@ -31,7 +31,7 @@ public class RMItemDrop : ReadableModel<BaseItem>
     #region Methods: Overrides
     public override string ToString()
     {
-        return $"[{ID}] {Name}";
+        return $"{Name} | ID {ID} - x{Quantity}";
     }
     #endregion
 
