@@ -7,55 +7,47 @@ public class ScriptOptions : ScriptParameter
 {
 
     #region Constructors
-    public ScriptOptions()
+    public ScriptOptions(string value, string hint = "") : base(value, hint)
     {
-        // Empty constructor for serialization and deserialization.
-    }
-
-    public ScriptOptions(object value, string? hint = null) : base(value, hint)
-    {
-        InputType = ScriptParameterInputType.Options;
-        Options = value.ToString()!;
+        Options = value;
     }
     #endregion
 
     #region Private Fields
-    private string _options;
+    private string _options = string.Empty;
     #endregion
 
     #region Properties
     /// <summary>
-    /// The parameter's list of values.
+    /// The parameter's input type.
     /// </summary>
     /// <returns>
-    /// A list representing the parameter's specific values.
+    /// An enumeration representing the parameter's input type.
+    /// </returns>
+    public override ScriptParameterInputType InputType
+    {
+        get => ScriptParameterInputType.Options;
+    }
+
+    /// <summary>
+    /// The parameter's set of options in string form.
+    /// </summary>
+    /// <returns>
+    /// A string representing the set of options.
     /// </returns>
     public string Options
     {
         get => _options;
-        set
+        protected set
         {
             _options = value;
-            List<string> list = GetOptionsList();
-            if (list.Count > 0)
+
+            string[] values = value.Split("/");
+            if (values.Length > 0 && String.Contains('/'))
             {
-                SetValue(list[0]);
+                Set(values[0]);
             }
         }
-    }
-    #endregion
-
-    #region Methods
-    public List<string> GetOptionsList()
-    {
-        return [.. Options.Split(" / ")];
-    }
-
-    public void Empty()
-    {
-        Options = string.Empty;
-
-        base.Empty();
     }
     #endregion
 

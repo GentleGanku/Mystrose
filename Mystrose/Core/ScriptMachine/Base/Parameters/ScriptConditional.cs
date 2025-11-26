@@ -7,151 +7,183 @@ public class ScriptConditional : ScriptParameter
 {
 
     #region Constructors
-    public ScriptConditional()
+    public ScriptConditional(ScriptConditionType condType, object value, string hint = "") : base(value, hint)
     {
-        // Empty constructor for serialization and deserialization.
-    }
-
-    public ScriptConditional(ScriptConditionalType condType) : base()
-    {
-        InputType = ScriptParameterInputType.Conditional;
-        SetCondition(condType);
-    }
-
-    public ScriptConditional(ScriptConditionalType condType, object value, string? hint = null) : base(value, hint)
-    {
-        InputType = ScriptParameterInputType.Conditional;
         SetCondition(condType);
     }
     #endregion
 
     #region Private Fields
-    private ScriptConditionalType? _condition;
+    private ScriptConditionType _condition = ScriptConditionType.Equal;
     #endregion
 
     #region Properties
+    /// <summary>
+    /// The parameter's input type.
+    /// </summary>
+    /// <returns>
+    /// An enumeration representing the parameter's input type.
+    /// </returns>
+    public override ScriptParameterInputType InputType 
+    {
+        get => ScriptParameterInputType.Conditional;
+    }
+
     /// <summary>
     /// The parameter's conditional type.
     /// </summary>
     /// <returns>
     /// An enumeration representing the parameter's conditional type.
     /// </returns>
-    public ScriptConditionalType? Condition
+    public ScriptConditionType Condition
     {
         get => _condition;
-        set
-        {
-            _condition = value;
-        }
+        protected set => SetCondition(value);
     }
     #endregion
 
-    #region Private Functions
-    private bool EvaluateString(string value, ScriptParameter target)
+    #region Methods: Utility
+    private bool EvaluateString(string targetValue, string inputValue)
     {
         return Condition switch
         {
-            ScriptConditionalType.Equal => value.Equals(target.String, StringComparison.OrdinalIgnoreCase),
-            ScriptConditionalType.NotEqual => !value.Equals(target.String, StringComparison.OrdinalIgnoreCase),
-            ScriptConditionalType.Include => value.Contains(target.String, StringComparison.OrdinalIgnoreCase),
-            ScriptConditionalType.Exclude => !value.Contains(target.String, StringComparison.OrdinalIgnoreCase),
+            ScriptConditionType.Equal => targetValue.Equals(inputValue, StringComparison.OrdinalIgnoreCase),
+            ScriptConditionType.NotEqual => !targetValue.Equals(inputValue, StringComparison.OrdinalIgnoreCase),
+
+            ScriptConditionType.Contains => targetValue.Contains(inputValue, StringComparison.OrdinalIgnoreCase),
+            ScriptConditionType.NotContains => !targetValue.Contains(inputValue, StringComparison.OrdinalIgnoreCase),
+            ScriptConditionType.StartsWith => targetValue.StartsWith(inputValue, StringComparison.OrdinalIgnoreCase),
+            ScriptConditionType.EndsWith => targetValue.EndsWith(inputValue, StringComparison.OrdinalIgnoreCase),
+
             _ => false
         };
     }
 
-    private bool EvaluateInteger(int value, ScriptParameter target)
+    private bool EvaluateInteger(int targetValue, int inputValue)
     {
         return Condition switch
         {
-            ScriptConditionalType.Equal => value == target.Integer,
-            ScriptConditionalType.NotEqual => value != target.Integer,
-            ScriptConditionalType.LessThanOrEqual => value <= target.Integer,
-            ScriptConditionalType.LessThan => value < target.Integer,
-            ScriptConditionalType.MoreThanOrEqual => value >= target.Integer,
-            ScriptConditionalType.MoreThan => value > target.Integer,
+            ScriptConditionType.Equal => targetValue == inputValue,
+            ScriptConditionType.NotEqual => targetValue != inputValue,
+
+            ScriptConditionType.LessThan => targetValue < inputValue,
+            ScriptConditionType.LessThanOrEqual => targetValue <= inputValue,
+            ScriptConditionType.MoreThan => targetValue > inputValue,
+            ScriptConditionType.MoreThanOrEqual => targetValue >= inputValue,
+
             _ => false
         };
     }
 
-    private bool EvaluateDouble(double value, ScriptParameter target)
+    private bool EvaluateDouble(double targetValue, double inputValue)
     {
         return Condition switch
         {
-            ScriptConditionalType.Equal => value == target.Double,
-            ScriptConditionalType.NotEqual => value != target.Double,
-            ScriptConditionalType.LessThanOrEqual => value <= target.Double,
-            ScriptConditionalType.LessThan => value < target.Double,
-            ScriptConditionalType.MoreThanOrEqual => value >= target.Double,
-            ScriptConditionalType.MoreThan => value > target.Double,
+            ScriptConditionType.Equal => targetValue == inputValue,
+            ScriptConditionType.NotEqual => targetValue != inputValue,
+
+            ScriptConditionType.LessThan => targetValue < inputValue,
+            ScriptConditionType.LessThanOrEqual => targetValue <= inputValue,
+            ScriptConditionType.MoreThan => targetValue > inputValue,
+            ScriptConditionType.MoreThanOrEqual => targetValue >= inputValue,
+
             _ => false
         };
     }
 
-    private bool EvaluateBool(bool value, ScriptParameter target)
+    private bool EvaluateBool(bool targetValue, bool inputValue)
     {
         return Condition switch
         {
-            ScriptConditionalType.Equal => value == target.Boolean,
-            ScriptConditionalType.NotEqual => value != target.Boolean,
+            ScriptConditionType.Equal => targetValue == inputValue,
+            ScriptConditionType.NotEqual => targetValue != inputValue,
+
             _ => false
         };
     }
     #endregion
 
     #region Methods
-    public void SetCondition(ScriptConditionalType condType)
+    public void SetCondition(ScriptConditionType conditionType)
     {
-        Condition = condType;
+        Condition = conditionType;
     }
 
-    public void SetCondition(string condType)
+    public void SetCondition(string conditionType)
     {
-        Condition = ScriptRepository.GetCondition(condType);
+        Condition = ScriptMachineParser.GetConditionType(conditionType);
     }
 
-    public void Empty()
+    public bool IsTrue(object value)
     {
-        Condition = null;
-
-        base.Empty();
-    }
-
-    public bool IsTrue(object value, ScriptParameter? alternative = null)
-    {
-        ScriptParameter target = alternative ?? this;
-
         switch (value)
         {
             case int intValue:
-                return EvaluateInteger(intValue, target);
+                return EvaluateInteger(intValue, Integer);
             case double doubleValue:
-                return EvaluateDouble(doubleValue, target);
+                return EvaluateDouble(doubleValue, Double);
             case bool boolValue:
-                return EvaluateBool(boolValue, target);
+                return EvaluateBool(boolValue, Boolean);
 
             case string stringValue:
-                if (int.TryParse(value.ToString(), out int parsedInt))
+                if (int.TryParse(stringValue, out int parsedInt))
                 {
-                    return EvaluateInteger(parsedInt, target);
+                    return EvaluateInteger(parsedInt, Integer);
                 }
-                else if (double.TryParse(value.ToString(), out double parsedDouble))
+                else if (double.TryParse(stringValue, out double parsedDouble))
                 {
-                    return EvaluateDouble(parsedDouble, target);
+                    return EvaluateDouble(parsedDouble, Double);
                 }
-                else if (bool.TryParse(value.ToString(), out bool parsedBool))
+                else if (bool.TryParse(stringValue, out bool parsedBool))
                 {
-                    return EvaluateBool(parsedBool, target);
+                    return EvaluateBool(parsedBool, Boolean);
                 }
-                return EvaluateString(stringValue, target);
+                return EvaluateString(stringValue, String);
 
             default:
                 return false;
         }
     }
 
-    public bool IsTrue(object value, bool reverse, ScriptParameter? alternative = null)
+    public bool IsTrue(ScriptParameter valueParameter)
     {
-        return reverse ? !IsTrue(value, alternative) : IsTrue(value, alternative);
+        switch (valueParameter.Value)
+        {
+            case int intValue:
+                return EvaluateInteger(intValue, Integer);
+            case double doubleValue:
+                return EvaluateDouble(doubleValue, Double);
+            case bool boolValue:
+                return EvaluateBool(boolValue, Boolean);
+
+            case string stringValue:
+                if (int.TryParse(stringValue, out int parsedInt))
+                {
+                    return EvaluateInteger(parsedInt, Integer);
+                }
+                else if (double.TryParse(stringValue, out double parsedDouble))
+                {
+                    return EvaluateDouble(parsedDouble, Double);
+                }
+                else if (bool.TryParse(stringValue, out bool parsedBool))
+                {
+                    return EvaluateBool(parsedBool, Boolean);
+                }
+                return EvaluateString(stringValue, String);
+
+            default:
+                return false;
+        }
+    }
+
+    public bool IsTrue(object value, bool reverse)
+    {
+        return !reverse ? IsTrue(value) : !IsTrue(value);
+    }
+
+    public bool IsTrue(ScriptParameter valueParameter, bool reverse)
+    {
+        return !reverse ? IsTrue(valueParameter.Value) : !IsTrue(valueParameter.Value);
     }
     #endregion
 

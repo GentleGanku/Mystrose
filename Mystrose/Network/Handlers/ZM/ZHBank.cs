@@ -1,4 +1,6 @@
-﻿namespace Mystrose.Network.Handlers.ZM;
+﻿using Mystrose.DataRecords.Game;
+
+namespace Mystrose.Network.Handlers.ZM;
 
 public class ZHBank() : MessageHandler<ZMMessage>(new()
 {

@@ -78,6 +78,7 @@ public partial class VisualizerItem : UserControl
     #region Events: Read/Write
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+        
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs e)

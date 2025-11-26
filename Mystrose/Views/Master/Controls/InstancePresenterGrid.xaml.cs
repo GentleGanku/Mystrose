@@ -130,6 +130,7 @@ public partial class InstancePresenterGrid : UserControl
             if (SelectedInstance is not null)
             {
                 SelectedInstance.Button.Appearance = ControlAppearance.Transparent;
+                SelectedInstance.RemoveButton.Appearance = ControlAppearance.Transparent;
             }
 
             if (string.IsNullOrEmpty(codename))
@@ -140,6 +141,7 @@ public partial class InstancePresenterGrid : UserControl
 
             InstanceButton? instanceButton = Instances.Find(i => i.NameText.Equals(codename));
             instanceButton!.Button.Appearance = ControlAppearance.Primary;
+            instanceButton!.RemoveButton.Appearance = ControlAppearance.Primary;
 
             SelectedInstance = instanceButton;
         });

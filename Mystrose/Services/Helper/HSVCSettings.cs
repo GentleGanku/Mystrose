@@ -29,26 +29,23 @@ public class HSVCSettings() : HelperService(nameof(HSVCSettings))
     #endregion
 
     #region Fields
-    private readonly string _pathToSettings = "settings.json";
-    private readonly JsonSerializerOptions _serializerOptions = new()
-    {
-        WriteIndented = true
-    };
+    private string _pathToFolder => "configs";
+    private string _pathToSettings => _pathToFolder + "\\settings.json";
     private readonly Dictionary<SettingOption, Option> _options = new()
     {
-        [SettingOption.FirstTime] = new(JsonSerializer.Serialize(SettingOption.FirstTime), 
+        [SettingOption.FirstTime] = new(JSONParser.Serialize(SettingOption.FirstTime), 
             "Brings the user to the app's introduction board.", 
             false, 
             true),
-        [SettingOption.MaximizedMainWindow] = new(JsonSerializer.Serialize(SettingOption.MaximizedMainWindow), 
+        [SettingOption.MaximizedMainWindow] = new(JSONParser.Serialize(SettingOption.MaximizedMainWindow), 
             "Maximizes the main window after the app opens.", 
             true, 
             false),
-        [SettingOption.SkippableHomeScreen] = new(JsonSerializer.Serialize(SettingOption.SkippableHomeScreen), 
+        [SettingOption.SkippableHomeScreen] = new(JSONParser.Serialize(SettingOption.SkippableHomeScreen), 
             "Immediately redirects to the game screen after the app opens.", 
             true, 
             false),
-        [SettingOption.DebugNetwork] = new(JsonSerializer.Serialize(SettingOption.DebugNetwork), 
+        [SettingOption.DebugNetwork] = new(JSONParser.Serialize(SettingOption.DebugNetwork), 
             "Enables network debugging.", 
             false, 
             false)
@@ -60,6 +57,11 @@ public class HSVCSettings() : HelperService(nameof(HSVCSettings))
     {
         try
         {
+            if (!Directory.Exists(_pathToFolder))
+            {
+                Directory.CreateDirectory(_pathToFolder);
+            }
+
             if (!File.Exists(_pathToSettings))
             {
                 Reset();
@@ -94,25 +96,25 @@ public class HSVCSettings() : HelperService(nameof(HSVCSettings))
     {
         try
         {
-            string jsonDictionary = JsonSerializer.Serialize(new Dictionary<SettingOption, Option>()
+            string jsonDictionary = JSONParser.Serialize(new Dictionary<SettingOption, Option>()
             {
-                [SettingOption.FirstTime] = new(JsonSerializer.Serialize(SettingOption.FirstTime), 
+                [SettingOption.FirstTime] = new(JSONParser.Serialize(SettingOption.FirstTime), 
                     "Brings the user to the app's introduction board.", 
                     false, 
                     true),
-                [SettingOption.MaximizedMainWindow] = new(JsonSerializer.Serialize(SettingOption.MaximizedMainWindow), 
+                [SettingOption.MaximizedMainWindow] = new(JSONParser.Serialize(SettingOption.MaximizedMainWindow), 
                     "Maximizes the main window after the app opens.", 
                     true, 
                     false),
-                [SettingOption.SkippableHomeScreen] = new(JsonSerializer.Serialize(SettingOption.SkippableHomeScreen), 
+                [SettingOption.SkippableHomeScreen] = new(JSONParser.Serialize(SettingOption.SkippableHomeScreen), 
                     "Immediately redirects to the game screen after the app opens.", 
                     true, 
                     false),
-                [SettingOption.DebugNetwork] = new(JsonSerializer.Serialize(SettingOption.DebugNetwork), 
+                [SettingOption.DebugNetwork] = new(JSONParser.Serialize(SettingOption.DebugNetwork), 
                     "Enables network debugging.", 
                     false, 
                     false)
-            }, _serializerOptions);
+            });
             File.WriteAllText(_pathToSettings, jsonDictionary);
 
             Log("Settings reset successfully.", "Reset");
@@ -128,7 +130,7 @@ public class HSVCSettings() : HelperService(nameof(HSVCSettings))
         try
         {
             string jsonDictionary = File.ReadAllText(_pathToSettings);
-            var settings = JsonSerializer.Deserialize<Dictionary<SettingOption, Option>>(jsonDictionary, _serializerOptions)!;
+            var settings = JSONParser.Deserialize<Dictionary<SettingOption, Option>>(jsonDictionary)!;
 
             foreach (var setting in settings)
             {
@@ -216,11 +218,11 @@ public class HSVCSettings() : HelperService(nameof(HSVCSettings))
         }
 
         string jsonDictionary = File.ReadAllText(_pathToSettings);
-        var settings = JsonSerializer.Deserialize<Dictionary<SettingOption, Option>>(jsonDictionary, _serializerOptions)!;
+        var settings = JSONParser.Deserialize<Dictionary<SettingOption, Option>>(jsonDictionary)!;
 
         settings[key] = option;
 
-        jsonDictionary = JsonSerializer.Serialize(settings, _serializerOptions);
+        jsonDictionary = JSONParser.Serialize(settings);
         File.WriteAllText(_pathToSettings, jsonDictionary);
 
         return new(true,
@@ -230,7 +232,7 @@ public class HSVCSettings() : HelperService(nameof(HSVCSettings))
 
     public Response<Dictionary<SettingOption, Option>> SaveAll()
     {
-        string jsonDictionary = JsonSerializer.Serialize(_options, _serializerOptions);
+        string jsonDictionary = JSONParser.Serialize(_options);
         File.WriteAllText(_pathToSettings, jsonDictionary);
 
         return new(true, 

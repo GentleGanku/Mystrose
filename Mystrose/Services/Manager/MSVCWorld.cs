@@ -1,4 +1,6 @@
-﻿namespace Mystrose.Services;
+﻿using Mystrose.DataRecords.Game;
+
+namespace Mystrose.Services;
 
 public class MSVCWorld() : ManagerService<World>(nameof(MSVCWorld))
 {

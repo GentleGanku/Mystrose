@@ -56,7 +56,7 @@
                 Background="Transparent"
                 BorderBrush="Transparent"
                 Click="Button_Click"
-                Opacity="0.5">
+                Opacity="1">
                 <ui:SymbolIcon Symbol="Dismiss20" />
             </ui:Button>
         </Grid>
@@ -185,12 +185,12 @@
                     <!--  PRIMARY  -->
                     <Trigger Property="Appearance" Value="Primary">
                         <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
-                        <Setter Property="MouseOverBackground" Value="{DynamicResource AccentButtonBackgroundPointerOver}" />
-                        <Setter Property="PressedBackground" Value="{DynamicResource AccentButtonBackgroundPressed}" />
+                        <Setter Property="MouseOverBackground" Value="{DynamicResource AccentButtonBackground}" />
+                        <Setter Property="PressedBackground" Value="{DynamicResource AccentButtonBackground}" />
                         <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
-                        <Setter Property="PressedForeground" Value="{DynamicResource AccentButtonForegroundPointerOver}" />
+                        <Setter Property="PressedForeground" Value="{DynamicResource AccentButtonForeground}" />
                         <Setter Property="BorderBrush" Value="{DynamicResource AccentControlElevationBorderBrush}" />
-                        <Setter Property="PressedBorderBrush" Value="{DynamicResource AccentButtonBorderBrushPressed}" />
+                        <Setter Property="PressedBorderBrush" Value="{DynamicResource AccentControlElevationBorderBrush}" />
                     </Trigger>
 
                     <!--  DANGER  -->

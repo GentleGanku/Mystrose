@@ -120,6 +120,7 @@
                 <ui:ListView
                     x:Name="LV_LogMessages"
                     Grid.Row="0"
+                    Margin="6"
                     HorizontalContentAlignment="Stretch"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     SelectionChanged="LV_LogMessages_SelectionChanged"

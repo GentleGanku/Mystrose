@@ -1,0 +1,82 @@
+<base:MystWindow
+    x:Class="Mystrose.Views.ScriptManager.VWScriptManager"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:base="clr-namespace:Mystrose.Views.Base"
+    xmlns:baseControls="clr-namespace:Mystrose.Views.Base.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Mystrose.Views.ScriptManager"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:scriptFeatures="clr-namespace:Mystrose.Views.ScriptManager.Features"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    x:Name="ScriptManager"
+    Title="Script Manager | Mystrose"
+    Width="750"
+    Height="600"
+    ResizeMode="CanResize"
+    WindowStartupLocation="CenterScreen"
+    WindowState="Normal"
+    mc:Ignorable="d">
+
+    <d:DesignerProperties.DesignStyle>
+        <Style TargetType="ui:FluentWindow">
+            <Setter Property="Background" Value="{DynamicResource LayerFillColorAltBrush}" />
+            <Setter Property="Height" Value="600" />
+            <Setter Property="Width" Value="750" />
+        </Style>
+    </d:DesignerProperties.DesignStyle>
+
+    <Grid Background="{DynamicResource LayerFillColorAltBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <baseControls:TitleBar
+            x:Name="TTLB_Main"
+            Grid.Row="0"
+            TitleIcon="Code16"
+            TitleText="Script Manager">
+            <baseControls:TitleBar.AdditionalContent>
+                <baseControls:ClientSwitchButton Tag="CSBTN_Codenames" />
+            </baseControls:TitleBar.AdditionalContent>
+        </baseControls:TitleBar>
+        <Rectangle
+            Grid.Row="1"
+            Height="0.5"
+            Fill="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
+        <Border
+            Grid.Row="2"
+            Margin="6"
+            Background="{DynamicResource CalendarViewBorderBrush}"
+            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="8">
+            <Grid Margin="9">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <scriptFeatures:ScriptTabMenu Grid.Row="0" Margin="0,0,0,6" />
+            </Grid>
+        </Border>
+
+
+
+        <!--  MystWindow's Base Controls  -->
+        <ContentPresenter
+            x:Name="CPST_ContentDialog"
+            Grid.Row="1"
+            Grid.RowSpan="4" />
+        <ui:SnackbarPresenter
+            x:Name="SBPST_Base"
+            Grid.Row="1"
+            Grid.RowSpan="4" />
+
+    </Grid>
+
+</base:MystWindow>

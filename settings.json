@@ -1,0 +1,14 @@
+{
+  "firstTime": {
+    "Value": true
+  },
+  "maximizedMainWindow": {
+    "Value": false
+  },
+  "skippableHome": {
+    "Value": false
+  },
+  "debugNetwork": {
+    "Value": false
+  }
+}

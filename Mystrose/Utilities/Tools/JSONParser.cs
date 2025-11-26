@@ -15,7 +15,12 @@ public static class JSONParser
     {
         return JsonSerializer.Serialize(obj, SerializerOptions);
     }
-    
+
+    public static JsonNode SerializeToNode<T>(T obj)
+    {
+        return JsonSerializer.SerializeToNode(obj, SerializerOptions)!;
+    }
+
     public static T Deserialize<T>(string json)
     {
         return JsonSerializer.Deserialize<T>(json, SerializerOptions)!;

@@ -1,4 +1,6 @@
-﻿namespace Mystrose.Network.Handlers.JSON;
+﻿using Mystrose.DataRecords.Game;
+
+namespace Mystrose.Network.Handlers.JSON;
 
 public class JHPartyInterface() : MessageHandler<JSONMessage>(new()
 {

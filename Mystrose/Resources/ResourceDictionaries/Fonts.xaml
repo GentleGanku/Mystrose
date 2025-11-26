@@ -7,8 +7,6 @@
     <FontFamily x:Key="FF_HypatiaSans_ExtraLight">pack://application:,,,/Resources/Fonts/HypatiaSans/#Hypatia Sans Pro ExtraLight</FontFamily>
     <FontFamily x:Key="FF_HypatiaSans_Light">pack://application:,,,/Resources/Fonts/HypatiaSans/#Hypatia Sans Pro Light</FontFamily>
     <FontFamily x:Key="FF_HypatiaSans_Semibold">pack://application:,,,/Resources/Fonts/HypatiaSans/#Hypatia Sans Pro Semibold</FontFamily>
-
-    <FontFamily x:Key="BDMerced">pack://application:,,,/Resources/Fonts/#BD Merced</FontFamily>
-    <FontFamily x:Key="Poppins">pack://application:,,,/Resources/Fonts/#Poppins</FontFamily>
+    <FontFamily x:Key="FF_SpaceMono_Regular">pack://application:,,,/Resources/Fonts/SpaceMono/#SpaceMono Regular</FontFamily>
 
 </ResourceDictionary>

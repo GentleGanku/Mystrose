@@ -1,10 +1,13 @@
-﻿namespace Mystrose.Services;
+﻿using Mystrose.Core.ScriptMachine.Base.Records;
+using Mystrose.DataRecords.Game;
 
-public class MSVCScript() : ManagerService<ScriptEngine>(nameof(MSVCScript))
+namespace Mystrose.Services;
+
+public class MSVCScript() : ManagerService<ScriptEngineOld>(nameof(MSVCScript))
 {
 
     #region Delegates & Handlers
-    public delegate void EngineHandler(string codename, ScriptEngine? engine);
+    public delegate void EngineHandler(string codename, ScriptEngineOld? engine);
     public event EngineHandler ActivatedEngineEvent;
     public event EngineHandler DeactivatedEngineEvent;
     #endregion
@@ -30,7 +33,7 @@ public class MSVCScript() : ManagerService<ScriptEngine>(nameof(MSVCScript))
     #endregion
 
     #region Properties
-    public Dictionary<string, ScriptEngine?> CombatInstances
+    public Dictionary<string, ScriptEngineOld?> CombatInstances
     {
         get;
         set;
@@ -46,7 +49,7 @@ public class MSVCScript() : ManagerService<ScriptEngine>(nameof(MSVCScript))
         ["Harbinger"] = null,
     };
 
-    public Dictionary<string, ScriptEngine?> SyncInstances
+    public Dictionary<string, ScriptEngineOld?> SyncInstances
     {
         get;
         set;
@@ -93,9 +96,9 @@ public class MSVCScript() : ManagerService<ScriptEngine>(nameof(MSVCScript))
     #endregion
 
     #region Methods: Read/Write
-    public Response<ScriptEngine?> Activate(string codename)
+    public Response<ScriptEngineOld?> Activate(string codename)
     {
-        if (Items.TryGetValue(codename, out ScriptEngine? engine) && engine is not null)
+        if (Items.TryGetValue(codename, out ScriptEngineOld? engine) && engine is not null)
         {
             return new(false,
                 $"Script engine with the codename {codename} is already activated.",
@@ -114,9 +117,9 @@ public class MSVCScript() : ManagerService<ScriptEngine>(nameof(MSVCScript))
             Items[codename]);
     }
 
-    public Response<ScriptEngine?> Deactivate(string codename)
+    public Response<ScriptEngineOld?> Deactivate(string codename)
     {
-        if (Items.TryGetValue(codename, out ScriptEngine? engine) && engine is null)
+        if (Items.TryGetValue(codename, out ScriptEngineOld? engine) && engine is null)
         {
             return new(false,
                 $"Script engine with the codename {codename} is already deactivated.",
@@ -136,9 +139,9 @@ public class MSVCScript() : ManagerService<ScriptEngine>(nameof(MSVCScript))
             null);
     }
 
-    public Response<ScriptEngine?> DeactivateAll()
+    public Response<ScriptEngineOld?> DeactivateAll()
     {
-        foreach (KeyValuePair<string, ScriptEngine?> engine in Items)
+        foreach (KeyValuePair<string, ScriptEngineOld?> engine in Items)
         {
             Deactivate(engine.Key);
         }
@@ -152,7 +155,7 @@ public class MSVCScript() : ManagerService<ScriptEngine>(nameof(MSVCScript))
     #region Methods: Invoker
     public Response<IReadableModel?> InvokeTrigger(string codename, object gameModel)
     {
-        if (Items.TryGetValue(codename, out ScriptEngine? engine) && engine is null)
+        if (Items.TryGetValue(codename, out ScriptEngineOld? engine) && engine is null)
         {
             return new(false,
                 $"Script engine with the codename {codename} is not activated yet.",
@@ -161,73 +164,73 @@ public class MSVCScript() : ManagerService<ScriptEngine>(nameof(MSVCScript))
 
         World world = MSVCWorld.Instance.Collection[codename]!;
         IReadableModel readableModel = null;
-        ScriptTriggerType triggerType = ScriptTriggerType.Variable;
+        ScriptEntityModelType triggerType = ScriptEntityModelType.Variable;
 
         switch (gameModel)
         {
             case ActiveSkill skill:
                 readableModel = new RMActiveSkill(skill, world);
-                triggerType = ScriptTriggerType.Skill;
+                triggerType = ScriptEntityModelType.Skill;
                 break;
 
             case Area map:
                 readableModel = new RMArea(map, world);
-                triggerType = ScriptTriggerType.Map;
+                triggerType = ScriptEntityModelType.Map;
                 break;
 
             case Aura aura:
                 readableModel = new RMAura(aura, world);
-                triggerType = ScriptTriggerType.Aura;
+                triggerType = ScriptEntityModelType.Aura;
                 break;
 
             case MainAvatar avatar:
                 readableModel = new RMSelf(avatar, world);
-                triggerType = ScriptTriggerType.Self;
+                triggerType = ScriptEntityModelType.Self;
                 break;
             
             case Avatar player:
                 readableModel = new RMAvatar(player, world);
-                triggerType = ScriptTriggerType.Player;
+                triggerType = ScriptEntityModelType.Player;
                 break;
 
             case InventoryItem item:
                 readableModel = new RMInventoryItem(item, world);
-                triggerType = ScriptTriggerType.Item;
+                triggerType = ScriptEntityModelType.Item;
                 break;
             
             case BaseItem drop:
                 readableModel = new RMItemDrop(drop, world);
-                triggerType = ScriptTriggerType.Drop;
+                triggerType = ScriptEntityModelType.Drop;
                 break;
 
             case CombatMessage message:
                 readableModel = new RMCombatMessage(message, world);
-                triggerType = ScriptTriggerType.CombatMessage;
+                triggerType = ScriptEntityModelType.CombatMessage;
                 break;
 
             case EventMessage message:
                 readableModel = new RMEventMessage(message, world);
-                triggerType = ScriptTriggerType.EventMessage;
+                triggerType = ScriptEntityModelType.EventMessage;
                 break;
 
             case Faction faction:
                 readableModel = new RMFaction(faction, world);
-                triggerType = ScriptTriggerType.Faction;
+                triggerType = ScriptEntityModelType.Faction;
                 break;
 
             case Monster monster:
                 readableModel = new RMMonster(monster, world);
-                triggerType = ScriptTriggerType.Monster;
+                triggerType = ScriptEntityModelType.Monster;
                 break;
 
             case Quest quest:
                 readableModel = new RMQuest(quest, world);
-                triggerType = ScriptTriggerType.Quest;
+                triggerType = ScriptEntityModelType.Quest;
                 break;
 
             case ScriptVariable variable:
                 readableModel = new RMScriptVariable(variable, world);
-                triggerType = ScriptTriggerType.Variable;
+                triggerType = ScriptEntityModelType.Variable;
                 break;
 
             default:

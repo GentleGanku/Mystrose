@@ -1,3 +1,5 @@
+using Mystrose.DataRecords.Game;
+
 namespace Mystrose.Services.Instantiable.Subservices;
 
 public class SSVCQuest(ISVCFlashAPI service) : Subservice<ISVCFlashAPI>(service)

@@ -1,224 +1,154 @@
 ﻿namespace Mystrose.Core.ScriptMachine.Engines;
 
-public class ScriptEngine
+public class ScriptEngine(HSTGame host)
 {
 
-    #region Constructors
-    public ScriptEngine(GameHost host, ScriptEngineType type = ScriptEngineType.Regular)
-    {
-        Type = type;
-        Host = host;
-
-        IsRunning = false;
-    }
-    #endregion
-
     #region Delegates & Handlers
-    public delegate void ScriptRunEvent(ScriptCommand cmd);
-    public event ScriptRunEvent ScriptRunHandler;
+    public delegate void StatusHandler(ScriptEngineStatusType status, string context = "");
+    public event StatusHandler StatusEvent;
 
-    public delegate void ScriptResultEvent(ScriptResultType result, string msg = "");
-    public event ScriptResultEvent ScriptResultHandler;
+    public delegate void CodelineHandler(ScriptCodeline cdln);
+    public event CodelineHandler MainCodelineEvent;
+    public event CodelineHandler SideCodelineEvent;
 
-    private delegate void ScriptTriggerEvent(ScriptTriggerType type, Dictionary<string, ScriptParameter> objectOnEvent);
-    private event ScriptTriggerEvent ScriptTriggerHandler;
-    #endregion
+    public delegate bool TriggerHandler(ScriptEngine engine, ScriptEntityModelType modelType, Dictionary<string, ScriptParameter> parameters);
+    public event TriggerHandler TriggerEvent;
 
-    #region Private Fields
-    private Task Task
-    {
-        get;
-        set;
-    }
-
-    private CancellationTokenSource CTSource
-    {
-        get;
-        set;
-    }
+    public delegate void ErrorHandler(Exception exception, string context = "");
+    public event ErrorHandler ErrorEvent;
     #endregion
 
     #region Fields
-    public FlashPlayer Flash
-    {
-        get => Host.Flash;
-    }
+    public ISVCFlashAPI FlashAPI => host.FlashAPI;
+    public World World => MSVCWorld.Instance[host.Identifier.Codename].Item2!;
+    public MainAvatar Player => World.Avatar;
+    public Area Map => World.Area;
+    public ActiveSkills Skills => World.Skills;
+    public List<Quest> Quests => [.. World.Quests];
+    public InventoryManager Inventory => World.Inventories[InventoryType.Base];
+    public InventoryManager TempInventory => World.Inventories[InventoryType.Temp];
+    public InventoryManager HouseInventory => World.Inventories[InventoryType.House];
+    public InventoryManager BankInventory => World.Inventories[InventoryType.Bank];
 
-    public World World
-    {
-        get => Host.World;
-    }
-
-    public MainAvatar Master
-    {
-        get => Host.World.Avatar;
-    }
-
-    public Area Area
-    {
-        get => Host.World.Area;
-    }
-
-    public ActiveSkills Skills
-    {
-        get => Host.World.Skills;
-    }
-
-    public List<Quest> Quests
-    {
-        get => Host.World.Quests;
-    }
-
-    public InventoryManager Inventory
-    {
-        get => Host.World.Inventories[InventoryType.Base];
-    }
     #endregion
 
-    #region Properties: Engine
-    public GameHost Host
+    #region Properties: Tasking
+    public virtual ScriptLoadout ActiveLoadout
     {
         get;
-        private set;
-    }
+        protected set;
+    } = new ScriptLoadout();
 
-    public ScriptEngineType Type
+    public virtual ScriptEngineStatusType Status
     {
         get;
-        private set;
-    }
+        protected set;
+    } = ScriptEngineStatusType.Idle;
 
-    public bool IsPaused
+    public virtual Task RunnerTask
     {
         get;
-        private set;
-    }
+        protected set;
+    } = new Task(() => {});
 
-    public bool IsRunning
+    public virtual CancellationTokenSource CTSource
     {
-        //get => Task.Status == TaskStatus.Running;
         get;
-        set;
-    }
+        protected set;
+    } = new CancellationTokenSource();
+
+    public virtual ScriptCodeline[] OngoingCodelines
+    {
+        get;
+        protected set;
+    } = [];
     #endregion
 
-    #region Properties: Data
-    public ScriptLoadout CurrentLoadout
+    #region Methods: Tasking
+    public virtual void EnlistLoadout(ScriptLoadout loadout)
     {
-        get;
-        set;
+        ActiveLoadout = loadout;
+        StateEngineToBe(ScriptEngineStatusType.Idle);
     }
 
-    public ScriptStance CurrentStance
+    public virtual async Task OnRunningScript()
     {
-        get;
-        set;
-    }
-
-    public int CurrentIndex
-    {
-        get;
-        set;
-    }
-    #endregion
-
-    #region Methods: Script
-    public void StartScript()
-    {
-        IsRunning = true;
-        CurrentIndex = 0;
-
-        CTSource = new CancellationTokenSource();
-
-        SetCurrentVariables();
-        ScriptTriggerHandler += OnTriggerCall;
-        Task = Task.Factory.StartNew(OnScriptRun, CTSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-    }
-
-    public void StopScript()
-    {
-        IsRunning = false;
-        CTSource.Cancel();
-        ScriptTriggerHandler -= OnTriggerCall;
-        ResetCurrentVariables();
-
-        foreach (ScriptStance stance in CurrentLoadout.Stances)
+        while (!CTSource.Token.IsCancellationRequested)
         {
-            stance.SetIndex(0);
-        }
-    }
-
-    public void PauseScript()
-    {
-        IsPaused = true;
-
-        CTSource.Cancel();
-        ScriptTriggerHandler -= OnTriggerCall;
-    }
-
-    public void ResumeScript()
-    {
-        IsPaused = false;
-
-        CTSource = new CancellationTokenSource();
-
-        ScriptTriggerHandler += OnTriggerCall;
-        Task = Task.Factory.StartNew(OnScriptRun, CTSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-    }
-
-    public async Task OnScriptRun()
-    {
-        string errorMsg = string.Empty;
-
-        while (!CTSource.IsCancellationRequested)
-        {
-            ScriptCommand targetCommand = CurrentStance.Commands[CurrentIndex];
-
-            ScriptRunHandler.Invoke(targetCommand);
+            ScriptCodeline cdln = ActiveLoadout.ActiveStance.Commands[ActiveLoadout.ActiveStance.Index];
+            cdln.Status = ScriptCodelineStatusType.Idle;
 
             try
             {
-                await targetCommand.Execute(this);
+                await cdln.Execute(this);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                errorMsg = e.Message;
-                targetCommand.EndResult = ScriptResultType.Error;
+                StateEngineToBe(ScriptEngineStatusType.Crash, ex);
                 break;
             }
 
-            switch (targetCommand.EndResult)
+            ActiveLoadout.ActiveStance.JumpIndex(1);
+            if ((ActiveLoadout.ActiveStance.Index + 1) >= ActiveLoadout.ActiveStance.Commands.Count)
             {
-                case ScriptResultType.Failure:
-                    ScriptResultHandler.Invoke(targetCommand.EndResult, $"[Stance: {CurrentStance.Name}, Index: {CurrentIndex}] The command has been skipped due to it returning a False result.");
-                    break;
-                case ScriptResultType.Success:
-                    ScriptResultHandler.Invoke(targetCommand.EndResult, $"[Stance: {CurrentStance.Name}, Index: {CurrentIndex}] Continuing the script as usual.");
-                    break;
-
-                case ScriptResultType.Cancel:
-                    StopScript();
-
-                    ScriptResultHandler.Invoke(targetCommand.EndResult, $"[Stance: {CurrentStance.Name}, Index: {CurrentIndex}] The script has been stopped.");
-                    return;
-                case ScriptResultType.Error:
-                    StopScript();
-
-                    ScriptResultHandler.Invoke(targetCommand.EndResult, $"[Stance: {CurrentStance.Name}, Index: {CurrentIndex}] An error has occurred while executing the script.\r\nError: {errorMsg}");
-                    return;
-            };
-
-            CurrentIndex += 1;
-            CurrentStance.SetIndex(CurrentIndex);
-            if (CurrentIndex >= CurrentStance.Commands.Count)
-            {
-                CurrentIndex = 0;
-                CurrentStance.SetIndex(0);
+                ActiveLoadout.ActiveStance.SetIndex(0);
             }
 
-            targetCommand.EndResult = ScriptResultType.Busy;
-            await Task.Delay(100);
+            await Task.Delay(ScriptMachineParser.EXECUTION_INTERVAL_TIME, CTSource.Token);
         }
+    }
+
+    public virtual void Start()
+    {
+        RefreshVariables();
+        RefreshTriggers();
+
+        CTSource = new CancellationTokenSource();
+        RunnerTask = Task.Run(async () =>
+        {
+            try
+            {
+                await OnRunningScript();
+            }
+            catch (Exception ex)
+            {
+                StateEngineToBe(ScriptEngineStatusType.Crash, ex);
+            }
+        }, CTSource.Token);
+    }
+
+    public virtual void Resume()
+    {
+        RefreshTriggers();
+
+        CTSource = new CancellationTokenSource();
+        RunnerTask = Task.Run(async () =>
+        {
+            try
+            {
+                await OnRunningScript();
+            }
+            catch (Exception ex)
+            {
+                StateEngineToBe(ScriptEngineStatusType.Crash, ex);
+            }
+        }, CTSource.Token);
+    }
+
+    public virtual void Stop()
+    {
+        CTSource.Cancel();
+        RefreshTriggers();
+        CancelOngoing();
+
+        RefreshStances();
+    }
+
+    public virtual void Pause()
+    {
+        CTSource.Cancel();
+        RefreshTriggers();
+        CancelOngoing();
     }
     #endregion
 
@@ -238,88 +168,177 @@ public class ScriptEngine
             }
         }
     }
-
-    public void InvokeTrigger(ScriptTriggerType type, object objectOnEvent)
-    {
-        if (!IsRunning)
-        {
-            return;
-        }
-
-        Dictionary<string, ScriptParameter> parameters = ScriptRepository.ConvertToParameters(objectOnEvent);
-        ScriptTriggerHandler.Invoke(type, parameters);
-    }
     #endregion
 
-    #region Methods: Variable
-    public void SetCurrentVariables()
+    #region Methods: Codeline Calls
+    public virtual void CancelOngoing()
     {
-        foreach (SCMDVariable varCmd in CurrentLoadout.PresetVariables)
+        foreach (var cdln in OngoingCodelines)
         {
-            varCmd.Execute(this);
+            StateCodelineToBe(ScriptCodelineStatusType.Canceled, cdln);
         }
     }
 
-    public void ResetCurrentVariables()
+    public virtual void RefreshStances()
     {
-        CurrentLoadout.Variables.Clear();
+        foreach (var stn in ActiveLoadout.Stances)
+        {
+            stn.SetIndex(0);
+        }
     }
 
-    public bool GetVariableValidation(ScriptParameter var)
+    public virtual void RefreshTriggers()
     {
-        if (string.IsNullOrEmpty(var.String))
+        foreach (var cdln in ActiveLoadout.Triggers)
+        {
+            if (Status is ScriptEngineStatusType.Running)
+            {
+                TriggerEvent += cdln.ValidateCondition;
+            }
+            else
+            {
+                TriggerEvent -= cdln.ValidateCondition;
+            }
+        }
+    }
+
+    public virtual void Trigger(ScriptEntityModelType modelType, Dictionary<string, ScriptParameter> parameters)
+    {
+        TriggerEvent?.Invoke(this, modelType, parameters);
+    }
+
+    public virtual async void RefreshVariables()
+    {
+        ActiveLoadout.Variables.Clear();
+
+        if (Status is ScriptEngineStatusType.Running)
+        {
+            foreach (var cdln in ActiveLoadout.PresetVariables)
+            {
+                await cdln.Execute(this);
+            }
+        }
+    }
+
+    public virtual bool ValidateVariable(ScriptParameter parameter)
+    {
+        if (string.IsNullOrEmpty(parameter.String))
         {
             return false;
         }
 
-        return ScriptRegexes.ScriptVariable().IsMatch(var.String);
+        return ScriptRegexes.ScriptVariable().IsMatch(parameter.String);
     }
 
-    public ScriptParameter GetVariableValue(ScriptParameter param)
+    public virtual ScriptParameter GetVariableValue(ScriptParameter parameter)
     {
-        if (GetVariableValidation(param))
+        if (ValidateVariable(parameter))
         {
-            string combinedValue = param.String;
+            string combinedValue = parameter.String;
 
-            foreach (Match match in ScriptRegexes.ScriptVariable().Matches(param.String))
+            foreach (Match match in ScriptRegexes.ScriptVariable().Matches(parameter.String))
             {
                 string varName = match.Value.Replace("{", "").Replace("}", "");
 
-                if (!CurrentLoadout.Variables.ContainsKey(varName))
+                if (!ActiveLoadout.Variables.ContainsKey(varName))
                 {
                     continue;
                 }
 
-                combinedValue = combinedValue.Replace(match.Value, CurrentLoadout.Variables[varName]!.Value);
+                combinedValue = combinedValue.Replace(match.Value, ActiveLoadout.Variables[varName]!.String);
             }
 
-            ScriptParameter varParam = new(combinedValue);
-            return varParam;
+            return new(combinedValue);
         }
 
-        return param;
+        return parameter;
     }
     #endregion
 
-    #region Methods: Event
-    private void OnTriggerCall(ScriptTriggerType type, Dictionary<string, ScriptParameter> objectOnEvent)
+    #region Methods: State Management
+    public virtual void StateEngineToBe(ScriptEngineStatusType targetStatus, Exception? exception = default)
     {
-        foreach (SCMDTrigger cmd in CurrentLoadout.Triggers.FindAll(t => t.IsEnabled && t.TriggerType == type))
+        ScriptEngineStatusType prevStatus = Status;
+        Status = targetStatus;
+
+        switch (targetStatus)
         {
-            if (!cmd.IsValid(this, objectOnEvent))
-            {
-                continue;
-            }
+            case ScriptEngineStatusType.Idle:
+                ActiveLoadout.ActiveStance.SetIndex(0);
 
-            cmd.Execute(this);
+                StatusEvent?.Invoke(targetStatus, "Script engine is now idle.");
+                break;
+
+            case ScriptEngineStatusType.Running:
+                if (prevStatus is ScriptEngineStatusType.Idle)
+                {
+                    Start();
+                    StatusEvent?.Invoke(targetStatus, "Starting the script engine now...");
+                }
+                else if (prevStatus is ScriptEngineStatusType.Paused)
+                {
+                    Resume();
+                    StatusEvent?.Invoke(targetStatus, "Resuming the script engine now...");
+                }
+                break;
+
+            case ScriptEngineStatusType.Paused:
+                Pause();
+                StatusEvent?.Invoke(targetStatus, "Script engine has been paused.");
+                break;
+            case ScriptEngineStatusType.Stopped:
+                Stop();
+                StatusEvent?.Invoke(targetStatus, "Script engine has been successfully stopped.");
+                break;
+
+            case ScriptEngineStatusType.Crash:
+                Stop();
+                StatusEvent?.Invoke(targetStatus, "Script engine has crashed. See below for more information:\r\n" + exception!.Message);
+                ErrorEvent?.Invoke(exception!, "Script engine has crashed. See below for more information:\r\n" + exception!.Message);
+                break;
+        }
+    }
+
+    public virtual void StateCodelineToBe(ScriptCodelineStatusType targetStatus, ScriptCodeline cdln)
+    {
+        ScriptCodelineStatusType prevStatus = cdln.Status;
+
+        if (prevStatus is ScriptCodelineStatusType.Canceled)
+        {
+            return;
+        }
+
+        cdln.Status = targetStatus;
+
+        switch (targetStatus)
+        {
+            case ScriptCodelineStatusType.Executing:
+                OngoingCodelines = [.. OngoingCodelines, cdln];
+                break;
+
+            case ScriptCodelineStatusType.Canceled:
+                cdln.Cancel(this);
+
+                OngoingCodelines = [.. OngoingCodelines.Where(c => c != cdln)];
+                break;
+
+            case ScriptCodelineStatusType.Failed:
+            case ScriptCodelineStatusType.Succeed:
+                OngoingCodelines = [.. OngoingCodelines.Where(c => c != cdln)];
+                break;
+        }
+        
+        switch (prevStatus)
+        {
+            case ScriptCodelineStatusType.Idle:
+                MainCodelineEvent?.Invoke(cdln);
+                break;
+            case ScriptCodelineStatusType.Standby:
+                SideCodelineEvent?.Invoke(cdln);
+                break;
         }
     }
     #endregion
-    
-    // Placeholder
-    public void Destruct()
-    {
-        // Placeholder
-    }
+
 
 }

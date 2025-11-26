@@ -1,4 +1,6 @@
-﻿namespace Mystrose.Services.Instantiable.Subservices;
+﻿using Mystrose.DataRecords.Game;
+
+namespace Mystrose.Services.Instantiable.Subservices;
 
 public class SSVCBank(ISVCFlashAPI service) : Subservice<ISVCFlashAPI>(service)
 {

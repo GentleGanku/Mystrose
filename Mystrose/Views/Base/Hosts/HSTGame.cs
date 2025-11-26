@@ -3,7 +3,14 @@
 public class HSTGame(ClientInstanceIdentifier identifier) : WindowsFormsHost
 {
 
-    #region Properties
+    #region Fields
+    public ClientInstanceIdentifier Identifier
+    {
+        get => identifier;
+    }
+    #endregion
+
+    #region Properties: Service
     public ISVCFlashAPI FlashAPI
     {
         get;

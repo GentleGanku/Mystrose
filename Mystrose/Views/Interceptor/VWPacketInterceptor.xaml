@@ -67,7 +67,7 @@
                     BorderBrush="{DynamicResource ControlElevationBorderBrush}"
                     BorderThickness="1"
                     CornerRadius="4">
-                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal">
                         <baseControls:MenuButton
                             x:Name="MBTN_CopySelected"
                             Margin="0,0,3,0"
@@ -274,6 +274,7 @@
                         <ui:TextBox
                             x:Name="TBX_FormattedPacket"
                             Grid.Row="0"
+                            BorderThickness="0"
                             Margin="6"
                             AutoWordSelection="True"
                             ClearButtonEnabled="False"

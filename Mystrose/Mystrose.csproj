@@ -94,16 +94,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\Panels\General\FrozenPanel.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Core\ScriptMachine\Panels\Controls\ScriptCodelineItem.xaml.cs">
+    <Compile Update="Views\ScriptManager\Controls\TabMenuButton.xaml.cs">
       <SubType>Code</SubType>
+      <DependentUpon>TabMenuButton.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -112,6 +110,14 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\ScriptManager\Controls\TabMenuButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

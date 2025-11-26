@@ -29,11 +29,23 @@ public class HSVCLogger() : HelperService(nameof(HSVCLogger))
     #endregion
 
     #region Fields
-    private string PathToFolder => "logs";
-    private string PathToPreviousFolder => PathToFolder + "\\previousSession";
-    private string PathToTraceLog => PathToFolder + "\\traceLog.txt";
-    private string PathToScriptLog => PathToFolder + "\\scriptLog.txt";
-    private string PathToExceptionLog => PathToFolder + "\\exceptionLog.txt";
+    private string _pathToFolder => "logs";
+    private string _pathToPreviousFolder => _pathToFolder + "\\previousSession";
+    private string _pathToTraceLog => _pathToFolder + "\\traceLog.txt";
+    private string _pathToExceptionLog => _pathToFolder + "\\exceptionLog.txt";
+    private string _pathToScriptLog => _pathToFolder + "\\scriptLog-[CODENAME].txt";
+
+    private string[] _traceableCodenames =
+    [
+        "Avernus",
+        "Beatrix",
+        "Cassiopeia",
+        "Durandal",
+        "Eligos",
+        "Fenrir",
+        "Gwyndell",
+        "Harbinger"
+    ];
     #endregion
 
     #region Methods: Builder
@@ -41,26 +53,31 @@ public class HSVCLogger() : HelperService(nameof(HSVCLogger))
     {
         try
         {
-            if (!Directory.Exists(PathToFolder))
+            if (!Directory.Exists(_pathToFolder))
             {
-                Directory.CreateDirectory(PathToFolder);
+                Directory.CreateDirectory(_pathToFolder);
             }
 
             Deconstruct();
 
-            if (!File.Exists(PathToTraceLog))
+            if (!File.Exists(_pathToTraceLog))
             {
-                File.Create(PathToTraceLog).Close();
+                File.Create(_pathToTraceLog).Close();
             }
 
-            if (!File.Exists(PathToScriptLog))
+            if (!File.Exists(_pathToExceptionLog))
             {
-                File.Create(PathToScriptLog).Close();
+                File.Create(_pathToExceptionLog).Close();
             }
 
-            if (!File.Exists(PathToExceptionLog))
+            foreach (string codename in _traceableCodenames)
             {
-                File.Create(PathToExceptionLog).Close();
+                string specificPath = _pathToScriptLog.Replace("[CODENAME]", codename);
+
+                if (!File.Exists(specificPath))
+                {
+                    File.Create(specificPath).Close();
+                }
             }
 
             Log("Logger constructed successfully.", "Construct");
@@ -75,27 +92,32 @@ public class HSVCLogger() : HelperService(nameof(HSVCLogger))
     {
         try
         {
-            if (!Directory.Exists(PathToPreviousFolder))
+            if (!Directory.Exists(_pathToPreviousFolder))
             {
-                Directory.CreateDirectory(PathToPreviousFolder);
+                Directory.CreateDirectory(_pathToPreviousFolder);
             }
 
-            if (File.Exists(PathToTraceLog))
+            if (File.Exists(_pathToTraceLog))
             {
-                File.Move(PathToTraceLog, PathToPreviousFolder + "\\traceLog.txt", true);
-                File.Create(PathToTraceLog).Close();
+                File.Move(_pathToTraceLog, _pathToPreviousFolder + "\\traceLog.txt", true);
+                File.Create(_pathToTraceLog).Close();
             }
 
-            if (File.Exists(PathToScriptLog))
+            if (File.Exists(_pathToExceptionLog))
             {
-                File.Move(PathToScriptLog, PathToPreviousFolder + "\\scriptLog.txt", true);
-                File.Create(PathToScriptLog).Close();
+                File.Move(_pathToExceptionLog, _pathToPreviousFolder + "\\exceptionLog.txt", true);
+                File.Create(_pathToExceptionLog).Close();
             }
 
-            if (File.Exists(PathToExceptionLog))
+            foreach (string codename in _traceableCodenames)
             {
-                File.Move(PathToExceptionLog, PathToPreviousFolder + "\\exceptionLog.txt", true);
-                File.Create(PathToExceptionLog).Close();
+                string specificPath = _pathToScriptLog.Replace("[CODENAME]", codename);
+
+                if (File.Exists(specificPath))
+                {
+                    File.Move(specificPath, _pathToPreviousFolder + $"\\scriptLog-{codename}.txt", true);
+                    File.Create(specificPath).Close();
+                }
             }
 
             Log("Logger deconstructed successfully.", "Deconstruct");
@@ -120,18 +142,6 @@ public class HSVCLogger() : HelperService(nameof(HSVCLogger))
         return response;
     }
 
-    public Response<string> GetLogsOnScript()
-    {
-        string logs = ReadFromScriptLog();
-        bool isSuccess = !string.IsNullOrEmpty(logs);
-
-        Response<string> response = new(isSuccess,
-            isSuccess ? "No logs found in script log." : "Logs found in script log.",
-            logs);
-
-        return response;
-    }
-
     public Response<string> GetLogsOnException()
     {
         string logs = ReadFromExceptionLog();
@@ -139,6 +149,18 @@ public class HSVCLogger() : HelperService(nameof(HSVCLogger))
 
         Response<string> response = new(isSuccess,
             isSuccess ? "No logs found in exception log." : "Logs found in exception log.",
+            logs);
+
+        return response;
+    }
+
+    public Response<string> GetLogsOnScript(string codename)
+    {
+        string logs = ReadFromScriptLog(codename);
+        bool isSuccess = !string.IsNullOrEmpty(logs);
+
+        Response<string> response = new(isSuccess,
+            isSuccess ? "No logs found in script log." : "Logs found in script log.",
             logs);
 
         return response;
@@ -158,20 +180,6 @@ public class HSVCLogger() : HelperService(nameof(HSVCLogger))
         return response;
     }
 
-    public Response<LogMessage> LogOnScript(string text)
-    {
-        LogMessage msg = new(1, text);
-        bool isWritten = WriteToScriptLog(msg);
-
-        Response<LogMessage> response = new(isWritten,
-            isWritten ? "Log written successfully to script log." : "Failed to write log to script log.",
-            msg);
-
-        LogEvent?.Invoke(response);
-
-        return response;
-    }
-
     public Response<LogMessage> LogOnException(string text)
     {
         LogMessage msg = new(2, text);
@@ -179,6 +187,20 @@ public class HSVCLogger() : HelperService(nameof(HSVCLogger))
 
         Response<LogMessage> response = new(isWritten,
             isWritten ? "Log written successfully to exception log." : "Failed to write log to exception log.",
+            msg);
+
+        LogEvent?.Invoke(response);
+
+        return response;
+    }
+
+    public Response<LogMessage> LogOnScript(string codename, string text)
+    {
+        LogMessage msg = new(1, text);
+        bool isWritten = WriteToScriptLog(codename, msg);
+
+        Response<LogMessage> response = new(isWritten,
+            isWritten ? "Log written successfully to script log." : "Failed to write log to script log.",
             msg);
 
         LogEvent?.Invoke(response);
@@ -204,64 +226,68 @@ public class HSVCLogger() : HelperService(nameof(HSVCLogger))
     #region Methods: Read/Write
     private string ReadFromTraceLog()
     {
-        if (!File.Exists(PathToTraceLog))
+        if (!File.Exists(_pathToTraceLog))
         {
             return string.Empty;
         }
 
-        return File.ReadAllText(PathToTraceLog);
+        return File.ReadAllText(_pathToTraceLog);
     }
 
     private bool WriteToTraceLog(LogMessage message)
     {
-        if (!File.Exists(PathToTraceLog))
+        if (!File.Exists(_pathToTraceLog))
         {
             return false;
         }
 
-        File.AppendAllText(PathToTraceLog, message.ToString() + Environment.NewLine);
-        return true;
-    }
-
-    private string ReadFromScriptLog()
-    {
-        if (!File.Exists(PathToScriptLog))
-        {
-            return string.Empty;
-        }
-
-        return File.ReadAllText(PathToScriptLog);
-    }
-
-    private bool WriteToScriptLog(LogMessage message)
-    {
-        if (!File.Exists(PathToScriptLog))
-        {
-            return false;
-        }
-
-        File.AppendAllText(PathToScriptLog, message.ToString() + Environment.NewLine);
+        File.AppendAllText(_pathToTraceLog, message.ToString() + Environment.NewLine);
         return true;
     }
 
     private string ReadFromExceptionLog()
     {
-        if (!File.Exists(PathToExceptionLog))
+        if (!File.Exists(_pathToExceptionLog))
         {
             return string.Empty;
         }
 
-        return File.ReadAllText(PathToExceptionLog);
+        return File.ReadAllText(_pathToExceptionLog);
     }
 
     private bool WriteToExceptionLog(LogMessage message)
     {
-        if (!File.Exists(PathToExceptionLog))
+        if (!File.Exists(_pathToExceptionLog))
         {
             return false;
         }
 
-        File.AppendAllText(PathToExceptionLog, message.ToString() + Environment.NewLine);
+        File.AppendAllText(_pathToExceptionLog, message.ToString() + Environment.NewLine);
+        return true;
+    }
+
+    private string ReadFromScriptLog(string codename)
+    {
+        string specificPath = _pathToScriptLog.Replace("[CODENAME]", codename);
+
+        if (!File.Exists(specificPath))
+        {
+            return string.Empty;
+        }
+
+        return File.ReadAllText(specificPath);
+    }
+
+    private bool WriteToScriptLog(string codename, LogMessage message)
+    {
+        string specificPath = _pathToScriptLog.Replace("[CODENAME]", codename);
+
+        if (!File.Exists(specificPath))
+        {
+            return false;
+        }
+
+        File.AppendAllText(specificPath, message.ToString() + Environment.NewLine);
         return true;
     }
     #endregion

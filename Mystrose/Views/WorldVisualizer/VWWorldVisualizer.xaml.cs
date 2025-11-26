@@ -1,4 +1,5 @@
-﻿using Mystrose.Views.WorldVisualizer.Controls;
+﻿using Mystrose.DataRecords.ReadableModels;
+using Mystrose.Views.WorldVisualizer.Controls;
 using Button = Wpf.Ui.Controls.Button;
 using TreeViewItem = System.Windows.Controls.TreeViewItem;
 
@@ -39,6 +40,14 @@ public partial class VWWorldVisualizer : MystWindow
     private MSVCVisualizer VisualizerService => MSVCVisualizer.Instance;
     private ClientSwitchButton SwitchButton => (ClientSwitchButton)TTLB_Main.AdditionalContent;
     private HSTGame CurrentGameHost => MSVCGame.Instance.Collection[SwitchButton.SelectedCodename]!;
+    #endregion
+
+    #region Properties
+    public VisualizerItem? SelectedVisualizerItem
+    {
+        get;
+        set;
+    }
     #endregion
 
     #region Methods: Setup
@@ -424,7 +433,7 @@ public partial class VWWorldVisualizer : MystWindow
     
     private VisualizerItem? GetSelectedVisualizerItem()
     {
-        return TV_Models.SelectedItem as VisualizerItem;
+        return SelectedVisualizerItem;
     }
     
     private AttributeItem? GetAttributeItemByName(string name)
@@ -552,6 +561,7 @@ public partial class VWWorldVisualizer : MystWindow
     {
         if (e.NewValue is VisualizerItem item && item.ReadableModel is not null)
         {
+            SelectedVisualizerItem = item;
             RefreshGrabberAttributes(item.ReadableModel);
         }
     }

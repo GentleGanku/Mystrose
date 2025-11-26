@@ -21,7 +21,6 @@ public partial class VWLogger : MystWindow
     private readonly Dictionary<string, List<string>> _logs = new()
     {
         ["Trace"] = [],
-        ["Script"] = [],
         ["Exception"] = []
     };
     #endregion
@@ -35,7 +34,6 @@ public partial class VWLogger : MystWindow
         }
 
         _logs["Trace"].AddRange(ConvertStringToList(HSVCLogger.Instance.GetLogsOnTrace().Output));
-        _logs["Script"].AddRange(ConvertStringToList(HSVCLogger.Instance.GetLogsOnScript().Output));
         _logs["Exception"].AddRange(ConvertStringToList(HSVCLogger.Instance.GetLogsOnException().Output));
 
         CB_LogTypes.SelectedIndex = 0;
@@ -50,7 +48,11 @@ public partial class VWLogger : MystWindow
         {
             LV_LogMessages.Items.Add(msg);
         }
-        LV_LogMessages.ScrollIntoView(LV_LogMessages.Items[LV_LogMessages.Items.Count - 1]);
+
+        if (LV_LogMessages.Items.Count > 0)
+        {
+            LV_LogMessages.ScrollIntoView(LV_LogMessages.Items[LV_LogMessages.Items.Count - 1]);
+        }
 
         RefreshStats();
     }

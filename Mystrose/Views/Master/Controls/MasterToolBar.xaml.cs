@@ -51,7 +51,7 @@ public partial class MasterToolBar : UserControl
         switch (button.Name)
         {
             case "MBTN_ScriptManager":
-                // TODO: Open Script Manager
+                response = MSVCView.Instance.OpenForInstances(typeof(VWScriptManager));
                 break;
             case "MBTN_Visualizer":
                 response = MSVCView.Instance.OpenForInstances(typeof(VWWorldVisualizer));

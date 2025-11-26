@@ -1,4 +1,5 @@
-﻿using Mystrose.Services.Instantiable.Subservices;
+﻿using Mystrose.DataRecords.Game;
+using Mystrose.Services.Instantiable.Subservices;
 
 namespace Mystrose.Services.Instantiable;
 

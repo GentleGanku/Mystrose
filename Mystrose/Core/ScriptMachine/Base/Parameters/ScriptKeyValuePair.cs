@@ -7,31 +7,28 @@ public class ScriptKeyValuePair : ScriptParameter
 {
 
     #region Constructors
-    public ScriptKeyValuePair()
+    public ScriptKeyValuePair(string key, object value, string hint = "") : base(value, hint)
     {
-        // Empty constructor for serialization and deserialization.
-    }
-
-    public ScriptKeyValuePair(string key) : base()
-    {
-        InputType = ScriptParameterInputType.KeyValuePair;
-        SetKey(key);
-    }
-
-    public ScriptKeyValuePair(string key, object value, string? hint = null) : base(value, hint)
-    {
-        InputType = ScriptParameterInputType.KeyValuePair;
-        SetKey(key);
-        SetValue(value);
+        Key = key;
     }
     #endregion
 
     #region Private Fields
-    private string _key;
-    private object _value;
+    private string _key = string.Empty;
     #endregion
 
     #region Properties
+    /// <summary>
+    /// The parameter's input type.
+    /// </summary>
+    /// <returns>
+    /// An enumeration representing the parameter's input type.
+    /// </returns>
+    public override ScriptParameterInputType InputType
+    {
+        get => ScriptParameterInputType.KeyValuePair;
+    }
+
     /// <summary>
     /// The parameter's key.
     /// </summary>
@@ -41,60 +38,28 @@ public class ScriptKeyValuePair : ScriptParameter
     public string Key
     {
         get => _key;
-        set
-        {
-            _key = value;
-        }
-    }
-
-    /// <summary>
-    /// The parameter's value.
-    /// </summary>
-    /// <returns>
-    /// An object representing the parameter's value.
-    /// </returns>
-    public object Value
-    {
-        get => _value;
-        set
-        {
-            base.SetValue(value);
-
-            _value = Type switch
-            {
-                ScriptValueType.String => String,
-                ScriptValueType.Integer => Integer,
-                ScriptValueType.Double => Double,
-                ScriptValueType.Boolean => Boolean,
-            };
-        }
+        protected set => SetKey(value);
     }
     #endregion
 
     #region Methods
     public void SetKey(string key)
     {
-        Key = key;
+        _key = key;
     }
 
     public void SetValue(object value)
     {
-        Value = value;
-    }
-
-    public void Empty()
-    {
-        Key = string.Empty;
-        Value = string.Empty;
-
-        base.Empty();
+        Set(value);
     }
     #endregion
 
-    #region Overrides
-    public override string ToString()
+    #region Methods: Overrides
+    public override void Empty()
     {
-        return base.ToString();
+        Key = string.Empty;
+
+        base.Empty();
     }
     #endregion
 

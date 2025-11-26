@@ -1,0 +1,136 @@
+﻿<UserControl
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded"
+    d:DesignHeight="150"
+    d:DesignWidth="300"
+    mc:Ignorable="d"
+    x:Class="Mystrose.Views.ScriptManager.Controls.ScriptLoadoutItem"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:baseControls="clr-namespace:Mystrose.Views.Base.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Mystrose.Views.ScriptManager.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                FontFamily="{StaticResource FF_HypatiaSans_Light}"
+                FontSize="12"
+                Grid.Column="0"
+                Margin="0,0,6,0"
+                Opacity="0.5"
+                Text="Enabled"
+                x:Name="TB_IsEnabled" />
+            <TextBlock
+                FontFamily="{StaticResource FF_HypatiaSans_Light}"
+                FontSize="12"
+                Grid.Column="1"
+                Margin="0,0,6,0"
+                Opacity="0.5"
+                Text="•" />
+            <TextBlock
+                FontFamily="{StaticResource FF_HypatiaSans_Light}"
+                FontSize="12"
+                Grid.Column="2"
+                Opacity="0.5"
+                Text="24 Jul 2025, 12:00 PM"
+                x:Name="TB_LastModifiedDate" />
+        </Grid>
+        <TextBlock
+            FontFamily="{StaticResource FF_Albertus_Regular}"
+            FontSize="14"
+            FontWeight="SemiBold"
+            Grid.Row="1"
+            Text="Hello, World!"
+            TextTrimming="CharacterEllipsis"
+            ToolTip="Hello, World!"
+            x:Name="TB_Name" />
+        <Grid Grid.Row="2" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                FontFamily="{StaticResource FF_HypatiaSans_Regular}"
+                FontSize="12"
+                Grid.Column="0"
+                Margin="0,0,3,0"
+                Opacity="0.5"
+                Text="Made by" />
+            <TextBlock
+                FontFamily="{StaticResource FF_Albertus_Regular}"
+                FontSize="12"
+                FontStyle="Italic"
+                Grid.Column="1"
+                Text="World"
+                TextTrimming="CharacterEllipsis"
+                x:Name="TB_Author" />
+        </Grid>
+        <Border
+            Background="{DynamicResource ButtonBackground}"
+            BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="4"
+            Grid.Row="2"
+            Visibility="Visible">
+            <StackPanel Orientation="Horizontal" x:Name="PNL_Menu">
+                <baseControls:MenuButton
+                    CaptionText="Run current script"
+                    Margin="0,0,3,0"
+                    ToolTip="Running the script will execute it immediately"
+                    x:Name="MBTN_ScriptRun">
+                    <baseControls:MenuButton.IconContent>
+                        <ui:SymbolIcon Symbol="Play16" />
+                    </baseControls:MenuButton.IconContent>
+                </baseControls:MenuButton>
+
+                <baseControls:MenuButton
+                    CaptionText="Stop current script"
+                    Margin="0,0,3,0"
+                    ToolTip="Stopping the script will halt its execution immediately"
+                    x:Name="MBTN_ScriptStop">
+                    <baseControls:MenuButton.IconContent>
+                        <ui:SymbolIcon Symbol="Pause16" />
+                    </baseControls:MenuButton.IconContent>
+                </baseControls:MenuButton>
+
+                <baseControls:MenuButton
+                    CaptionText="Enable current script"
+                    Margin="0,0,0,0"
+                    ToolTip="Enabling the script will allow it to be ran manually or automatically in the future"
+                    x:Name="MBTN_ScriptEnable">
+                    <baseControls:MenuButton.IconContent>
+                        <ui:SymbolIcon Symbol="Checkmark16" />
+                    </baseControls:MenuButton.IconContent>
+                </baseControls:MenuButton>
+
+                <baseControls:MenuButton
+                    CaptionText="Disable current script"
+                    Margin="0,0,0,0"
+                    ToolTip="Disabling the script will prevent it from running manually or automatically in the future"
+                    x:Name="MBTN_ScriptDisable">
+                    <baseControls:MenuButton.IconContent>
+                        <ui:SymbolIcon Symbol="Dismiss16" />
+                    </baseControls:MenuButton.IconContent>
+                </baseControls:MenuButton>
+
+            </StackPanel>
+        </Border>
+    </Grid>
+
+</UserControl>

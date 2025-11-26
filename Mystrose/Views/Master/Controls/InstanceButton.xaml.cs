@@ -28,6 +28,11 @@ public partial class InstanceButton : UserControl
     {
         get => BTN_Item;
     }
+
+    public Button RemoveButton
+    {
+        get => BTN_Remove;
+    }
     #endregion
 
     #region Properties
@@ -77,6 +82,7 @@ public partial class InstanceButton : UserControl
                 {
                     MSVCGame.Instance.Select(NameText);
                     button.Appearance = ControlAppearance.Primary;
+                    RemoveButton.Appearance = ControlAppearance.Primary;
                 }
                 break;
             case "BTN_Remove":

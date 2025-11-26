@@ -1,4 +1,6 @@
-﻿namespace Mystrose.Services.Helper;
+﻿using Mystrose.DataRecords.Game;
+
+namespace Mystrose.Services.Helper;
 
 public class HSVCRepository() : HelperService(nameof(HSVCRepository))
 {

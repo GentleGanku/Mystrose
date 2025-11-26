@@ -1,28 +1,18 @@
-﻿namespace Mystrose.Core.ScriptMachine.Commands.Interfaces;
+﻿namespace Mystrose.Core.ScriptMachine.Codelines.Interfaces;
 
 public interface IStackable
 {
 
-    #region Inputs & Outputs
-    string LabelName
+    #region Properties: I/O
+    ScriptCodeline[] InternalCommands
     {
         get;
-    }
-
-    int StackLimit
-    {
-        get;
-    }
-
-    List<ScriptCommand> InternalCommands
-    {
-        get;
-        set;
+        init;
     }
     #endregion
 
-    #region Methods
-    bool IsInputValid(ScriptCommand cmd);
+    #region Methods: Validation
+    string ValidateCodelineToBeAdded(ScriptCodeline cdl);
     #endregion
 
 }
