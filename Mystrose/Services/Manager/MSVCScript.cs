@@ -3,11 +3,11 @@ using Mystrose.DataRecords.Game;
 
 namespace Mystrose.Services;
 
-public class MSVCScript() : ManagerService<ScriptEngineOld>(nameof(MSVCScript))
+public class MSVCScript() : ManagerService<ScriptEngine>(nameof(MSVCScript))
 {
 
     #region Delegates & Handlers
-    public delegate void EngineHandler(string codename, ScriptEngineOld? engine);
+    public delegate void EngineHandler(string codename, ScriptEngine? engine);
     public event EngineHandler ActivatedEngineEvent;
     public event EngineHandler DeactivatedEngineEvent;
     #endregion
@@ -33,7 +33,7 @@ public class MSVCScript() : ManagerService<ScriptEngineOld>(nameof(MSVCScript))
     #endregion
 
     #region Properties
-    public Dictionary<string, ScriptEngineOld?> CombatInstances
+    public Dictionary<string, ScriptEngine?> CombatInstances
     {
         get;
         set;
@@ -49,7 +49,7 @@ public class MSVCScript() : ManagerService<ScriptEngineOld>(nameof(MSVCScript))
         ["Harbinger"] = null,
     };
 
-    public Dictionary<string, ScriptEngineOld?> SyncInstances
+    public Dictionary<string, ScriptEngine?> SyncInstances
     {
         get;
         set;
@@ -96,9 +96,9 @@ public class MSVCScript() : ManagerService<ScriptEngineOld>(nameof(MSVCScript))
     #endregion
 
     #region Methods: Read/Write
-    public Response<ScriptEngineOld?> Activate(string codename)
+    public Response<ScriptEngine?> Activate(string codename)
     {
-        if (Items.TryGetValue(codename, out ScriptEngineOld? engine) && engine is not null)
+        if (Items.TryGetValue(codename, out ScriptEngine? engine) && engine is not null)
         {
             return new(false,
                 $"Script engine with the codename {codename} is already activated.",
@@ -107,8 +107,8 @@ public class MSVCScript() : ManagerService<ScriptEngineOld>(nameof(MSVCScript))
 
         ClientInstanceIdentifier identifier = new(codename);
 
-        Items[codename] = new RegularEngine(identifier);
-        CombatInstances[codename] = new CombatEngine(identifier);
+        Items[codename] = new ScriptEngine(identifier);
+        CombatInstances[codename] = new ScriptEngine(identifier);
 
         ActivatedEngineEvent?.Invoke(codename, Items[codename]);
 
@@ -117,19 +117,17 @@ public class MSVCScript() : ManagerService<ScriptEngineOld>(nameof(MSVCScript))
             Items[codename]);
     }
 
-    public Response<ScriptEngineOld?> Deactivate(string codename)
+    public Response<ScriptEngine?> Deactivate(string codename)
     {
-        if (Items.TryGetValue(codename, out ScriptEngineOld? engine) && engine is null)
+        if (Items.TryGetValue(codename, out ScriptEngine? engine) && engine is null)
         {
             return new(false,
                 $"Script engine with the codename {codename} is already deactivated.",
                 engine);
         }
 
-        Items[codename]!.Destruct();
         Items[codename] = null;
 
-        CombatInstances[codename]!.Destruct();
         CombatInstances[codename] = null;
 
         DeactivatedEngineEvent?.Invoke(codename, null);
@@ -139,9 +137,9 @@ public class MSVCScript() : ManagerService<ScriptEngineOld>(nameof(MSVCScript))
             null);
     }
 
-    public Response<ScriptEngineOld?> DeactivateAll()
+    public Response<ScriptEngine?> DeactivateAll()
     {
-        foreach (KeyValuePair<string, ScriptEngineOld?> engine in Items)
+        foreach (KeyValuePair<string, ScriptEngine?> engine in Items)
         {
             Deactivate(engine.Key);
         }
@@ -155,7 +153,7 @@ public class MSVCScript() : ManagerService<ScriptEngineOld>(nameof(MSVCScript))
     #region Methods: Invoker
     public Response<IReadableModel?> InvokeTrigger(string codename, object gameModel)
     {
-        if (Items.TryGetValue(codename, out ScriptEngineOld? engine) && engine is null)
+        if (Items.TryGetValue(codename, out ScriptEngine? engine) && engine is null)
         {
             return new(false,
                 $"Script engine with the codename {codename} is not activated yet.",
@@ -164,18 +162,18 @@ public class MSVCScript() : ManagerService<ScriptEngineOld>(nameof(MSVCScript))
 
         World world = MSVCWorld.Instance.Collection[codename]!;
         IReadableModel readableModel = null;
-        ScriptEntityModelType triggerType = ScriptEntityModelType.Variable;
+        ScriptEntityModelType triggerType = ScriptEntityModelType.ScriptVariable;
 
         switch (gameModel)
         {
             case ActiveSkill skill:
                 readableModel = new RMActiveSkill(skill, world);
-                triggerType = ScriptEntityModelType.Skill;
+                triggerType = ScriptEntityModelType.ActiveSkill;
                 break;
 
             case Area map:
                 readableModel = new RMArea(map, world);
-                triggerType = ScriptEntityModelType.Map;
+                triggerType = ScriptEntityModelType.Area;
                 break;
 
             case Aura aura:
@@ -190,17 +188,17 @@ public class MSVCScript() : ManagerService<ScriptEngineOld>(nameof(MSVCScript))
             
             case Avatar player:
                 readableModel = new RMAvatar(player, world);
-                triggerType = ScriptEntityModelType.Player;
+                triggerType = ScriptEntityModelType.Avatar;
                 break;
 
             case InventoryItem item:
                 readableModel = new RMInventoryItem(item, world);
-                triggerType = ScriptEntityModelType.Item;
+                triggerType = ScriptEntityModelType.InventoryItem;
                 break;
             
             case BaseItem drop:
                 readableModel = new RMItemDrop(drop, world);
-                triggerType = ScriptEntityModelType.Drop;
+                triggerType = ScriptEntityModelType.ItemDrop;
                 break;
 
             case CombatMessage message:
@@ -228,9 +226,9 @@ public class MSVCScript() : ManagerService<ScriptEngineOld>(nameof(MSVCScript))
                 triggerType = ScriptEntityModelType.Quest;
                 break;
 
-            case ScriptVariable variable:
+            case ScriptKeyValuePair variable:
                 readableModel = new RMScriptVariable(variable, world);
-                triggerType = ScriptEntityModelType.Variable;
+                triggerType = ScriptEntityModelType.ScriptVariable;
                 break;
 
             default:
@@ -239,8 +237,8 @@ public class MSVCScript() : ManagerService<ScriptEngineOld>(nameof(MSVCScript))
                     null);
         }
 
-        Items[codename]!.InvokeTrigger(triggerType, readableModel);
-        CombatInstances[codename]!.InvokeTrigger(triggerType, readableModel);
+        Items[codename]!.Trigger(triggerType, readableModel);
+        CombatInstances[codename]!.Trigger(triggerType, readableModel);
 
         return new(true,
             "Successfully invoked the trigger systems.",

@@ -180,11 +180,11 @@ public static class ScriptMachineParser
     #endregion
 
     #region Methods: Conversion To
-    public static ScriptLoadout2 ConvertToLoadout(string jsonString)
+    public static ScriptLoadout ConvertToLoadout(string jsonString)
     {
         JsonObject jsonObj = JsonSerializer.Deserialize<JsonObject>(jsonString)!;
 
-        ScriptLoadout2 loadout = new()
+        ScriptLoadout loadout = new()
         {
             Name = jsonObj["Name"]!.ToString(),
             Description = jsonObj["Description"]!.ToString(),
@@ -195,7 +195,6 @@ public static class ScriptMachineParser
             PresetVariables = ConvertToVariablesList(jsonObj["PresetVariables"]!.ToString())
         };
 
-        System.Diagnostics.Debug.WriteLine(loadout);
         return loadout;
     }
 
@@ -353,20 +352,20 @@ public static class ScriptMachineParser
     #endregion
 
     #region Methods: Conversion From
-    public static string ConvertFromLoadout(ScriptLoadout2 loadout)
+    public static string ConvertFromLoadout(ScriptLoadout loadout)
     {
-        string loadoutString = JsonSerializer.Serialize(loadout, SerializerOptions);
-        JsonObject jsonObj = JsonSerializer.Deserialize<JsonObject>(loadoutString)!;
+        string loadoutString = JSONParser.Serialize(loadout);
+        JsonObject jsonObj = JSONParser.Deserialize<JsonObject>(loadoutString)!;
 
         string stancesString = ConvertFromStances(loadout.Stances);
         string triggersString = ConvertFrom(loadout.Triggers);
         string presetVariablesString = ConvertFrom(loadout.PresetVariables);
 
-        jsonObj["Stances"] = JsonSerializer.Deserialize<JsonNode>(stancesString);
-        jsonObj["Triggers"] = JsonSerializer.Deserialize<JsonNode>(triggersString);
-        jsonObj["PresetVariables"] = JsonSerializer.Deserialize<JsonNode>(presetVariablesString);
+        jsonObj["Stances"] = JSONParser.Deserialize<JsonNode>(stancesString);
+        jsonObj["Triggers"] = JSONParser.Deserialize<JsonNode>(triggersString);
+        jsonObj["PresetVariables"] = JSONParser.Deserialize<JsonNode>(presetVariablesString);
 
-        return JsonSerializer.Serialize(jsonObj, SerializerOptions);
+        return JSONParser.Serialize(jsonObj);
     }
 
     public static string ConvertFromStances(List<ScriptStance> stances)
@@ -375,11 +374,11 @@ public static class ScriptMachineParser
 
         foreach (ScriptStance stance in stances)
         {
-            string stanceString = ConvertFromStance(stance);
-            jsonArr.Add(JsonSerializer.Deserialize<JsonNode>(stanceString));
+            string stanceString = ConvertFrom(stance);
+            jsonArr.Add(JSONParser.Deserialize<JsonNode>(stanceString));
         }
 
-        return JsonSerializer.Serialize(jsonArr, SerializerOptions);
+        return JSONParser.Serialize(jsonArr);
     }
 
     public static string ConvertFrom(ScriptStance stn)
@@ -388,10 +387,10 @@ public static class ScriptMachineParser
 
 
 
-        string commandsString = ConvertFrom(stance.Commands);
-        jsonObj["Commands"] = JsonSerializer.Deserialize<JsonNode>(commandsString);
+        string commandsString = ConvertFrom(stn.Commands);
+        stnObject["Commands"] = JSONParser.Deserialize<JsonNode>(commandsString);
 
-        return JsonSerializer.Serialize(jsonObj, SerializerOptions);
+        return JSONParser.Serialize(stnObject);
     }
 
     public static string ConvertFrom(ScriptCodeline cmd)

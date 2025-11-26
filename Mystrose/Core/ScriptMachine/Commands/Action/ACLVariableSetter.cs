@@ -82,16 +82,16 @@ public class ACLVariableSetter : SCLAction
 
         ScriptKeyValuePair? scriptVar = Parameters["Setting Type"].String switch
         {
-            "Add" => engine.ActiveLoadout.Variables.Add(Parameters["Variable Name"].String, Additionals["Variable Value"].Value),
-            "Remove" => engine.CurrentLoadout.Variables.Remove(Parameters["Variable Name"].String),
-            "Update" => engine.CurrentLoadout.Variables.Update((ScriptOptions)Additionals["Operator Type"], Parameters["Variable Name"].String, Additionals["Variable Value"].Value)
+            "Add" => engine.ActiveLoadout.Variables.Add(Parameters["Variable Name"].String, new(Parameters["Variable Name"].String, Additionals["Variable Value"].Value)),
+            "Remove" => engine.ActiveLoadout.Variables.Remove(Parameters["Variable Name"].String),
+            "Update" => engine.ActiveLoadout.Variables.Update((ScriptOptions)Additionals["Operator Type"], Parameters["Variable Name"].String, Additionals["Variable Value"].Value)
         };
 
         if (scriptVar is not null)
         {
             engine.Trigger(ScriptEntityModelType.ScriptVariable, [..
-                    new("Key", scriptVar.Key),
-                    new("Value", scriptVar.Value)
+                    new KeyValuePair("Key", scriptVar.Key),
+                    new KeyValuePair("Value", scriptVar.Value)
                 ]);
 
             engine.StateCodelineToBe(ScriptCodelineStatusType.Succeed, this);

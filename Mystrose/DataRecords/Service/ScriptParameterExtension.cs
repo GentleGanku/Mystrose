@@ -4,7 +4,7 @@ public struct ScriptParameterExtension
 {
 
     #region Constructor
-    public ScriptParameterExtension(ScriptParameterInputType inputType, object value, string hint)
+    public ScriptParameterExtension(ScriptParameterInputType inputType, string value, string hint)
     {
         InputType = inputType;
         Value = value;

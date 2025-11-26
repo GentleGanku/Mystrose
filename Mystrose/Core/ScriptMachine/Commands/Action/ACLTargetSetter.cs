@@ -94,7 +94,7 @@ public class ACLTargetSetter : SCLAction
                 engine.FlashAPI.CallGameFunctionOnFunc("world.setTarget", "world.getAvatarByUserName", Additionals["Player Name"].GetVariable(engine).String);
                 break;
             case "Monster":
-                if (Additionals["Tag"].Type == ScriptValueType.String)
+                if (Additionals["Tag"].ValueType == ScriptValueType.String)
                 {
                     Random monRandom = new();
                     int monIndex = 0;
@@ -121,7 +121,7 @@ public class ACLTargetSetter : SCLAction
                     monIndex = monRandom.Next(0, monsters.Length);
                     engine.FlashAPI.CallGameFunctionOnFunc("world.setTarget", "world.getMonster", monsters[monIndex].MonMapID);
                 }
-                else if (Additionals["Tag"].Type == ScriptValueType.Integer)
+                else if (Additionals["Tag"].ValueType == ScriptValueType.Integer)
                 {
                     engine.FlashAPI.CallGameFunctionOnFunc("world.setTarget", "world.getMonster", Additionals["Tag"].GetVariable(engine).Integer);
                 }

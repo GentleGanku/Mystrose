@@ -96,7 +96,7 @@ public class ACLSkillUse : SCLAction
                     safeChecks -= engine.Player.HP <= engine.Player.MaxHP * (Additionals["Minimum HP (%)"].Double / 100.0) ? 0 : 1;
                 }
 
-                if (SecondaryParameters["Ruling"]["Minimum MP (%)"].Double >= 0.0)
+                if (Additionals["Minimum MP (%)"].Double >= 0.0)
                 {
                     safeChecks -= engine.Player.MP <= engine.Player.MaxMP * (Additionals["Minimum MP (%)"].Double / 100.0) ? 0 : 1;
                 }
